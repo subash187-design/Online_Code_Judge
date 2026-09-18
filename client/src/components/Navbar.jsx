@@ -78,18 +78,6 @@ export default function Navbar({ onNavigate, currentPage }) {
               Problems
             </button>
 
-            <button
-              onClick={() => handleNav('landing')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                currentPage === 'landing'
-                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Compass size={14} />
-              Overview
-            </button>
-
             {user?.role === 'ADMIN' && (
               <button
                 onClick={() => handleNav('admin')}
@@ -217,27 +205,29 @@ export default function Navbar({ onNavigate, currentPage }) {
               </button>
             </>
           )}
-          <button
-            onClick={() => handleNav('landing')}
-            className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-          >
-            <Compass size={16} /> Overview
-          </button>
           {!isAuthenticated && (
-            <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+            <>
               <button
-                onClick={() => handleNav('signin')}
-                className="w-full py-2.5 rounded-xl text-center text-sm font-semibold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center justify-center gap-2"
+                onClick={() => handleNav('landing')}
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
               >
-                <LogIn size={15} /> Sign In
+                <Compass size={16} /> Overview
               </button>
-              <button
-                onClick={() => handleNav('signup')}
-                className="w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center gap-2 shadow-sm"
-              >
-                <UserPlus size={15} /> Sign Up
-              </button>
-            </div>
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
+                <button
+                  onClick={() => handleNav('signin')}
+                  className="w-full py-2.5 rounded-xl text-center text-sm font-semibold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center justify-center gap-2"
+                >
+                  <LogIn size={15} /> Sign In
+                </button>
+                <button
+                  onClick={() => handleNav('signup')}
+                  className="w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center gap-2 shadow-sm"
+                >
+                  <UserPlus size={15} /> Sign Up
+                </button>
+              </div>
+            </>
           )}
         </div>
       )}
