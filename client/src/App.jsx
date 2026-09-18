@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import ProblemListPage from './pages/ProblemListPage';
@@ -10,7 +11,6 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import UserDashboardPage from './pages/UserDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 
-// Helper to normalize browser pathname to app route key
 function getRouteFromPath(pathname) {
   const path = pathname.toLowerCase().replace(/\/$/, '');
   if (!path || path === '') return 'landing';
@@ -40,14 +40,12 @@ function getPathFromRoute(route, params = {}) {
 function MainApp() {
   const { user, isAuthenticated, loading } = useAuth();
   
-  // Initialize route from current window.location
   const [currentRoute, setCurrentRoute] = useState(() => {
     return getRouteFromPath(window.location.pathname);
   });
   const [selectedProblemId, setSelectedProblemId] = useState(null);
   const [routeParams, setRouteParams] = useState({});
 
-  // Sync with browser back/forward history buttons
   useEffect(() => {
     const handlePopState = () => {
       const route = getRouteFromPath(window.location.pathname);
@@ -62,7 +60,6 @@ function MainApp() {
     setRouteParams(params);
     setCurrentRoute(route);
     
-    // Update browser URL
     const targetUrl = getPathFromRoute(route, params);
     window.history.pushState({}, '', targetUrl);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -78,19 +75,20 @@ function MainApp() {
     navigate('problems');
   };
 
-  // Route protection rules
   const renderCurrentPage = () => {
     if (loading) {
       return (
-        <div className="min-h-[60vh] flex items-center justify-center text-slate-500 text-sm">
-          Loading authentication status...
+        <div className="min-h-[60vh] flex items-center justify-center text-slate-500 dark:text-zinc-400 text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+            Loading authentication status...
+          </div>
         </div>
       );
     }
 
     switch (currentRoute) {
       case 'landing':
-        // If user is already authenticated, redirect them to dashboard
         if (isAuthenticated) {
           return user?.role === 'ADMIN' ? (
             <AdminDashboardPage onNavigate={navigate} />
@@ -165,7 +163,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-blue-600/30 selection:text-blue-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-brand-500/20 selection:text-brand-700 dark:selection:text-brand-300 transition-colors duration-200">
       <Navbar onNavigate={navigate} currentPage={currentRoute} />
       <main className="flex-1">
         {renderCurrentPage()}
@@ -176,8 +174,10 @@ function MainApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <MainApp />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }

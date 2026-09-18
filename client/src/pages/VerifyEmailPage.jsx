@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ShieldCheck, Mail, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 
 export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
@@ -71,27 +71,27 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-slate-950">
-      <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl p-8 shadow-2xl backdrop-blur">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-slate-50 dark:bg-[#030712] transition-colors">
+      <div className="w-full max-w-md bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-3xl p-8 shadow-soft-xl">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 mb-3 border border-blue-500/20">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 mb-3 border border-brand-200 dark:border-brand-800/60">
             <ShieldCheck size={24} />
           </div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Verify Your Email</h2>
-          <p className="text-slate-400 text-sm mt-1">
-            Please enter the 6-digit verification code sent to your email inbox.
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Verify Your Email</h2>
+          <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1">
+            Please enter the 6-digit verification code sent to your inbox.
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-sm flex items-start gap-3">
             <AlertCircle size={18} className="shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm flex items-start gap-3">
+          <div className="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-sm flex items-start gap-3">
             <CheckCircle size={18} className="shrink-0 mt-0.5" />
             <span>{success}</span>
           </div>
@@ -99,26 +99,24 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
               Email Address
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
-                <Mail size={18} />
-              </div>
+              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors text-sm"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 shadow-soft-sm"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
               6-Digit Verification Code
             </label>
             <input
@@ -127,36 +125,29 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
               maxLength={6}
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-              placeholder="••••••"
-              className="w-full text-center tracking-[0.75em] text-2xl font-mono py-3 bg-slate-950 border border-slate-800 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+              placeholder="123456"
+              className="w-full text-center tracking-[0.4em] font-mono text-xl py-3 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-brand-500/20 shadow-soft-sm"
             />
-            <p className="text-xs text-slate-500 mt-1.5 text-center">Codes expire after 15 minutes.</p>
           </div>
 
           <button
             type="submit"
             disabled={loading || otp.length !== 6}
-            className="w-full mt-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-colors shadow-lg shadow-blue-600/20 disabled:opacity-50 text-sm flex items-center justify-center gap-2"
+            className="w-full mt-2 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold text-sm transition-all shadow-soft-sm hover:shadow-glow-brand flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {loading ? 'Verifying Code...' : 'Verify Code & Activate'}
+            {loading ? 'Verifying...' : 'Verify Email & Activate'}
           </button>
         </form>
 
-        <div className="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <div className="mt-6 flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
+          <span>Didn't receive the code?</span>
           <button
             onClick={handleResend}
             disabled={resending}
-            className="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+            className="text-brand-600 dark:text-brand-400 hover:underline font-semibold flex items-center gap-1.5 disabled:opacity-50"
           >
-            <RefreshCw size={14} className={resending ? 'animate-spin' : ''} />
-            Resend verification code
-          </button>
-
-          <button
-            onClick={() => onNavigate('signin')}
-            className="hover:text-slate-200 transition-colors"
-          >
-            Back to Sign In
+            <RefreshCw size={12} className={resending ? 'animate-spin' : ''} />
+            {resending ? 'Resending...' : 'Resend Code'}
           </button>
         </div>
       </div>

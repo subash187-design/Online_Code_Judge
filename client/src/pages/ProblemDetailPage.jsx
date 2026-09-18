@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import VerdictBadge from '../components/VerdictBadge';
 import ProgressTracker from '../components/ProgressTracker';
@@ -7,7 +7,7 @@ import ComplexityCard from '../components/ComplexityCard';
 import MentorPanel from '../components/MentorPanel';
 import OptimizationJourney from '../components/analytics/OptimizationJourney';
 import SubmissionDiffModal from '../components/analytics/SubmissionDiffModal';
-import { Play, Send, Clock, Database, ChevronLeft, GitCompare } from 'lucide-react';
+import { Play, Send, Clock, Database, ChevronLeft, GitCompare, Sparkles, Layers } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const DEFAULT_CPP_BOILERPLATE = `#include <iostream>
@@ -60,30 +60,22 @@ export default function ProblemDetailPage({ problemId, onBack }) {
   }, [activeStageId, effectiveUserId]);
 
   const loadProblemAndStages = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const [probRes, stagesRes] = await Promise.all([
-        authFetch(`/api/v1/problems/${problemId}`),
-        authFetch(`/api/v1/problems/${problemId}/stages?user_id=${effectiveUserId}`)
+        fetch(`/api/v1/problems/${problemId}`).then(r => r.json()),
+        fetch(`/api/v1/problems/${problemId}/stages?user_id=${effectiveUserId}`).then(r => r.json())
       ]);
 
-      const probData = await probRes.json();
-      setProblem(probData);
-      if (probData.sample_test_cases && probData.sample_test_cases.length > 0) {
-        setCustomInput(probData.sample_test_cases[0].input);
-      }
+      setProblem(probRes);
+      setStagesData(stagesRes);
 
-      if (stagesRes.ok) {
-        const sData = await stagesRes.json();
-        setStagesData(sData);
-
-        const currentActive = sData.stages.find(s => s.status === 'UNLOCKED') || sData.stages[0];
-        if (currentActive) {
-          setActiveStageId(currentActive.id);
-        }
+      if (stagesRes && stagesRes.stages && stagesRes.stages.length > 0) {
+        const activeOrUnlocked = stagesRes.stages.find(s => s.status === 'UNLOCKED') || stagesRes.stages[0];
+        setActiveStageId(activeOrUnlocked.id);
       }
     } catch (err) {
-      console.error('Failed to load problem data:', err);
+      console.error('Failed to load problem context:', err);
     } finally {
       setLoading(false);
     }
@@ -91,33 +83,36 @@ export default function ProblemDetailPage({ problemId, onBack }) {
 
   const fetchStageHistory = async (stageId) => {
     try {
-      const res = await authFetch(`/api/v1/stages/${stageId}/submissions?user_id=${effectiveUserId}`);
+      const res = await fetch(`/api/v1/stages/${stageId}/submissions?user_id=${effectiveUserId}`);
       if (res.ok) {
         const data = await res.json();
         setHistory(data);
       }
     } catch (err) {
-      console.error('Failed to fetch stage history:', err);
+      console.error('Error loading history:', err);
     }
   };
 
   const fetchJourney = async () => {
     try {
-      const res = await authFetch(`/api/v1/analytics/problems/${problemId}/journey?user_id=${effectiveUserId}`);
+      const res = await fetch(`/api/v1/analytics/problems/${problemId}/journey?user_id=${effectiveUserId}`);
       if (res.ok) {
         const data = await res.json();
         setJourney(data);
       }
     } catch (err) {
-      console.error('Failed to fetch journey:', err);
+      console.error('Error loading journey:', err);
     }
   };
 
   const handleRunCode = async () => {
     setRunning(true);
+    setRunOutput(null);
+    setLatestVerdict(null);
     setActiveBottomTab('result');
+
     try {
-      const res = await authFetch('/api/v1/judge/run', {
+      const res = await fetch('/api/v1/judge/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -128,11 +123,16 @@ export default function ProblemDetailPage({ problemId, onBack }) {
           memory_limit_kb: problem?.memory_limit_kb || 262144
         })
       });
+
       const data = await res.json();
       setRunOutput(data);
-      setLatestVerdict(null);
     } catch (err) {
-      setRunOutput({ verdict: 'RUNTIME_ERROR', stderr: err.message });
+      setRunOutput({
+        verdict: 'INTERNAL_ERROR',
+        stderr: err.message,
+        execution_time_ms: 0,
+        memory_used_kb: 0
+      });
     } finally {
       setRunning(false);
     }
@@ -142,12 +142,12 @@ export default function ProblemDetailPage({ problemId, onBack }) {
     if (!activeStageId) return;
 
     setSubmitting(true);
-    setActiveBottomTab('result');
-    setLatestVerdict({ verdict: 'PENDING' });
+    setLatestVerdict(null);
     setRunOutput(null);
+    setActiveBottomTab('result');
 
     try {
-      const res = await authFetch(`/api/v1/stages/${activeStageId}/submissions`, {
+      const res = await fetch(`/api/v1/stages/${activeStageId}/submissions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -158,33 +158,31 @@ export default function ProblemDetailPage({ problemId, onBack }) {
       });
 
       const data = await res.json();
+      setLatestVerdict(data);
 
-      if (!res.ok) {
-        setLatestVerdict({
-          verdict: data.error === 'STAGE_LOCKED' ? 'RUNTIME_ERROR' : 'ERROR',
-          compile_output: data.message || 'Stage submission rejected.'
+      if (data.verdict === 'ACCEPTED') {
+        const updatedStages = await fetch(`/api/v1/problems/${problemId}/stages?user_id=${effectiveUserId}`).then(r => r.json());
+        setStagesData(updatedStages);
+
+        setStageFeedback({
+          stage_status: data.stage_status,
+          next_unlocked_stage_id: data.next_unlocked_stage_id,
+          is_problem_solved: data.is_problem_solved,
+          feedback_message: data.feedback_message
         });
-      } else {
-        setLatestVerdict(data);
 
-        if (data.verdict === 'ACCEPTED') {
-          setStageFeedback({
-            message: data.feedback_message,
-            nextStageId: data.next_unlocked_stage_id
-          });
-
-          const reloadStages = await fetch(`/api/v1/problems/${problemId}/stages?user_id=1`);
-          if (reloadStages.ok) {
-            const updated = await reloadStages.json();
-            setStagesData(updated);
-          }
+        if (data.next_unlocked_stage_id) {
+          setActiveStageId(data.next_unlocked_stage_id);
         }
-
-        fetchStageHistory(activeStageId);
-        fetchJourney();
       }
+
+      fetchStageHistory(activeStageId);
+      fetchJourney();
     } catch (err) {
-      setLatestVerdict({ verdict: 'RUNTIME_ERROR', compile_output: err.message });
+      setLatestVerdict({
+        verdict: 'INTERNAL_ERROR',
+        compile_output: err.message
+      });
     } finally {
       setSubmitting(false);
     }
@@ -192,64 +190,90 @@ export default function ProblemDetailPage({ problemId, onBack }) {
 
   const handleCompare = async (subAId, subBId) => {
     try {
-      const res = await fetch(`/api/v1/analytics/compare?sub_a=${subAId}&sub_b=${subBId}&user_id=1`);
+      const res = await fetch(`/api/v1/analytics/compare?sub_a=${subAId}&sub_b=${subBId}&user_id=${effectiveUserId}`);
       if (res.ok) {
         const data = await res.json();
         setComparison(data);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching diff:', err);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 dark:bg-[#030712] text-slate-500 dark:text-zinc-400 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+          Loading algorithmic workspace...
+        </div>
+      </div>
+    );
+  }
+
+  if (!problem) {
+    return (
+      <div className="p-8 text-center text-rose-500 bg-slate-50 dark:bg-[#030712]">
+        Problem not found.
+        <button onClick={onBack} className="block mx-auto mt-4 text-brand-600 dark:text-brand-400 underline">
+          Return to problem list
+        </button>
+      </div>
+    );
+  }
 
   const activeStage = stagesData?.stages?.find(s => s.id === activeStageId);
   const isStageLocked = activeStage?.status === 'LOCKED';
 
-  if (loading) return <div className="p-8 text-center text-slate-500">Loading problem workspace...</div>;
-  if (!problem) return <div className="p-8 text-center text-rose-400">Problem not found.</div>;
-
   return (
-    <div className="h-screen flex flex-col bg-slate-950 text-slate-200">
-      {/* Comparator Modal */}
+    <div className="flex flex-col h-[calc(100vh-4rem)] bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-zinc-100 transition-colors">
+      
+      {/* Diff Modal */}
       {comparison && (
-        <SubmissionDiffModal comparison={comparison} onClose={() => setComparison(null)} />
+        <SubmissionDiffModal
+          comparison={comparison}
+          onClose={() => setComparison(null)}
+        />
       )}
 
-      {/* Top Navbar */}
-      <header className="h-14 border-b border-slate-800 px-4 flex items-center justify-between bg-slate-900/80">
+      {/* Top Workspace Header */}
+      <header className="h-14 border-b border-slate-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-[#030712]/90 backdrop-blur px-4 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            className="p-1.5 rounded-lg text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+            title="Back to problems"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
-          <span className="font-semibold text-white text-sm">
-            #{problem.id}. {problem.title}
-          </span>
-          <span className="text-xs px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-800 font-medium">
-            {problem.difficulty}
-          </span>
-          {activeStage && (
-            <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-300 border border-blue-800/80 font-mono font-medium">
-              Target: {activeStage.name}
+          <div className="flex items-center gap-2">
+            <h1 className="text-sm font-bold text-slate-900 dark:text-white">
+              #{problem.id}. {problem.title}
+            </h1>
+            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
+              problem.difficulty === 'EASY' 
+                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/50'
+                : 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200/70 dark:border-amber-800/50'
+            }`}>
+              {problem.difficulty}
             </span>
-          )}
+          </div>
         </div>
 
+        {/* Action Buttons */}
         <div className="flex items-center gap-2">
           <button
             onClick={handleRunCode}
             disabled={running || submitting}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 disabled:opacity-50 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold border border-slate-200 dark:border-zinc-700 disabled:opacity-50 transition-all shadow-soft-sm"
           >
-            <Play size={14} className="text-emerald-400" />
+            <Play size={14} className="text-emerald-500" />
             {running ? 'Running...' : 'Run Custom'}
           </button>
           <button
             onClick={handleSubmitCode}
             disabled={running || submitting || isStageLocked}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-900/30 disabled:opacity-50 transition-all"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-semibold shadow-soft-sm hover:shadow-glow-brand disabled:opacity-50 transition-all"
           >
             <Send size={14} />
             {submitting ? 'Evaluating...' : isStageLocked ? 'Stage Locked' : 'Submit Stage'}
@@ -257,10 +281,11 @@ export default function ProblemDetailPage({ problemId, onBack }) {
         </div>
       </header>
 
-      {/* Two-Pane Body */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left Pane */}
-        <div className="w-1/2 border-r border-slate-800 p-6 overflow-y-auto space-y-5">
+      {/* Two-Pane Workspace Layout */}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        {/* Left Problem Specs & Target Pane */}
+        <div className="w-full md:w-1/2 border-r border-slate-200/80 dark:border-zinc-800/80 p-6 overflow-y-auto space-y-5 bg-white/60 dark:bg-zinc-950/40">
           {stagesData && (
             <ProgressTracker
               stages={stagesData.stages}
@@ -279,8 +304,8 @@ export default function ProblemDetailPage({ problemId, onBack }) {
           />
 
           <div>
-            <h2 className="text-lg font-bold text-white mb-2">{problem.title}</h2>
-            <div className="flex gap-4 text-xs text-slate-400 pb-4 border-b border-slate-800 font-mono">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{problem.title}</h2>
+            <div className="flex gap-4 text-xs text-slate-500 dark:text-zinc-400 pb-4 border-b border-slate-200/80 dark:border-zinc-800/80 font-mono">
               <span className="flex items-center gap-1">
                 <Clock size={13} /> {problem.time_limit_ms}ms
               </span>
@@ -291,42 +316,42 @@ export default function ProblemDetailPage({ problemId, onBack }) {
           </div>
 
           {activeStage && (
-            <div className="bg-slate-900/80 border border-blue-900/40 rounded-xl p-4 space-y-2">
+            <div className="bg-brand-50/50 dark:bg-brand-950/20 border border-brand-200/80 dark:border-brand-900/50 rounded-2xl p-4 space-y-2 shadow-soft-sm">
               <div className="flex items-center justify-between">
-                <span className="text-xs uppercase font-bold tracking-wider text-blue-400 font-mono">
-                  Current Target Requirements
+                <span className="text-[11px] uppercase font-bold tracking-wider text-brand-600 dark:text-brand-400 font-mono flex items-center gap-1.5">
+                  <Sparkles size={12} /> Target Stage Requirements
                 </span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">
+                <span className="text-[10px] px-2 py-0.5 rounded bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 font-mono border border-slate-200 dark:border-zinc-800">
                   {activeStage.status}
                 </span>
               </div>
-              <h4 className="text-sm font-semibold text-white">{activeStage.name}</h4>
-              <p className="text-xs text-slate-300 leading-relaxed">{activeStage.description}</p>
-              <div className="flex gap-4 pt-2 text-[11px] font-mono text-slate-400 border-t border-slate-800/80">
-                <span>Expected Time: <b className="text-blue-300">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
-                <span>Expected Space: <b className="text-blue-300">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
+              <h4 className="text-sm font-semibold text-slate-900 dark:text-white">{activeStage.name}</h4>
+              <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{activeStage.description}</p>
+              <div className="flex gap-4 pt-2 text-[11px] font-mono text-slate-500 dark:text-zinc-400 border-t border-brand-200/50 dark:border-brand-900/30">
+                <span>Expected Time: <b className="text-brand-600 dark:text-brand-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
+                <span>Expected Space: <b className="text-brand-600 dark:text-brand-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
               </div>
             </div>
           )}
 
-          <div className="prose prose-invert text-slate-300 text-xs whitespace-pre-wrap leading-relaxed">
+          <div className="text-slate-700 dark:text-zinc-300 text-xs whitespace-pre-wrap leading-relaxed">
             {problem.description}
           </div>
 
           {problem.sample_test_cases && problem.sample_test_cases.length > 0 && (
-            <div className="space-y-3 pt-3 border-t border-slate-800">
-              <h3 className="text-xs font-semibold text-white uppercase tracking-wider text-slate-400">
+            <div className="space-y-3 pt-3 border-t border-slate-200/80 dark:border-zinc-800/80">
+              <h3 className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                 Sample Test Cases
               </h3>
-              {problem.sample_test_cases.map((stc, idx) => (
-                <div key={idx} className="bg-slate-900/70 border border-slate-800/80 rounded-lg p-3 text-xs font-mono">
-                  <div className="mb-2">
-                    <span className="text-slate-500 block mb-1">Input</span>
-                    <pre className="text-slate-200 bg-slate-950 p-2 rounded">{stc.input}</pre>
+              {problem.sample_test_cases.map((tc, idx) => (
+                <div key={idx} className="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl border border-slate-200/80 dark:border-zinc-800 text-xs font-mono space-y-1.5 shadow-soft-sm">
+                  <div>
+                    <span className="text-slate-400 dark:text-zinc-500 block text-[10px] uppercase font-bold">Input</span>
+                    <pre className="text-slate-800 dark:text-zinc-200 mt-0.5">{tc.input}</pre>
                   </div>
                   <div>
-                    <span className="text-slate-500 block mb-1">Expected Output</span>
-                    <pre className="text-slate-200 bg-slate-950 p-2 rounded">{stc.expected_output}</pre>
+                    <span className="text-slate-400 dark:text-zinc-500 block text-[10px] uppercase font-bold">Expected Output</span>
+                    <pre className="text-emerald-600 dark:text-emerald-400 mt-0.5">{tc.expected_output}</pre>
                   </div>
                 </div>
               ))}
@@ -334,58 +359,64 @@ export default function ProblemDetailPage({ problemId, onBack }) {
           )}
         </div>
 
-        {/* Right Pane */}
-        <div className="w-1/2 flex flex-col overflow-hidden">
-          <div className="flex-1 p-2 min-h-[350px]">
-            <CodeEditor code={code} onChange={(v) => setCode(v || '')} />
+        {/* Right Code Editor & Diagnostic Drawer Pane */}
+        <div className="w-full md:w-1/2 flex flex-col overflow-hidden bg-slate-100/50 dark:bg-zinc-950/80">
+          
+          {/* Monaco Code Editor (Strict Syntax Colors Preserved) */}
+          <div className="flex-1 p-3 overflow-hidden">
+            <CodeEditor code={code} onChange={(newVal) => setCode(newVal)} />
           </div>
 
-          {/* Bottom Tabs Drawer */}
-          <div className="h-64 border-t border-slate-800 bg-slate-900/90 flex flex-col">
-            <div className="flex border-b border-slate-800 px-3 pt-2 gap-2 text-xs font-semibold">
+          {/* Diagnostic & AI Mentor Bottom Drawer */}
+          <div className="h-64 border-t border-slate-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#0a0e1a] flex flex-col">
+            
+            {/* Drawer Tabs */}
+            <div className="flex items-center gap-1 border-b border-slate-200/80 dark:border-zinc-800/80 px-4 pt-2 text-xs font-semibold bg-slate-50/70 dark:bg-zinc-900/40">
               <button
                 onClick={() => setActiveBottomTab('result')}
-                className={`pb-2 px-2 border-b-2 transition-colors ${
-                  activeBottomTab === 'result' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200'
+                className={`pb-2 px-3 border-b-2 transition-all ${
+                  activeBottomTab === 'result' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Evaluation & Complexity
               </button>
               <button
                 onClick={() => setActiveBottomTab('journey')}
-                className={`pb-2 px-2 border-b-2 transition-colors ${
-                  activeBottomTab === 'journey' ? 'border-emerald-500 text-emerald-400' : 'border-transparent text-slate-400 hover:text-slate-200'
+                className={`pb-2 px-3 border-b-2 transition-all ${
+                  activeBottomTab === 'journey' ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                📈 Optimization Journey
+                Optimization Journey
               </button>
               <button
                 onClick={() => setActiveBottomTab('mentor')}
-                className={`pb-2 px-2 border-b-2 transition-colors ${
-                  activeBottomTab === 'mentor' ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-200'
+                className={`pb-2 px-3 border-b-2 transition-all ${
+                  activeBottomTab === 'mentor' ? 'border-purple-600 text-purple-600 dark:text-purple-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 💡 AI Mentor
               </button>
               <button
                 onClick={() => setActiveBottomTab('custom')}
-                className={`pb-2 px-2 border-b-2 transition-colors ${
-                  activeBottomTab === 'custom' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200'
+                className={`pb-2 px-3 border-b-2 transition-all ${
+                  activeBottomTab === 'custom' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Custom Input
               </button>
               <button
                 onClick={() => setActiveBottomTab('history')}
-                className={`pb-2 px-2 border-b-2 transition-colors ${
-                  activeBottomTab === 'history' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400 hover:text-slate-200'
+                className={`pb-2 px-3 border-b-2 transition-all ${
+                  activeBottomTab === 'history' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
-                Stage History ({history.length})
+                History ({history.length})
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto">
+            {/* Drawer Tab Content */}
+            <div className="flex-1 overflow-y-auto p-4">
+              
               {/* Journey Tab */}
               {activeBottomTab === 'journey' && (
                 <OptimizationJourney journey={journey} />
@@ -401,33 +432,33 @@ export default function ProblemDetailPage({ problemId, onBack }) {
 
               {/* Custom Input Tab */}
               {activeBottomTab === 'custom' && (
-                <div className="p-3 h-full">
+                <div className="h-full">
                   <textarea
                     value={customInput}
                     onChange={(e) => setCustomInput(e.target.value)}
                     placeholder="Enter custom stdin here..."
-                    className="w-full h-full bg-slate-950 text-slate-200 border border-slate-800 rounded p-2 resize-none focus:outline-none focus:border-blue-500 font-mono text-xs"
+                    className="w-full h-full bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 rounded-xl p-3 resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 font-mono text-xs shadow-soft-sm"
                   />
                 </div>
               )}
 
               {/* Result Tab */}
               {activeBottomTab === 'result' && (
-                <div className="p-3 text-xs font-mono">
+                <div className="text-xs font-mono">
                   {latestVerdict && (
                     <div className="space-y-3">
                       <div className="flex items-center gap-3">
                         <VerdictBadge verdict={latestVerdict.verdict} />
                         {latestVerdict.execution_time_ms !== undefined && (
-                          <span className="text-slate-400">Time: {latestVerdict.execution_time_ms}ms</span>
+                          <span className="text-slate-600 dark:text-zinc-400">Time: {latestVerdict.execution_time_ms}ms</span>
                         )}
                         {latestVerdict.memory_used_kb !== undefined && (
-                          <span className="text-slate-400">Memory: {latestVerdict.memory_used_kb}KB</span>
+                          <span className="text-slate-600 dark:text-zinc-400">Memory: {latestVerdict.memory_used_kb}KB</span>
                         )}
                       </div>
 
                       {latestVerdict.compile_output && (
-                        <div className="bg-slate-950 p-2.5 rounded border border-slate-800 text-rose-300 whitespace-pre-wrap">
+                        <div className="bg-rose-50 dark:bg-rose-950/40 p-3 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 whitespace-pre-wrap font-mono">
                           {latestVerdict.compile_output}
                         </div>
                       )}
@@ -442,27 +473,31 @@ export default function ProblemDetailPage({ problemId, onBack }) {
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
                         <VerdictBadge verdict={runOutput.verdict} />
-                        <span className="text-slate-400">Time: {runOutput.execution_time_ms}ms</span>
-                        <span className="text-slate-400">Memory: {runOutput.memory_used_kb}KB</span>
+                        <span className="text-slate-600 dark:text-zinc-400">Time: {runOutput.execution_time_ms}ms</span>
+                        <span className="text-slate-600 dark:text-zinc-400">Memory: {runOutput.memory_used_kb}KB</span>
                       </div>
                       {runOutput.stdout && (
                         <div>
-                          <span className="text-slate-500 block mb-1">Standard Output</span>
-                          <pre className="bg-slate-950 p-2 rounded text-slate-200">{runOutput.stdout}</pre>
+                          <span className="text-slate-400 dark:text-zinc-500 block mb-1">Standard Output</span>
+                          <pre className="bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-200 font-mono whitespace-pre-wrap">
+                            {runOutput.stdout}
+                          </pre>
                         </div>
                       )}
                       {runOutput.stderr && (
                         <div>
-                          <span className="text-rose-400 block mb-1">Standard Error</span>
-                          <pre className="bg-slate-950 p-2 rounded text-rose-300">{runOutput.stderr}</pre>
+                          <span className="text-rose-500 block mb-1">Standard Error</span>
+                          <pre className="bg-rose-50 dark:bg-rose-950/40 p-2.5 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-mono whitespace-pre-wrap">
+                            {runOutput.stderr}
+                          </pre>
                         </div>
                       )}
                     </div>
                   )}
 
                   {!latestVerdict && !runOutput && (
-                    <div className="text-slate-500 py-6 text-center">
-                      Submit code to view evaluation results and algorithmic complexity profile.
+                    <div className="text-center py-8 text-slate-400 dark:text-zinc-500">
+                      Run code with custom input or submit stage to view execution metrics.
                     </div>
                   )}
                 </div>
@@ -470,38 +505,36 @@ export default function ProblemDetailPage({ problemId, onBack }) {
 
               {/* History Tab */}
               {activeBottomTab === 'history' && (
-                <div className="p-3 space-y-2 text-xs font-mono">
-                  {history.map((h, idx) => (
-                    <div
-                      key={h.id}
-                      className="flex items-center justify-between p-2 rounded bg-slate-950/60 border border-slate-800/80 hover:border-slate-700"
-                    >
-                      <div className="flex items-center gap-3">
-                        <VerdictBadge verdict={h.verdict} />
-                        <span className="text-slate-400">{h.execution_time_ms ?? 0}ms</span>
-                        <span className="text-slate-400">{h.memory_used_kb ?? 0}KB</span>
-                        {h.time_complexity && (
-                          <span className="text-blue-400 font-bold">{h.time_complexity}</span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {idx < history.length - 1 && (
+                <div className="space-y-2">
+                  {history.length === 0 ? (
+                    <div className="text-center py-6 text-slate-400 dark:text-zinc-500 text-xs">
+                      No submissions recorded for this stage yet.
+                    </div>
+                  ) : (
+                    history.map((sub, idx) => (
+                      <div
+                        key={sub.id}
+                        className="p-3 bg-slate-50 dark:bg-zinc-900 rounded-xl border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between text-xs font-mono shadow-soft-sm"
+                      >
+                        <div className="flex items-center gap-3">
+                          <VerdictBadge verdict={sub.verdict} />
+                          <span className="text-slate-600 dark:text-zinc-400">
+                            {sub.execution_time_ms !== null ? `${sub.execution_time_ms}ms` : '—'}
+                          </span>
+                          <span className="text-slate-400 dark:text-zinc-500">
+                            {new Date(sub.created_at).toLocaleTimeString()}
+                          </span>
+                        </div>
+                        {idx > 0 && (
                           <button
-                            onClick={() => handleCompare(history[idx + 1].id, h.id)}
-                            className="flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px]"
+                            onClick={() => handleCompare(history[idx].id, history[0].id)}
+                            className="px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 text-brand-600 dark:text-brand-400 border border-brand-200/60 text-[11px] font-semibold flex items-center gap-1"
                           >
-                            <GitCompare size={11} /> Diff
+                            <GitCompare size={12} /> Diff with Latest
                           </button>
                         )}
-                        <span className="text-slate-500 text-[10px]">
-                          {new Date(h.created_at).toLocaleTimeString()}
-                        </span>
                       </div>
-                    </div>
-                  ))}
-                  {history.length === 0 && (
-                    <div className="text-slate-500 py-6 text-center">No submissions for this stage yet.</div>
+                    ))
                   )}
                 </div>
               )}

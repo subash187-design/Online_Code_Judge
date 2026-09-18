@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Lightbulb, CheckCircle2, Lock, Sparkles, AlertCircle } from 'lucide-react';
 
 export default function MentorPanel({ submissionId, stageId }) {
@@ -59,112 +59,96 @@ export default function MentorPanel({ submissionId, stageId }) {
 
   if (!submissionId) {
     return (
-      <div className="p-8 text-center text-slate-500 text-xs font-mono">
-        Submit code to activate the Socratic AI Code Mentor.
+      <div className="p-6 text-center text-slate-500 dark:text-zinc-400 text-xs">
+        Submit or evaluate your code on this stage to activate the Socratic AI Mentor.
       </div>
     );
   }
 
   return (
-    <div className="p-4 space-y-4 text-slate-300 text-xs">
-      <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-        <div className="flex items-center gap-2">
-          <Sparkles size={16} className="text-amber-400" />
-          <span className="font-semibold text-slate-100 text-xs uppercase tracking-wider">
-            Socratic AI Code Mentor
-          </span>
-        </div>
-        <span className="text-[10px] bg-amber-950/60 text-amber-300 border border-amber-800/80 px-2 py-0.5 rounded-full font-mono">
-          Non-Spoiler Mode
-        </span>
-      </div>
-
-      {loadingFeedback && (
-        <div className="py-4 text-center text-slate-500">Formulating personalized guidance...</div>
-      )}
-
+    <div className="space-y-4 p-1 text-xs">
       {error && (
-        <div className="p-2.5 rounded bg-rose-950/40 border border-rose-800 text-rose-300 text-xs flex items-center gap-2">
-          <AlertCircle size={14} />
-          {error}
+        <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 rounded-xl flex items-center gap-2">
+          <AlertCircle size={15} />
+          <span>{error}</span>
         </div>
       )}
 
-      {feedback && (
-        <div className="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-800/80">
-          <div>
-            <span className="text-slate-500 block font-mono text-[10px]">Approach Assessment</span>
-            <p className="text-slate-200 mt-0.5 font-medium">{feedback.approach}</p>
+      {/* Socratic Feedback Summary */}
+      {loadingFeedback ? (
+        <div className="p-4 text-center text-slate-500 dark:text-zinc-400">
+          Analyzing code structure with AI Mentor...
+        </div>
+      ) : feedback ? (
+        <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-2xl p-4 space-y-3 shadow-soft-sm">
+          <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider text-[11px]">
+            <Sparkles size={14} /> Socratic Code Intelligence
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+          <div className="space-y-2 text-slate-700 dark:text-zinc-300 leading-relaxed">
             <div>
-              <span className="text-emerald-400 block font-mono text-[10px] font-semibold">
-                ✓ What You Did Well
-              </span>
-              <p className="text-slate-300 mt-0.5">{feedback.what_you_are_doing_well}</p>
+              <span className="font-semibold text-slate-900 dark:text-white">Detected Approach: </span>
+              {feedback.approach}
             </div>
             <div>
-              <span className="text-amber-400 block font-mono text-[10px] font-semibold">
-                ⚡ Area for Optimization
-              </span>
-              <p className="text-slate-300 mt-0.5">{feedback.what_could_be_improved}</p>
+              <span className="font-semibold text-slate-900 dark:text-white">Asymptotic Complexity: </span>
+              <span className="font-mono text-purple-600 dark:text-purple-400 font-semibold">{feedback.complexity}</span>
+            </div>
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 p-2.5 rounded-xl border border-emerald-200/60 dark:border-emerald-900/40 text-emerald-800 dark:text-emerald-300">
+              <strong className="block mb-0.5 text-emerald-900 dark:text-emerald-200">Strengths:</strong>
+              {feedback.what_you_are_doing_well}
+            </div>
+            <div className="bg-amber-50 dark:bg-amber-950/30 p-2.5 rounded-xl border border-amber-200/60 dark:border-amber-900/40 text-amber-800 dark:text-amber-300">
+              <strong className="block mb-0.5 text-amber-900 dark:text-amber-200">Optimization Opportunity:</strong>
+              {feedback.what_could_be_improved}
+            </div>
+            <div className="pt-1">
+              <span className="font-semibold text-slate-900 dark:text-white">Next Learning Milestone: </span>
+              {feedback.next_goal}
             </div>
           </div>
-
-          <div className="bg-slate-950 p-2.5 rounded border border-slate-800/80">
-            <span className="text-blue-400 block font-mono text-[10px] font-semibold">
-              🎯 Next Milestone Goal
-            </span>
-            <p className="text-slate-200 mt-0.5">{feedback.next_goal}</p>
-          </div>
         </div>
-      )}
+      ) : null}
 
-      {/* Progressive Hint Progression (1 -> 2 -> 3) */}
-      <div className="pt-2 border-t border-slate-800">
-        <div className="flex items-center justify-between mb-2">
-          <span className="font-semibold text-slate-200 text-xs flex items-center gap-1.5">
-            <Lightbulb size={14} className="text-amber-400" />
-            Progressive Hints
-          </span>
-          <span className="text-[10px] text-slate-500 font-mono">Sequential Unlocking</span>
-        </div>
+      {/* Progressive Multi-Tier Hints */}
+      <div className="space-y-2 pt-2">
+        <h4 className="font-bold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+          <Lightbulb size={13} className="text-amber-500" /> Progressive Hint System
+        </h4>
 
-        <div className="flex gap-2 mb-3">
-          {[1, 2, 3].map((lvl) => {
-            const unlocked = hints.some((h) => h.hint_level === lvl);
-            return (
-              <button
-                key={lvl}
-                disabled={loadingHint}
-                onClick={() => handleUnlockHint(lvl)}
-                className={`flex-1 py-1.5 px-2 rounded-lg font-mono text-[11px] font-semibold border transition-all flex items-center justify-center gap-1.5 ${
-                  unlocked
-                    ? 'bg-emerald-950/50 border-emerald-700/80 text-emerald-300'
-                    : 'bg-slate-800 hover:bg-slate-700/80 border-slate-700 text-slate-400'
-                }`}
-              >
-                {unlocked ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Lock size={12} />}
-                <span>{unlocked ? `Hint ${lvl} Unlocked` : `Unlock Hint ${lvl}`}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Render Unlocked Hints */}
-        <div className="space-y-2">
-          {hints
-            .sort((a, b) => a.hint_level - b.hint_level)
-            .map((h) => (
-              <div key={h.hint_level} className="bg-slate-950 p-3 rounded-lg border border-slate-800">
-                <span className="text-amber-400 font-mono font-bold block text-[11px]">
-                  Hint Level {h.hint_level}: {h.title}
+        {[1, 2, 3].map((lvl) => {
+          const unlockedHint = hints.find((h) => h.hint_level === lvl);
+          return (
+            <div key={lvl} className="border border-slate-200/80 dark:border-zinc-800 rounded-xl overflow-hidden bg-white dark:bg-zinc-900 shadow-soft-sm">
+              <div className="p-3 bg-slate-50 dark:bg-zinc-800/40 flex items-center justify-between">
+                <span className="font-semibold text-slate-900 dark:text-white">
+                  Hint {lvl}: {lvl === 1 ? 'Conceptual Direction' : lvl === 2 ? 'Technique-Level Guidance' : 'Algorithmic Blueprint'}
                 </span>
-                <p className="text-slate-300 text-xs mt-1 leading-relaxed">{h.content}</p>
+
+                {unlockedHint ? (
+                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                    <CheckCircle2 size={12} /> UNLOCKED
+                  </span>
+                ) : (
+                  <button
+                    disabled={loadingHint}
+                    onClick={() => handleUnlockHint(lvl)}
+                    className="px-2.5 py-1 rounded-lg bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-[11px] font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
+                  >
+                    <Lock size={11} /> Unlock
+                  </button>
+                )}
               </div>
-            ))}
-        </div>
+
+              {unlockedHint && (
+                <div className="p-3 text-slate-700 dark:text-zinc-300 leading-relaxed border-t border-slate-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                  <div className="font-semibold text-brand-600 dark:text-brand-400 mb-1">{unlockedHint.title}</div>
+                  <div>{unlockedHint.content}</div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

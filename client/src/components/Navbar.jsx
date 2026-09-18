@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
-  Terminal, 
   LogOut, 
   User, 
   Shield, 
@@ -9,12 +8,16 @@ import {
   LayoutDashboard, 
   Code2, 
   Menu, 
-  X 
+  X,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar({ onNavigate, currentPage }) {
   const { user, isAuthenticated, logout } = useAuth();
+  const { theme, isDark, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNav = (route) => {
@@ -29,126 +32,156 @@ export default function Navbar({ onNavigate, currentPage }) {
   };
 
   return (
-    <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header className="border-b border-slate-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-[#030712]/85 backdrop-blur sticky top-0 z-40 transition-colors duration-200 shadow-soft-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         
-        {/* Left: Brand Logo */}
+        {/* Left: Brand Logo & Title */}
         <div
           onClick={() => handleNav(isAuthenticated ? 'dashboard' : 'landing')}
-          className="flex items-center gap-2.5 cursor-pointer group"
+          className="flex items-center gap-3 cursor-pointer group"
         >
-          <div className="p-2 rounded-lg bg-blue-600/10 text-blue-400 group-hover:bg-blue-600/20 transition-colors">
-            <Terminal size={20} />
+          <div className="h-8 w-auto flex items-center">
+            <img 
+              src="/logo.png" 
+              alt="Algomind Logo" 
+              className="h-full w-auto object-contain dark:brightness-110 drop-shadow-sm group-hover:scale-105 transition-transform" 
+            />
           </div>
           <div className="flex items-center">
-            <span className="font-bold text-lg text-white tracking-tight">Algomind</span>
-            <span className="text-[10px] text-blue-400 ml-1.5 font-mono px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-800/50 font-semibold">
+            <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Algomind</span>
+            <span className="text-[10px] text-brand-600 dark:text-brand-400 ml-2 font-mono px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800/50 font-semibold tracking-wide">
               JUDGE
             </span>
           </div>
         </div>
 
-        {/* Center: Navigation Links ONLY shown when authenticated */}
-        {isAuthenticated ? (
-          <nav className="hidden md:flex items-center gap-1">
+        {/* Center: Navigation Links ONLY when authenticated */}
+        {isAuthenticated && (
+          <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/70 dark:bg-zinc-900/70 p-1 rounded-xl border border-slate-200/60 dark:border-zinc-800/60">
             <button
               onClick={() => handleNav('dashboard')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 currentPage === 'dashboard'
-                  ? 'text-white bg-slate-800/80 font-medium'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <LayoutDashboard size={15} />
+              <LayoutDashboard size={14} />
               Dashboard
             </button>
+
             <button
               onClick={() => handleNav('problems')}
-              className={`px-3 py-1.5 rounded-lg text-sm transition-colors flex items-center gap-1.5 ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                 currentPage === 'problems' || currentPage === 'problem-detail'
-                  ? 'text-white bg-slate-800/80 font-medium'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <Code2 size={15} />
+              <Code2 size={14} />
               Problems
             </button>
+
             {user?.role === 'ADMIN' && (
               <button
                 onClick={() => handleNav('admin')}
-                className={`px-3 py-1.5 rounded-lg text-sm transition-colors flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   currentPage === 'admin'
-                    ? 'text-amber-300 bg-amber-950/40 border border-amber-800/50 font-medium'
-                    : 'text-amber-400/80 hover:text-amber-300'
+                    ? 'text-brand-600 dark:text-brand-400 bg-white dark:bg-zinc-800 shadow-soft-sm'
+                    : 'text-slate-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400'
                 }`}
               >
-                <Shield size={15} />
-                Admin
+                <Shield size={14} />
+                Admin Console
               </button>
             )}
           </nav>
-        ) : null}
+        )}
 
-        {/* Right Section */}
+        {/* Right Controls: [Theme Toggle] | [Sign In] | [Sign Up] (or User Avatar) */}
         <div className="hidden md:flex items-center gap-3">
-          {isAuthenticated ? (
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 pl-3 border-l border-slate-800">
-                <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 font-semibold text-xs">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : <User size={14} />}
-                </div>
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            aria-label="Toggle theme"
+            className="p-2 rounded-xl text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700/80 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+          >
+            {isDark ? (
+              <Sun size={17} className="text-amber-400 transition-transform rotate-0 hover:rotate-45" />
+            ) : (
+              <Moon size={17} className="text-slate-700 transition-transform -rotate-12 hover:rotate-0" />
+            )}
+          </button>
 
-                <div className="text-left">
-                  <div className="text-xs font-semibold text-white flex items-center gap-1.5">
-                    <span className="truncate max-w-[120px]">{user?.name || user?.username}</span>
+          <div className="h-5 w-[1px] bg-slate-200 dark:bg-zinc-800" />
+
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80">
+                <div className="w-7 h-7 rounded-lg bg-brand-500/10 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs">
+                  {user?.name ? user.name.charAt(0).toUpperCase() : <User size={13} />}
+                </div>
+                <div className="flex flex-col text-left">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-semibold text-slate-900 dark:text-white truncate max-w-[110px]">
+                      {user?.name || user?.username}
+                    </span>
                     {user?.role === 'ADMIN' && (
-                      <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1 rounded uppercase font-bold">
+                      <span className="text-[9px] bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 px-1 rounded uppercase font-bold">
                         Admin
                       </span>
                     )}
                   </div>
-                  <div className="text-[11px] text-slate-500 truncate max-w-[130px]">{user?.email}</div>
+                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 truncate max-w-[110px]">{user?.email}</span>
                 </div>
-
-                <button
-                  onClick={handleLogout}
-                  title="Log out"
-                  className="p-2 ml-1 text-slate-400 hover:text-rose-400 hover:bg-slate-800/60 rounded-lg transition-colors"
-                >
-                  <LogOut size={16} />
-                </button>
               </div>
+
+              <button
+                onClick={handleLogout}
+                title="Log out"
+                className="p-2 text-slate-500 dark:text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-all"
+              >
+                <LogOut size={16} />
+              </button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleNav('signin')}
-                className={`px-3.5 py-1.5 rounded-xl text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   currentPage === 'signin'
-                    ? 'text-white bg-slate-800 font-medium'
-                    : 'text-slate-300 hover:text-white'
+                    ? 'text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200/60 dark:border-brand-800/60'
+                    : 'text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800'
                 }`}
               >
-                <LogIn size={15} />
+                <LogIn size={14} />
                 Sign In
               </button>
 
               <button
                 onClick={() => handleNav('signup')}
-                className="px-4 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors shadow-sm flex items-center gap-1.5"
+                className="px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-semibold transition-all shadow-soft-sm hover:shadow-glow-brand flex items-center gap-1.5"
               >
-                <UserPlus size={15} />
+                <UserPlus size={14} />
                 Sign Up
               </button>
             </div>
           )}
         </div>
 
-        {/* Mobile menu toggle */}
+        {/* Mobile Toggle and Controls */}
         <div className="flex md:hidden items-center gap-2">
           <button
+            onClick={toggleTheme}
+            aria-label="Toggle light/dark theme"
+            className="p-2 rounded-xl text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800"
+          >
+            {isDark ? <Sun size={17} className="text-amber-400" /> : <Moon size={17} />}
+          </button>
+          <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+            className="p-2 rounded-xl text-slate-700 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
           >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -157,50 +190,50 @@ export default function Navbar({ onNavigate, currentPage }) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-slate-800 bg-slate-900 px-4 py-4 space-y-2">
+        <div className="md:hidden border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#030712] px-4 py-4 space-y-2 shadow-lg">
           {isAuthenticated ? (
             <div className="space-y-2">
-              <div className="px-3 py-1 text-xs text-slate-400">
-                Signed in as <strong className="text-white">{user?.name || user?.email}</strong> ({user?.role})
+              <div className="px-3 py-1.5 text-xs text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-900 rounded-lg">
+                Signed in as <strong className="text-slate-900 dark:text-white">{user?.name || user?.email}</strong> ({user?.role})
               </div>
               <button
                 onClick={() => handleNav('dashboard')}
-                className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2"
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
               >
                 <LayoutDashboard size={16} /> Dashboard
               </button>
               <button
                 onClick={() => handleNav('problems')}
-                className="w-full text-left px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 flex items-center gap-2"
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
               >
                 <Code2 size={16} /> Problems
               </button>
               {user?.role === 'ADMIN' && (
                 <button
                   onClick={() => handleNav('admin')}
-                  className="w-full text-left px-3 py-2 rounded-lg text-sm text-amber-400 hover:bg-slate-800 flex items-center gap-2"
+                  className="w-full text-left px-3 py-2 rounded-xl text-sm text-brand-600 dark:text-brand-400 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
                 >
                   <Shield size={16} /> Admin Console
                 </button>
               )}
               <button
                 onClick={handleLogout}
-                className="w-full text-left px-3 py-2 rounded-lg text-sm text-rose-400 hover:bg-slate-800 flex items-center gap-2 pt-2 border-t border-slate-800"
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800 font-medium"
               >
                 <LogOut size={16} /> Sign Out
               </button>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 pt-1">
               <button
                 onClick={() => handleNav('signin')}
-                className="w-full py-2 rounded-lg text-center text-sm font-medium text-slate-300 hover:bg-slate-800 flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl text-center text-sm font-semibold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center justify-center gap-2"
               >
                 <LogIn size={15} /> Sign In
               </button>
               <button
                 onClick={() => handleNav('signup')}
-                className="w-full py-2 rounded-lg text-center text-sm font-medium bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center gap-2"
+                className="w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center gap-2 shadow-sm"
               >
                 <UserPlus size={15} /> Sign Up
               </button>
