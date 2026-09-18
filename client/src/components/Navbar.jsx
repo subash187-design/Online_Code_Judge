@@ -50,9 +50,6 @@ export default function Navbar({ onNavigate, currentPage }) {
           </div>
           <div className="flex items-center">
             <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Algomind</span>
-            <span className="text-[10px] text-brand-600 dark:text-brand-400 ml-2 font-mono px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800/50 font-semibold tracking-wide">
-              INTELLIGENCE
-            </span>
           </div>
         </div>
 
