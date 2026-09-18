@@ -10,7 +10,8 @@ import {
   Menu, 
   X,
   Sun,
-  Moon
+  Moon,
+  Compass
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -27,7 +28,7 @@ export default function Navbar({ onNavigate, currentPage }) {
 
   const handleLogout = () => {
     logout();
-    onNavigate('landing');
+    onNavigate('dashboard');
     setMobileMenuOpen(false);
   };
 
@@ -37,7 +38,7 @@ export default function Navbar({ onNavigate, currentPage }) {
         
         {/* Left: Brand Logo & Title */}
         <div
-          onClick={() => handleNav(isAuthenticated ? 'dashboard' : 'landing')}
+          onClick={() => handleNav('dashboard')}
           className="flex items-center gap-3 cursor-pointer group"
         >
           <div className="h-8 w-auto flex items-center">
@@ -50,55 +51,65 @@ export default function Navbar({ onNavigate, currentPage }) {
           <div className="flex items-center">
             <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Algomind</span>
             <span className="text-[10px] text-brand-600 dark:text-brand-400 ml-2 font-mono px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/80 border border-brand-200 dark:border-brand-800/50 font-semibold tracking-wide">
-              JUDGE
+              INTELLIGENCE
             </span>
           </div>
         </div>
 
-        {/* Center: Navigation Links ONLY when authenticated */}
-        {isAuthenticated && (
-          <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/70 dark:bg-zinc-900/70 p-1 rounded-xl border border-slate-200/60 dark:border-zinc-800/60">
+        {/* Center: Global Direct Workspace Navigation */}
+        <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/70 dark:bg-zinc-900/70 p-1 rounded-xl border border-slate-200/60 dark:border-zinc-800/60">
+          <button
+            onClick={() => handleNav('dashboard')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              currentPage === 'dashboard'
+                ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <LayoutDashboard size={14} />
+            Studio Dashboard
+          </button>
+
+          <button
+            onClick={() => handleNav('problems')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              currentPage === 'problems' || currentPage === 'problem-detail'
+                ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Code2 size={14} />
+            Problems
+          </button>
+
+          <button
+            onClick={() => handleNav('landing')}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+              currentPage === 'landing'
+                ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <Compass size={14} />
+            Overview
+          </button>
+
+          {user?.role === 'ADMIN' && (
             <button
-              onClick={() => handleNav('dashboard')}
+              onClick={() => handleNav('admin')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                currentPage === 'dashboard'
-                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+                currentPage === 'admin'
+                  ? 'text-brand-600 dark:text-brand-400 bg-white dark:bg-zinc-800 shadow-soft-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400'
               }`}
             >
-              <LayoutDashboard size={14} />
-              Dashboard
+              <Shield size={14} />
+              Admin
             </button>
+          )}
+        </nav>
 
-            <button
-              onClick={() => handleNav('problems')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                currentPage === 'problems' || currentPage === 'problem-detail'
-                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Code2 size={14} />
-              Problems
-            </button>
-
-            {user?.role === 'ADMIN' && (
-              <button
-                onClick={() => handleNav('admin')}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                  currentPage === 'admin'
-                    ? 'text-brand-600 dark:text-brand-400 bg-white dark:bg-zinc-800 shadow-soft-sm'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400'
-                }`}
-              >
-                <Shield size={14} />
-                Admin Console
-              </button>
-            )}
-          </nav>
-        )}
-
-        {/* Right Controls: [Theme Toggle] | [Sign In] | [Sign Up] (or User Avatar) */}
+        {/* Right Controls: [Theme Toggle] | [Sign In / User Avatar] */}
         <div className="hidden md:flex items-center gap-3">
           {/* Theme Toggle Button */}
           <button
@@ -191,40 +202,26 @@ export default function Navbar({ onNavigate, currentPage }) {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#030712] px-4 py-4 space-y-2 shadow-lg">
-          {isAuthenticated ? (
-            <div className="space-y-2">
-              <div className="px-3 py-1.5 text-xs text-slate-500 dark:text-zinc-400 bg-slate-50 dark:bg-zinc-900 rounded-lg">
-                Signed in as <strong className="text-slate-900 dark:text-white">{user?.name || user?.email}</strong> ({user?.role})
-              </div>
-              <button
-                onClick={() => handleNav('dashboard')}
-                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-              >
-                <LayoutDashboard size={16} /> Dashboard
-              </button>
-              <button
-                onClick={() => handleNav('problems')}
-                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-              >
-                <Code2 size={16} /> Problems
-              </button>
-              {user?.role === 'ADMIN' && (
-                <button
-                  onClick={() => handleNav('admin')}
-                  className="w-full text-left px-3 py-2 rounded-xl text-sm text-brand-600 dark:text-brand-400 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-                >
-                  <Shield size={16} /> Admin Console
-                </button>
-              )}
-              <button
-                onClick={handleLogout}
-                className="w-full text-left px-3 py-2 rounded-xl text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800 font-medium"
-              >
-                <LogOut size={16} /> Sign Out
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-2 pt-1">
+          <button
+            onClick={() => handleNav('dashboard')}
+            className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+          >
+            <LayoutDashboard size={16} /> Studio Dashboard
+          </button>
+          <button
+            onClick={() => handleNav('problems')}
+            className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+          >
+            <Code2 size={16} /> Problems
+          </button>
+          <button
+            onClick={() => handleNav('landing')}
+            className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+          >
+            <Compass size={16} /> Overview
+          </button>
+          {!isAuthenticated && (
+            <div className="flex flex-col gap-2 pt-2 border-t border-slate-100 dark:border-zinc-800">
               <button
                 onClick={() => handleNav('signin')}
                 className="w-full py-2.5 rounded-xl text-center text-sm font-semibold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center justify-center gap-2"

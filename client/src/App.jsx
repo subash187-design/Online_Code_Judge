@@ -13,23 +13,24 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 
 function getRouteFromPath(pathname) {
   const path = pathname.toLowerCase().replace(/\/$/, '');
-  if (!path || path === '') return 'landing';
+  if (!path || path === '') return 'dashboard'; // Direct to intelligence dashboard
+  if (path === '/landing') return 'landing';
   if (path === '/signin' || path === '/login') return 'signin';
   if (path === '/signup' || path === '/register') return 'signup';
   if (path === '/verify-email') return 'verify-email';
   if (path === '/dashboard') return 'dashboard';
   if (path === '/admin') return 'admin';
   if (path === '/problems') return 'problems';
-  return 'landing';
+  return 'dashboard';
 }
 
 function getPathFromRoute(route, params = {}) {
   switch (route) {
-    case 'landing': return '/';
+    case 'landing': return '/landing';
+    case 'dashboard': return '/';
     case 'signin': return '/signin';
     case 'signup': return '/signup';
     case 'verify-email': return '/verify-email';
-    case 'dashboard': return '/dashboard';
     case 'admin': return '/admin';
     case 'problems': return '/problems';
     case 'problem-detail': return `/problems?id=${params.problemId || ''}`;
@@ -81,21 +82,17 @@ function MainApp() {
         <div className="min-h-[60vh] flex items-center justify-center text-slate-500 dark:text-zinc-400 text-sm">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
-            Loading authentication status...
+            Loading intelligence platform...
           </div>
         </div>
       );
     }
 
     switch (currentRoute) {
+      case 'dashboard':
+        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />;
+
       case 'landing':
-        if (isAuthenticated) {
-          return user?.role === 'ADMIN' ? (
-            <AdminDashboardPage onNavigate={navigate} />
-          ) : (
-            <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />
-          );
-        }
         return <LandingPage onNavigate={navigate} />;
 
       case 'signin':
@@ -122,12 +119,6 @@ function MainApp() {
           />
         );
 
-      case 'dashboard':
-        if (!isAuthenticated) {
-          return <LoginPage onNavigate={navigate} />;
-        }
-        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />;
-
       case 'admin':
         if (!isAuthenticated) {
           return <LoginPage onNavigate={navigate} />;
@@ -135,15 +126,9 @@ function MainApp() {
         return <AdminDashboardPage onNavigate={navigate} />;
 
       case 'problems':
-        if (!isAuthenticated) {
-          return <LoginPage onNavigate={navigate} />;
-        }
         return <ProblemListPage onSelectProblem={handleSelectProblem} />;
 
       case 'problem-detail':
-        if (!isAuthenticated) {
-          return <LoginPage onNavigate={navigate} />;
-        }
         return selectedProblemId ? (
           <ProblemDetailPage
             problemId={selectedProblemId}
@@ -154,11 +139,7 @@ function MainApp() {
         );
 
       default:
-        return isAuthenticated ? (
-          <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />
-        ) : (
-          <LandingPage onNavigate={navigate} />
-        );
+        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />;
     }
   };
 
