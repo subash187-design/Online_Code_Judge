@@ -62,25 +62,6 @@ export default function LandingPage({ onNavigate }) {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-brand-500/15 via-purple-500/10 to-transparent blur-[120px] pointer-events-none -z-0" />
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          
-          {/* Tag Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-soft-sm mb-6 text-xs font-semibold text-slate-800 dark:text-zinc-200">
-            <span className="flex h-2 w-2 rounded-full bg-brand-500 animate-pulse" />
-            <span className="text-brand-600 dark:text-brand-400 font-bold">Algomind</span> Next-Gen Code Intelligence
-            <ChevronRight size={14} className="text-slate-400 dark:text-zinc-500" />
-          </div>
-
-          {/* Logo */}
-          <div className="flex flex-col items-center justify-center mb-6">
-            <div className="max-w-[220px] sm:max-w-[260px] hover:scale-105 transition-all duration-300">
-              <img 
-                src="/logo.png" 
-                alt="Algomind Logo" 
-                className="w-full h-auto object-contain dark:brightness-110 drop-shadow-md"
-              />
-            </div>
-          </div>
-
           {/* Clean Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.15] max-w-4xl mx-auto">
             Master Algorithmic Optimization with{' '}
