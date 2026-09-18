@@ -36,10 +36,11 @@ export default function Navbar({ onNavigate, currentPage }) {
     <header className="border-b border-slate-200/80 dark:border-zinc-800/80 bg-white/85 dark:bg-[#030712]/85 backdrop-blur sticky top-0 z-40 transition-colors duration-200 shadow-soft-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         
-        {/* Left: Brand Logo & Title */}
+        {/* Left: Brand Logo */}
         <div
           onClick={() => handleNav(isAuthenticated ? 'dashboard' : 'landing')}
-          className="flex items-center gap-3 cursor-pointer group"
+          className="flex items-center cursor-pointer group"
+          title="Algomind"
         >
           <div className="h-8 w-auto flex items-center">
             <img 
@@ -47,9 +48,6 @@ export default function Navbar({ onNavigate, currentPage }) {
               alt="Algomind Logo" 
               className="h-full w-auto object-contain dark:brightness-110 drop-shadow-sm group-hover:scale-105 transition-transform" 
             />
-          </div>
-          <div className="flex items-center">
-            <span className="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Algomind</span>
           </div>
         </div>
 
