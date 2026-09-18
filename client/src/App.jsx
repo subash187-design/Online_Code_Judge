@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import Navbar from './components/Navbar';
@@ -11,23 +11,23 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import UserDashboardPage from './pages/UserDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 
-function getRouteFromPath(pathname) {
+function getRouteFromPath(pathname, isAuthenticated) {
   const path = pathname.toLowerCase().replace(/\/$/, '');
-  if (!path || path === '') return 'dashboard'; // Direct to intelligence dashboard
+  if (!path || path === '') return isAuthenticated ? 'dashboard' : 'landing';
   if (path === '/landing') return 'landing';
   if (path === '/signin' || path === '/login') return 'signin';
   if (path === '/signup' || path === '/register') return 'signup';
   if (path === '/verify-email') return 'verify-email';
-  if (path === '/dashboard') return 'dashboard';
+  if (path === '/dashboard') return isAuthenticated ? 'dashboard' : 'signin';
   if (path === '/admin') return 'admin';
-  if (path === '/problems') return 'problems';
-  return 'dashboard';
+  if (path === '/problems') return isAuthenticated ? 'problems' : 'signin';
+  return isAuthenticated ? 'dashboard' : 'landing';
 }
 
-function getPathFromRoute(route, params = {}) {
+function getPathFromRoute(route, params = {}, isAuthenticated = false) {
   switch (route) {
-    case 'landing': return '/landing';
-    case 'dashboard': return '/';
+    case 'landing': return '/';
+    case 'dashboard': return isAuthenticated ? '/dashboard' : '/';
     case 'signin': return '/signin';
     case 'signup': return '/signup';
     case 'verify-email': return '/verify-email';
@@ -42,26 +42,33 @@ function MainApp() {
   const { user, isAuthenticated, loading } = useAuth();
   
   const [currentRoute, setCurrentRoute] = useState(() => {
-    return getRouteFromPath(window.location.pathname);
+    return getRouteFromPath(window.location.pathname, isAuthenticated);
   });
   const [selectedProblemId, setSelectedProblemId] = useState(null);
   const [routeParams, setRouteParams] = useState({});
 
   useEffect(() => {
+    if (!loading) {
+      const route = getRouteFromPath(window.location.pathname, isAuthenticated);
+      setCurrentRoute(route);
+    }
+  }, [isAuthenticated, loading]);
+
+  useEffect(() => {
     const handlePopState = () => {
-      const route = getRouteFromPath(window.location.pathname);
+      const route = getRouteFromPath(window.location.pathname, isAuthenticated);
       setCurrentRoute(route);
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [isAuthenticated]);
 
   const navigate = (route, params = {}) => {
     setRouteParams(params);
     setCurrentRoute(route);
     
-    const targetUrl = getPathFromRoute(route, params);
+    const targetUrl = getPathFromRoute(route, params, isAuthenticated);
     window.history.pushState({}, '', targetUrl);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

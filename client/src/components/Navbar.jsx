@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   LogOut, 
   User, 
@@ -38,7 +38,7 @@ export default function Navbar({ onNavigate, currentPage }) {
         
         {/* Left: Brand Logo & Title */}
         <div
-          onClick={() => handleNav('dashboard')}
+          onClick={() => handleNav(isAuthenticated ? 'dashboard' : 'landing')}
           className="flex items-center gap-3 cursor-pointer group"
         >
           <div className="h-8 w-auto flex items-center">
@@ -56,58 +56,62 @@ export default function Navbar({ onNavigate, currentPage }) {
           </div>
         </div>
 
-        {/* Center: Global Direct Workspace Navigation */}
-        <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/70 dark:bg-zinc-900/70 p-1 rounded-xl border border-slate-200/60 dark:border-zinc-800/60">
-          <button
-            onClick={() => handleNav('dashboard')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-              currentPage === 'dashboard'
-                ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
-                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <LayoutDashboard size={14} />
-            Studio Dashboard
-          </button>
-
-          <button
-            onClick={() => handleNav('problems')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-              currentPage === 'problems' || currentPage === 'problem-detail'
-                ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
-                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Code2 size={14} />
-            Problems
-          </button>
-
-          <button
-            onClick={() => handleNav('landing')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-              currentPage === 'landing'
-                ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
-                : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Compass size={14} />
-            Overview
-          </button>
-
-          {user?.role === 'ADMIN' && (
+        {/* Center: Global Direct Workspace Navigation (Shown for authenticated users) */}
+        {isAuthenticated ? (
+          <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/70 dark:bg-zinc-900/70 p-1 rounded-xl border border-slate-200/60 dark:border-zinc-800/60">
             <button
-              onClick={() => handleNav('admin')}
+              onClick={() => handleNav('dashboard')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
-                currentPage === 'admin'
-                  ? 'text-brand-600 dark:text-brand-400 bg-white dark:bg-zinc-800 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400'
+                currentPage === 'dashboard'
+                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              <Shield size={14} />
-              Admin
+              <LayoutDashboard size={14} />
+              Studio Dashboard
             </button>
-          )}
-        </nav>
+
+            <button
+              onClick={() => handleNav('problems')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                currentPage === 'problems' || currentPage === 'problem-detail'
+                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Code2 size={14} />
+              Problems
+            </button>
+
+            <button
+              onClick={() => handleNav('landing')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                currentPage === 'landing'
+                  ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Compass size={14} />
+              Overview
+            </button>
+
+            {user?.role === 'ADMIN' && (
+              <button
+                onClick={() => handleNav('admin')}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  currentPage === 'admin'
+                    ? 'text-brand-600 dark:text-brand-400 bg-white dark:bg-zinc-800 shadow-soft-sm'
+                    : 'text-slate-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400'
+                }`}
+              >
+                <Shield size={14} />
+                Admin
+              </button>
+            )}
+          </nav>
+        ) : (
+          <div className="hidden md:block" />
+        )}
 
         {/* Right Controls: [Theme Toggle] | [Sign In / User Avatar] */}
         <div className="hidden md:flex items-center gap-3">
@@ -202,18 +206,22 @@ export default function Navbar({ onNavigate, currentPage }) {
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-[#030712] px-4 py-4 space-y-2 shadow-lg">
-          <button
-            onClick={() => handleNav('dashboard')}
-            className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-          >
-            <LayoutDashboard size={16} /> Studio Dashboard
-          </button>
-          <button
-            onClick={() => handleNav('problems')}
-            className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-          >
-            <Code2 size={16} /> Problems
-          </button>
+          {isAuthenticated && (
+            <>
+              <button
+                onClick={() => handleNav('dashboard')}
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+              >
+                <LayoutDashboard size={16} /> Studio Dashboard
+              </button>
+              <button
+                onClick={() => handleNav('problems')}
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+              >
+                <Code2 size={16} /> Problems
+              </button>
+            </>
+          )}
           <button
             onClick={() => handleNav('landing')}
             className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
