@@ -27,7 +27,7 @@ function getRouteFromPath(pathname, isAuthenticated) {
 function getPathFromRoute(route, params = {}, isAuthenticated = false) {
   switch (route) {
     case 'landing': return '/';
-    case 'dashboard': return isAuthenticated ? '/dashboard' : '/';
+    case 'dashboard': return '/dashboard';
     case 'signin': return '/signin';
     case 'signup': return '/signup';
     case 'verify-email': return '/verify-email';

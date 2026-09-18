@@ -39,11 +39,45 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const login = (newToken, newUser) => {
-    setToken(newToken);
-    setUser(newUser);
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(newUser));
+  const login = async (email, password) => {
+    const res = await fetch('/api/v1/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      const err = new Error(data.error || 'Login failed');
+      if (data.requiresVerification) {
+        err.requiresVerification = true;
+        err.email = data.email || email;
+      }
+      throw err;
+    }
+
+    setToken(data.token);
+    setUser(data.user);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    return data;
+  };
+
+  const register = async (name, email, password, confirmPassword) => {
+    const res = await fetch('/api/v1/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password, confirmPassword })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Registration failed');
+    }
+
+    return data;
   };
 
   const logout = () => {
