@@ -36,9 +36,18 @@
   }
 
   /* Smooth transition for theme switches */
-  a, button, input, textarea, select {
+  a, button, input:not([class*="monaco"]), textarea:not([class*="monaco"]):not(.inputarea), select {
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
+}
+
+/* Ensure Monaco Editor elements and hidden typing textarea are free of CSS transition interference */
+.monaco-editor,
+.monaco-editor *,
+.monaco-editor textarea.inputarea,
+.monaco-editor .view-overlays,
+.monaco-editor .view-lines {
+  transition: none !important;
 }
 
 /* ==========================================================================

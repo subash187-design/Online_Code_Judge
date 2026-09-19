@@ -8,7 +8,8 @@ const VERDICT_CONFIG = {
   RUNTIME_ERROR: { label: 'Runtime Error', bg: 'bg-purple-950/80', text: 'text-purple-400', border: 'border-purple-700' },
   COMPILATION_ERROR: { label: 'Compilation Error', bg: 'bg-yellow-950/80', text: 'text-yellow-400', border: 'border-yellow-700' },
   PENDING: { label: 'Evaluating...', bg: 'bg-blue-950/80', text: 'text-blue-400', border: 'border-blue-700' },
-  SUCCESS: { label: 'Run Succeeded', bg: 'bg-emerald-950/80', text: 'text-emerald-400', border: 'border-emerald-700' }
+  SUCCESS: { label: 'Run Succeeded', bg: 'bg-emerald-950/80', text: 'text-emerald-400', border: 'border-emerald-700' },
+  COMPLEXITY_MISMATCH: { label: 'Complexity Mismatch', bg: 'bg-amber-950/80', text: 'text-amber-400', border: 'border-amber-700' }
 };
 
 export default function VerdictBadge({ verdict }) {

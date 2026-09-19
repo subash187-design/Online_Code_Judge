@@ -162,6 +162,33 @@ class StageService {
         stage.expected_time_complexity
       );
 
+      // Algomind Progressive Stage Invariant:
+      // A stage completes ONLY if test cases pass AND the code's time complexity satisfies the stage requirement!
+      // This prevents skipping progressive intuition (e.g. submitting optimal code on a brute force stage).
+      let complexityMismatch = false;
+      let complexityMismatchMessage = null;
+
+      if (judgeResult.verdict === 'ACCEPTED' && stage.expected_time_complexity) {
+        const norm = (s) => (s || '').replace(/\s+/g, '').toUpperCase();
+        const detectedNorm = norm(analysisResult.estimatedComplexity);
+        const expectedNorm = norm(stage.expected_time_complexity);
+
+        const isMatch = (detectedNorm === expectedNorm) || (analysisResult.stage_match_status === 'MATCHES_STAGE_TARGET');
+
+        if (!isMatch) {
+          complexityMismatch = true;
+          judgeResult.verdict = 'COMPLEXITY_MISMATCH';
+
+          if (analysisResult.stage_match_status === 'BETTER_THAN_EXPECTED') {
+            complexityMismatchMessage = `Complexity Mismatch: This stage requires ${stage.expected_time_complexity} (${stage.name}), but your solution was analyzed as ${analysisResult.estimatedComplexity}. In Algomind, you must submit the solution designed for this stage before proceeding to optimal stages!`;
+          } else if (analysisResult.stage_match_status === 'POSSIBLY_SUBOPTIMAL') {
+            complexityMismatchMessage = `Complexity Mismatch: This stage requires ${stage.expected_time_complexity} (${stage.name}), but your solution was analyzed as ${analysisResult.estimatedComplexity}. Please optimize your algorithm to match the stage's target complexity!`;
+          } else {
+            complexityMismatchMessage = `Complexity Mismatch: This stage requires ${stage.expected_time_complexity}, but your solution was analyzed as ${analysisResult.estimatedComplexity}.`;
+          }
+        }
+      }
+
       // Insert Submission Record
       const subRes = await client.query(
         `INSERT INTO stage_submissions 
@@ -308,7 +335,7 @@ class StageService {
         is_problem_solved: isProblemSolved,
         feedback_message: judgeResult.verdict === 'ACCEPTED'
           ? (isProblemSolved ? '🎉 Problem Solved! All required stages successfully cleared.' : `Stage ${stage.order_index} complete! Next stage unlocked.`)
-          : (stressFailed ? 'Solution passed sample cases but failed on dynamic randomized stress testing.' : null),
+          : (complexityMismatch ? complexityMismatchMessage : (stressFailed ? 'Solution passed sample cases but failed on dynamic randomized stress testing.' : null)),
         analysis: analysisResult
       };
     } catch (err) {
@@ -329,6 +356,58 @@ class StageService {
       [userId, stageId]
     );
     return res.rows;
+  }
+  static async getStageById(stageId) {
+    const res = await db.query('SELECT * FROM problem_stages WHERE id = $1', [stageId]);
+    return res.rows[0] || null;
+  }
+
+  static async createStage(data) {
+    const {
+      problem_id,
+      order_index,
+      name,
+      description,
+      is_required = true,
+      expected_time_complexity = 'O(N)',
+      expected_space_complexity = 'O(1)',
+      time_limit_ms = 1000,
+      memory_limit_kb = 262144
+    } = data;
+
+    const res = await db.query(
+      `INSERT INTO problem_stages 
+        (problem_id, order_index, name, description, is_required, expected_time_complexity, expected_space_complexity, time_limit_ms, memory_limit_kb)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING *;`,
+      [problem_id, order_index, name, description, is_required, expected_time_complexity, expected_space_complexity, time_limit_ms, memory_limit_kb]
+    );
+    return res.rows[0];
+  }
+
+  static async updateStage(stageId, data) {
+    const fields = [];
+    const values = [];
+    let idx = 1;
+
+    for (const [key, val] of Object.entries(data)) {
+      if (['order_index', 'name', 'description', 'is_required', 'expected_time_complexity', 'expected_space_complexity', 'time_limit_ms', 'memory_limit_kb'].includes(key)) {
+        fields.push(`${key} = $${idx++}`);
+        values.push(val);
+      }
+    }
+
+    if (fields.length === 0) return this.getStageById(stageId);
+
+    values.push(stageId);
+    const query = `UPDATE problem_stages SET ${fields.join(', ')} WHERE id = $${idx} RETURNING *;`;
+    const res = await db.query(query, values);
+    return res.rows[0] || null;
+  }
+
+  static async deleteStage(stageId) {
+    const res = await db.query('DELETE FROM problem_stages WHERE id = $1 RETURNING id;', [stageId]);
+    return res.rows.length > 0;
   }
 }
 

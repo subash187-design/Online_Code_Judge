@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import CodeEditor from '../components/CodeEditor';
 import VerdictBadge from '../components/VerdictBadge';
 import ProgressTracker from '../components/ProgressTracker';
@@ -7,10 +7,34 @@ import ComplexityCard from '../components/ComplexityCard';
 import MentorPanel from '../components/MentorPanel';
 import OptimizationJourney from '../components/analytics/OptimizationJourney';
 import SubmissionDiffModal from '../components/analytics/SubmissionDiffModal';
-import { Play, Send, Clock, Database, ChevronLeft, GitCompare, Sparkles, Layers } from 'lucide-react';
+import { 
+  Play, Send, Clock, Database, ChevronLeft, ChevronRight, GitCompare, Sparkles, Layers,
+  AlertTriangle, ChevronDown, ChevronUp, GripVertical, GripHorizontal, Maximize2, Minimize2,
+  Pause, RotateCcw, FileText, Lightbulb, Tag, CheckSquare, Terminal
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const DEFAULT_CPP_BOILERPLATE = `#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    // Write your solution here
+
+    return 0;
+}
+`;
+
+function generateStarterBoilerplate(prob) {
+  if (!prob) return DEFAULT_CPP_BOILERPLATE;
+  
+  if (prob.id === 1) {
+    return `#include <iostream>
 using namespace std;
 
 int main() {
@@ -19,14 +43,111 @@ int main() {
 
     long long a, b;
     if (cin >> a >> b) {
-        cout << (a + b) << "\n";
+        // Write your solution for: ${prob.title}
+        
     }
 
     return 0;
 }
 `;
+  }
 
-export default function ProblemDetailPage({ problemId, onBack }) {
+  if (prob.id === 2 || prob.topic === 'Strings') {
+    return `#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    string s;
+    if (cin >> s) {
+        // Write your solution for: ${prob.title}
+        
+    }
+
+    return 0;
+}
+`;
+  }
+
+  if (prob.id === 3 || prob.title?.toLowerCase().includes('two sum')) {
+    return `#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n;
+    long long target;
+    // Input format: First line contains N and target
+    if (cin >> n >> target) {
+        vector<long long> nums(n);
+        for (int i = 0; i < n; i++) {
+            cin >> nums[i];
+        }
+
+        // Write your solution for: ${prob.title}
+        
+    }
+
+    return 0;
+}
+`;
+  }
+
+  if (prob.topic === 'Arrays & Hashing' || prob.topic === 'Two Pointers & Sliding Window' || prob.topic === 'Binary Search') {
+    return `#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n;
+    if (cin >> n) {
+        vector<long long> nums(n);
+        for (int i = 0; i < n; i++) {
+            cin >> nums[i];
+        }
+        
+        // Write your solution for: ${prob.title}
+        
+    }
+
+    return 0;
+}
+`;
+  }
+
+  return `#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    // Write your solution for: ${prob.title}
+
+    return 0;
+}
+`;
+}
+
+export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem }) {
   const { user, authFetch } = useAuth();
   const effectiveUserId = user?.id || 1;
 
@@ -38,7 +159,11 @@ export default function ProblemDetailPage({ problemId, onBack }) {
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState(DEFAULT_CPP_BOILERPLATE);
   const [customInput, setCustomInput] = useState('');
-  const [activeBottomTab, setActiveBottomTab] = useState('result'); // 'result' | 'journey' | 'mentor' | 'custom' | 'history'
+  
+  // Left Panel Tab: 'description' | 'stages' | 'solutions' | 'submissions'
+  const [leftTab, setLeftTab] = useState('description');
+  // Right Bottom Drawer Tab: 'testcase' | 'testresult' | 'stagefeedback' | 'journey'
+  const [bottomTab, setBottomTab] = useState('testcase');
 
   const [submitting, setSubmitting] = useState(false);
   const [running, setRunning] = useState(false);
@@ -47,6 +172,108 @@ export default function ProblemDetailPage({ problemId, onBack }) {
   const [history, setHistory] = useState([]);
   const [journey, setJourney] = useState(null);
   const [comparison, setComparison] = useState(null);
+
+  // Dynamic Workspace Resizing States
+  const [leftWidth, setLeftWidth] = useState(46); // 46% width for problem pane
+  const [drawerHeight, setDrawerHeight] = useState(250); // 250px default bottom drawer
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false);
+  const [isDraggingH, setIsDraggingH] = useState(false);
+  const [isDraggingV, setIsDraggingV] = useState(false);
+
+  // Stopwatch Timer
+  const [timerSeconds, setTimerSeconds] = useState(646);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
+  
+  const containerRef = useRef(null);
+  const rightPaneRef = useRef(null);
+
+  // Stopwatch Timer Effect
+  useEffect(() => {
+    let interval = null;
+    if (isTimerRunning) {
+      interval = setInterval(() => {
+        setTimerSeconds(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning]);
+
+  const formatTimer = (totalSeconds) => {
+    const hrs = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+    const mins = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+    const secs = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${hrs}:${mins}:${secs}`;
+  };
+
+  // Horizontal Dragging: Problem Pane <-> Editor Pane
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDraggingH || !containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const newPercent = ((e.clientX - rect.left) / rect.width) * 100;
+      if (newPercent >= 20 && newPercent <= 80) {
+        setLeftWidth(newPercent);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingH(false);
+    };
+
+    if (isDraggingH) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    } else {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isDraggingH]);
+
+  // Vertical Dragging: Code Editor <-> Bottom Testcase Drawer
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDraggingV || !rightPaneRef.current) return;
+      const rect = rightPaneRef.current.getBoundingClientRect();
+      const newHeight = rect.bottom - e.clientY;
+      if (newHeight >= 36 && newHeight <= rect.height - 100) {
+        setDrawerHeight(newHeight);
+        if (isDrawerCollapsed && newHeight > 45) {
+          setIsDrawerCollapsed(false);
+        }
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDraggingV(false);
+    };
+
+    if (isDraggingV) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = 'row-resize';
+      document.body.style.userSelect = 'none';
+    } else {
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+  }, [isDraggingV, isDrawerCollapsed]);
 
   useEffect(() => {
     loadProblemAndStages();
@@ -69,6 +296,11 @@ export default function ProblemDetailPage({ problemId, onBack }) {
 
       setProblem(probRes);
       setStagesData(stagesRes);
+      setCode(generateStarterBoilerplate(probRes));
+
+      if (probRes?.sample_test_cases && probRes.sample_test_cases.length > 0) {
+        setCustomInput(probRes.sample_test_cases[0].input || '');
+      }
 
       if (stagesRes && stagesRes.stages && stagesRes.stages.length > 0) {
         const activeOrUnlocked = stagesRes.stages.find(s => s.status === 'UNLOCKED') || stagesRes.stages[0];
@@ -109,7 +341,8 @@ export default function ProblemDetailPage({ problemId, onBack }) {
     setRunning(true);
     setRunOutput(null);
     setLatestVerdict(null);
-    setActiveBottomTab('result');
+    setBottomTab('testresult');
+    if (isDrawerCollapsed) setIsDrawerCollapsed(false);
 
     try {
       const res = await fetch('/api/v1/judge/run', {
@@ -129,9 +362,7 @@ export default function ProblemDetailPage({ problemId, onBack }) {
     } catch (err) {
       setRunOutput({
         verdict: 'INTERNAL_ERROR',
-        stderr: err.message,
-        execution_time_ms: 0,
-        memory_used_kb: 0
+        stderr: err.message
       });
     } finally {
       setRunning(false);
@@ -144,7 +375,8 @@ export default function ProblemDetailPage({ problemId, onBack }) {
     setSubmitting(true);
     setLatestVerdict(null);
     setRunOutput(null);
-    setActiveBottomTab('result');
+    setBottomTab('testresult');
+    if (isDrawerCollapsed) setIsDrawerCollapsed(false);
 
     try {
       const res = await fetch(`/api/v1/stages/${activeStageId}/submissions`, {
@@ -202,9 +434,9 @@ export default function ProblemDetailPage({ problemId, onBack }) {
 
   if (loading) {
     return (
-      <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-slate-50 dark:bg-[#030712] text-slate-500 dark:text-zinc-400 text-sm">
+      <div className="flex h-screen items-center justify-center bg-[#1a1a1a] text-zinc-400 text-sm">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
           Loading algorithmic workspace...
         </div>
       </div>
@@ -213,9 +445,9 @@ export default function ProblemDetailPage({ problemId, onBack }) {
 
   if (!problem) {
     return (
-      <div className="p-8 text-center text-rose-500 bg-slate-50 dark:bg-[#030712]">
+      <div className="p-8 text-center text-rose-400 bg-[#1a1a1a] min-h-screen">
         Problem not found.
-        <button onClick={onBack} className="block mx-auto mt-4 text-brand-600 dark:text-brand-400 underline">
+        <button onClick={onBack} className="block mx-auto mt-4 text-emerald-400 underline">
           Return to problem list
         </button>
       </div>
@@ -226,7 +458,7 @@ export default function ProblemDetailPage({ problemId, onBack }) {
   const isStageLocked = activeStage?.status === 'LOCKED';
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-zinc-100 transition-colors">
+    <div className="flex flex-col h-screen bg-[#181818] text-zinc-100 overflow-hidden font-sans">
       
       {/* Diff Modal */}
       {comparison && (
@@ -236,311 +468,620 @@ export default function ProblemDetailPage({ problemId, onBack }) {
         />
       )}
 
-      {/* Top Workspace Header */}
-      <header className="h-14 border-b border-slate-200/80 dark:border-zinc-800/80 bg-white/90 dark:bg-[#030712]/90 backdrop-blur px-4 flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
+      {/* Top LeetCode-style Navigation Header */}
+      <header className="h-11 border-b border-[#2d2d2d] bg-[#1a1a1a] px-3 flex items-center justify-between shrink-0 z-30 select-none">
+        
+        {/* Left: Problem List Navigation */}
+        <div className="flex items-center gap-2">
           <button
             onClick={onBack}
-            className="p-1.5 rounded-lg text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
-            title="Back to problems"
+            className="p-1 rounded text-zinc-400 hover:text-white hover:bg-[#282828] transition-colors"
+            title="Back to all problems"
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={16} />
           </button>
-          <div className="flex items-center gap-2">
-            <h1 className="text-sm font-bold text-slate-900 dark:text-white">
-              #{problem.id}. {problem.title}
-            </h1>
-            <span className={`text-[10px] font-semibold px-2 py-0.5 rounded ${
-              problem.difficulty === 'EASY' 
-                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/50'
-                : 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200/70 dark:border-amber-800/50'
-            }`}>
-              {problem.difficulty}
-            </span>
+
+          <button
+            onClick={onBack}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-zinc-300 hover:text-white hover:bg-[#282828] transition-colors"
+          >
+            <Layers size={13} className="text-zinc-400" />
+            <span>Problem List</span>
+          </button>
+
+          <div className="flex items-center text-zinc-400 bg-[#262626] rounded-md p-0.5 border border-[#333333]">
+            <button
+              onClick={() => {
+                if (Number(problemId) > 1) {
+                  if (onNavigateProblem) onNavigateProblem(Number(problemId) - 1);
+                  else window.location.search = `?id=${Number(problemId) - 1}`;
+                }
+              }}
+              title="Previous problem"
+              className="p-1 rounded hover:bg-[#333333] hover:text-white transition-colors"
+            >
+              <ChevronLeft size={12} />
+            </button>
+            <button
+              onClick={() => {
+                if (onNavigateProblem) onNavigateProblem(Number(problemId) + 1);
+                else window.location.search = `?id=${Number(problemId) + 1}`;
+              }}
+              title="Next problem"
+              className="p-1 rounded hover:bg-[#333333] hover:text-white transition-colors"
+            >
+              <ChevronRight size={12} />
+            </button>
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Center: Action Buttons */}
         <div className="flex items-center gap-2">
           <button
             onClick={handleRunCode}
             disabled={running || submitting}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-semibold border border-slate-200 dark:border-zinc-700 disabled:opacity-50 transition-all shadow-soft-sm"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#282828] hover:bg-[#333333] text-zinc-200 text-xs font-medium border border-[#3c3c3c] disabled:opacity-50 transition-all shadow-sm"
+            title="Run Custom Input"
           >
-            <Play size={14} className="text-emerald-500" />
-            {running ? 'Running...' : 'Run Custom'}
+            <Play size={12} className="text-emerald-400 fill-emerald-400" />
+            <span>{running ? 'Running...' : 'Run'}</span>
           </button>
+
           <button
             onClick={handleSubmitCode}
             disabled={running || submitting || isStageLocked}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-semibold shadow-soft-sm hover:shadow-glow-brand disabled:opacity-50 transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-1 rounded-md bg-[#2cbb5d]/20 hover:bg-[#2cbb5d]/30 text-[#2cbb5d] border border-[#2cbb5d]/40 text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
+            title="Submit Solution"
           >
-            <Send size={14} />
-            {submitting ? 'Evaluating...' : isStageLocked ? 'Stage Locked' : 'Submit Stage'}
+            <Send size={12} />
+            <span>{submitting ? 'Evaluating...' : isStageLocked ? 'Stage Locked' : 'Submit'}</span>
           </button>
+
+          <button
+            onClick={() => setLeftTab(prev => prev === 'solutions' ? 'description' : 'solutions')}
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
+              leftTab === 'solutions'
+                ? 'bg-purple-950/60 border-purple-500 text-purple-300'
+                : 'bg-[#282828] hover:bg-[#333333] border-[#3c3c3c] text-purple-400'
+            }`}
+            title="AI Code Mentor & Socratic Hints"
+          >
+            <Sparkles size={13} />
+          </button>
+        </div>
+
+        {/* Right: Stopwatch, Streak & Profile */}
+        <div className="flex items-center gap-3 text-xs text-zinc-400">
+          <div className="flex items-center gap-1.5 bg-[#262626] px-2.5 py-1 rounded-md border border-[#333333] font-mono text-[11px] text-zinc-300">
+            <Clock size={11} className="text-zinc-400" />
+            <span>{formatTimer(timerSeconds)}</span>
+            <button
+              onClick={() => setIsTimerRunning(!isTimerRunning)}
+              title={isTimerRunning ? "Pause timer" : "Start timer"}
+              className="hover:text-white transition-colors ml-0.5"
+            >
+              {isTimerRunning ? <Pause size={10} /> : <Play size={10} />}
+            </button>
+            <button
+              onClick={() => setTimerSeconds(0)}
+              title="Reset timer"
+              className="hover:text-white transition-colors"
+            >
+              <RotateCcw size={10} />
+            </button>
+          </div>
+
+          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#444]">
+            {user?.name ? user.name[0].toUpperCase() : 'U'}
+          </div>
         </div>
       </header>
 
-      {/* Two-Pane Workspace Layout */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+      {/* Main Two-Pane Split Screen Layout */}
+      <div 
+        ref={containerRef}
+        className="flex-1 flex flex-col md:flex-row p-2 gap-2 overflow-hidden bg-[#181818]"
+      >
         
-        {/* Left Problem Specs & Target Pane */}
-        <div className="w-full md:w-1/2 border-r border-slate-200/80 dark:border-zinc-800/80 p-6 overflow-y-auto space-y-5 bg-white/60 dark:bg-zinc-950/40">
-          {stagesData && (
-            <ProgressTracker
-              stages={stagesData.stages}
-              activeStageId={activeStageId}
-              onSelectStage={(id) => setActiveStageId(id)}
-              isProblemSolved={stagesData.is_solved}
-            />
-          )}
+        {/* Left Problem Specifications & Stages Card */}
+        <div
+          style={{ width: isMaximized ? '0%' : `${leftWidth}%`, display: isMaximized ? 'none' : 'flex' }}
+          className="h-full bg-[#262626] border border-[#333333] rounded-xl overflow-hidden flex flex-col shrink-0 min-w-0 shadow-soft-sm"
+        >
+          {/* Left Card Top Tab Bar */}
+          <div className="h-9 bg-[#262626] border-b border-[#333333] px-2 flex items-center justify-between text-xs shrink-0">
+            <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+              <button
+                onClick={() => setLeftTab('description')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  leftTab === 'description' 
+                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                }`}
+              >
+                <FileText size={13} className={leftTab === 'description' ? 'text-blue-400' : 'text-zinc-500'} />
+                <span>Description</span>
+              </button>
 
-          <StageFeedbackBanner
-            feedback={stageFeedback}
-            onProceed={(nextId) => {
-              setActiveStageId(nextId);
-              setStageFeedback(null);
-            }}
-          />
+              <button
+                onClick={() => setLeftTab('stages')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  leftTab === 'stages' 
+                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                }`}
+              >
+                <Layers size={13} className={leftTab === 'stages' ? 'text-emerald-400' : 'text-zinc-500'} />
+                <span>Stages</span>
+              </button>
 
-          <div>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{problem.title}</h2>
-            <div className="flex gap-4 text-xs text-slate-500 dark:text-zinc-400 pb-4 border-b border-slate-200/80 dark:border-zinc-800/80 font-mono">
-              <span className="flex items-center gap-1">
-                <Clock size={13} /> {problem.time_limit_ms}ms
-              </span>
-              <span className="flex items-center gap-1">
-                <Database size={13} /> {Math.round(problem.memory_limit_kb / 1024)}MB
-              </span>
+              <button
+                onClick={() => setLeftTab('solutions')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  leftTab === 'solutions' 
+                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                }`}
+              >
+                <Lightbulb size={13} className={leftTab === 'solutions' ? 'text-amber-400' : 'text-zinc-500'} />
+                <span>AI Hints</span>
+              </button>
+
+              <button
+                onClick={() => setLeftTab('submissions')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  leftTab === 'submissions' 
+                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
+                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                }`}
+              >
+                <Clock size={13} className={leftTab === 'submissions' ? 'text-brand-400' : 'text-zinc-500'} />
+                <span>Submissions</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-1 text-zinc-500">
+              <button 
+                onClick={() => setLeftWidth(prev => prev > 60 ? 46 : 70)}
+                title="Expand panel" 
+                className="p-1 hover:text-zinc-300 hover:bg-[#333333] rounded"
+              >
+                <Maximize2 size={12} />
+              </button>
             </div>
           </div>
 
-          {activeStage && (
-            <div className="bg-brand-50/50 dark:bg-brand-950/20 border border-brand-200/80 dark:border-brand-900/50 rounded-2xl p-4 space-y-2 shadow-soft-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase font-bold tracking-wider text-brand-600 dark:text-brand-400 font-mono flex items-center gap-1.5">
-                  <Sparkles size={12} /> Target Stage Requirements
-                </span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 font-mono border border-slate-200 dark:border-zinc-800">
-                  {activeStage.status}
-                </span>
-              </div>
-              <h4 className="text-sm font-semibold text-slate-900 dark:text-white">{activeStage.name}</h4>
-              <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{activeStage.description}</p>
-              <div className="flex gap-4 pt-2 text-[11px] font-mono text-slate-500 dark:text-zinc-400 border-t border-brand-200/50 dark:border-brand-900/30">
-                <span>Expected Time: <b className="text-brand-600 dark:text-brand-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
-                <span>Expected Space: <b className="text-brand-600 dark:text-brand-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
-              </div>
-            </div>
-          )}
+          {/* Left Card Content Area */}
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-[#1e1e1e] select-text text-zinc-200">
+            
+            {/* Tab: Description */}
+            {leftTab === 'description' && (
+              <div className="space-y-4">
+                {/* Problem Title */}
+                <div>
+                  <h1 className="text-xl font-bold text-white tracking-tight">
+                    {problem.title}
+                  </h1>
+                  
+                  {/* Pills Row: Difficulty, Topic, Hint button */}
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      problem.difficulty === 'EASY' 
+                        ? 'bg-[#00b8a3]/10 text-[#00b8a3] border border-[#00b8a3]/30'
+                        : problem.difficulty === 'MEDIUM'
+                        ? 'bg-[#ffc01e]/10 text-[#ffc01e] border border-[#ffc01e]/30'
+                        : 'bg-[#ff375f]/10 text-[#ff375f] border border-[#ff375f]/30'
+                    }`}>
+                      {problem.difficulty}
+                    </span>
 
-          <div className="text-slate-700 dark:text-zinc-300 text-xs whitespace-pre-wrap leading-relaxed">
-            {problem.description}
-          </div>
+                    {problem.topic && (
+                      <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-[#2d2d2d] text-zinc-300 border border-[#383838]">
+                        <Tag size={11} className="text-zinc-400" />
+                        {problem.topic}
+                      </span>
+                    )}
 
-          {problem.sample_test_cases && problem.sample_test_cases.length > 0 && (
-            <div className="space-y-3 pt-3 border-t border-slate-200/80 dark:border-zinc-800/80">
-              <h3 className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
-                Sample Test Cases
-              </h3>
-              {problem.sample_test_cases.map((tc, idx) => (
-                <div key={idx} className="bg-slate-50 dark:bg-zinc-900 p-3 rounded-xl border border-slate-200/80 dark:border-zinc-800 text-xs font-mono space-y-1.5 shadow-soft-sm">
-                  <div>
-                    <span className="text-slate-400 dark:text-zinc-500 block text-[10px] uppercase font-bold">Input</span>
-                    <pre className="text-slate-800 dark:text-zinc-200 mt-0.5">{tc.input}</pre>
-                  </div>
-                  <div>
-                    <span className="text-slate-400 dark:text-zinc-500 block text-[10px] uppercase font-bold">Expected Output</span>
-                    <pre className="text-emerald-600 dark:text-emerald-400 mt-0.5">{tc.expected_output}</pre>
+                    <button
+                      onClick={() => setLeftTab('solutions')}
+                      className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-[#2d2d2d] hover:bg-[#383838] text-zinc-300 border border-[#383838] transition-colors"
+                    >
+                      <Lightbulb size={11} className="text-amber-400" />
+                      <span>Hint</span>
+                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
 
-        {/* Right Code Editor & Diagnostic Drawer Pane */}
-        <div className="w-full md:w-1/2 flex flex-col overflow-hidden bg-slate-100/50 dark:bg-zinc-950/80">
-          
-          {/* Monaco Code Editor (Strict Syntax Colors Preserved) */}
-          <div className="flex-1 p-3 overflow-hidden">
-            <CodeEditor code={code} onChange={(newVal) => setCode(newVal)} />
-          </div>
+                {/* Active Stage Target Banner */}
+                {activeStage && (
+                  <div className="p-3.5 rounded-xl bg-[#262626] border border-[#383838] space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-400 font-mono flex items-center gap-1.5">
+                        <Sparkles size={12} /> Target Stage Requirements
+                      </span>
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#1e1e1e] text-zinc-300 font-mono border border-[#333333]">
+                        {activeStage.status}
+                      </span>
+                    </div>
+                    <h4 className="text-xs font-semibold text-white">{activeStage.name}</h4>
+                    <p className="text-xs text-zinc-300 leading-relaxed">{activeStage.description}</p>
+                    <div className="flex gap-4 pt-1 text-[11px] font-mono text-zinc-400 border-t border-[#333333]">
+                      <span>Expected Time: <b className="text-emerald-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
+                      <span>Expected Space: <b className="text-emerald-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
+                    </div>
+                  </div>
+                )}
 
-          {/* Diagnostic & AI Mentor Bottom Drawer */}
-          <div className="h-64 border-t border-slate-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#0a0e1a] flex flex-col">
-            
-            {/* Drawer Tabs */}
-            <div className="flex items-center gap-1 border-b border-slate-200/80 dark:border-zinc-800/80 px-4 pt-2 text-xs font-semibold bg-slate-50/70 dark:bg-zinc-900/40">
-              <button
-                onClick={() => setActiveBottomTab('result')}
-                className={`pb-2 px-3 border-b-2 transition-all ${
-                  activeBottomTab === 'result' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Evaluation & Complexity
-              </button>
-              <button
-                onClick={() => setActiveBottomTab('journey')}
-                className={`pb-2 px-3 border-b-2 transition-all ${
-                  activeBottomTab === 'journey' ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Optimization Journey
-              </button>
-              <button
-                onClick={() => setActiveBottomTab('mentor')}
-                className={`pb-2 px-3 border-b-2 transition-all ${
-                  activeBottomTab === 'mentor' ? 'border-purple-600 text-purple-600 dark:text-purple-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                💡 AI Mentor
-              </button>
-              <button
-                onClick={() => setActiveBottomTab('custom')}
-                className={`pb-2 px-3 border-b-2 transition-all ${
-                  activeBottomTab === 'custom' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Custom Input
-              </button>
-              <button
-                onClick={() => setActiveBottomTab('history')}
-                className={`pb-2 px-3 border-b-2 transition-all ${
-                  activeBottomTab === 'history' ? 'border-brand-600 text-brand-600 dark:text-brand-400 font-bold' : 'border-transparent text-slate-500 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                History ({history.length})
-              </button>
-            </div>
+                {/* Feedback Banner */}
+                <StageFeedbackBanner
+                  feedback={stageFeedback}
+                  onProceed={(nextId) => {
+                    setActiveStageId(nextId);
+                    setStageFeedback(null);
+                  }}
+                />
 
-            {/* Drawer Tab Content */}
-            <div className="flex-1 overflow-y-auto p-4">
-              
-              {/* Journey Tab */}
-              {activeBottomTab === 'journey' && (
-                <OptimizationJourney journey={journey} />
-              )}
+                {/* Problem Description Text */}
+                <div className="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap space-y-3">
+                  {problem.description}
+                </div>
 
-              {/* Mentor Tab */}
-              {activeBottomTab === 'mentor' && (
+                {/* Sample Test Cases */}
+                {problem.sample_test_cases && problem.sample_test_cases.length > 0 && (
+                  <div className="space-y-3 pt-3 border-t border-[#333333]">
+                    <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                      Examples
+                    </h3>
+                    {problem.sample_test_cases.map((tc, idx) => (
+                      <div key={idx} className="bg-[#262626] p-3 rounded-xl border border-[#333333] text-xs font-mono space-y-2">
+                        <div className="text-zinc-400 font-semibold text-[11px]">Example {idx + 1}:</div>
+                        <div className="bg-[#1a1a1a] p-2 rounded-lg border border-[#2d2d2d] space-y-1">
+                          <div>
+                            <span className="text-zinc-500 text-[10px] uppercase font-bold block">Input</span>
+                            <pre className="text-zinc-200 text-xs font-mono">{tc.input}</pre>
+                          </div>
+                          <div className="pt-1 border-t border-[#2d2d2d]">
+                            <span className="text-zinc-500 text-[10px] uppercase font-bold block">Output</span>
+                            <pre className="text-emerald-400 text-xs font-mono">{tc.expected_output}</pre>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Limits */}
+                <div className="flex gap-4 pt-3 text-[11px] text-zinc-500 font-mono border-t border-[#333333]">
+                  <span>Time Limit: {problem.time_limit_ms}ms</span>
+                  <span>Memory Limit: {Math.round(problem.memory_limit_kb / 1024)}MB</span>
+                </div>
+              </div>
+            )}
+
+            {/* Tab: Stages */}
+            {leftTab === 'stages' && stagesData && (
+              <div className="space-y-4">
+                <ProgressTracker
+                  stages={stagesData.stages}
+                  activeStageId={activeStageId}
+                  onSelectStage={(id) => setActiveStageId(id)}
+                  isProblemSolved={stagesData.is_solved}
+                />
+              </div>
+            )}
+
+            {/* Tab: Solutions / AI Hints */}
+            {leftTab === 'solutions' && (
+              <div className="space-y-4">
                 <MentorPanel
                   submissionId={latestVerdict?.submission_id || history[0]?.id}
                   stageId={activeStageId}
                 />
-              )}
+              </div>
+            )}
 
-              {/* Custom Input Tab */}
-              {activeBottomTab === 'custom' && (
-                <div className="h-full">
-                  <textarea
-                    value={customInput}
-                    onChange={(e) => setCustomInput(e.target.value)}
-                    placeholder="Enter custom stdin here..."
-                    className="w-full h-full bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 rounded-xl p-3 resize-none focus:outline-none focus:ring-2 focus:ring-brand-500/20 font-mono text-xs shadow-soft-sm"
-                  />
+            {/* Tab: Submissions */}
+            {leftTab === 'submissions' && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between pb-2 border-b border-[#333333]">
+                  <span className="text-xs font-semibold text-zinc-300">Submission History</span>
+                  <span className="text-[11px] text-zinc-500 font-mono">{history.length} records</span>
                 </div>
-              )}
-
-              {/* Result Tab */}
-              {activeBottomTab === 'result' && (
-                <div className="text-xs font-mono">
-                  {latestVerdict && (
-                    <div className="space-y-3">
+                {history.length === 0 ? (
+                  <div className="text-center py-8 text-zinc-500 text-xs">
+                    No submissions recorded yet for this problem stage.
+                  </div>
+                ) : (
+                  history.map((sub, idx) => (
+                    <div
+                      key={sub.id}
+                      className="p-3 bg-[#262626] rounded-xl border border-[#333333] flex items-center justify-between text-xs font-mono"
+                    >
                       <div className="flex items-center gap-3">
-                        <VerdictBadge verdict={latestVerdict.verdict} />
-                        {latestVerdict.execution_time_ms !== undefined && (
-                          <span className="text-slate-600 dark:text-zinc-400">Time: {latestVerdict.execution_time_ms}ms</span>
-                        )}
-                        {latestVerdict.memory_used_kb !== undefined && (
-                          <span className="text-slate-600 dark:text-zinc-400">Memory: {latestVerdict.memory_used_kb}KB</span>
-                        )}
+                        <VerdictBadge verdict={sub.verdict} />
+                        <span className="text-zinc-400 text-[11px]">
+                          {sub.execution_time_ms !== null ? `${sub.execution_time_ms}ms` : '—'}
+                        </span>
+                        <span className="text-zinc-500 text-[10px]">
+                          {new Date(sub.created_at).toLocaleTimeString()}
+                        </span>
                       </div>
-
-                      {latestVerdict.compile_output && (
-                        <div className="bg-rose-50 dark:bg-rose-950/40 p-3 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 whitespace-pre-wrap font-mono">
-                          {latestVerdict.compile_output}
-                        </div>
-                      )}
-
-                      {latestVerdict.analysis && (
-                        <ComplexityCard analysis={latestVerdict.analysis} />
+                      {idx > 0 && (
+                        <button
+                          onClick={() => handleCompare(history[idx].id, history[0].id)}
+                          className="px-2 py-1 rounded-md bg-[#333333] hover:bg-[#3d3d3d] text-zinc-300 text-[11px] flex items-center gap-1 transition-colors"
+                        >
+                          <GitCompare size={12} /> Diff
+                        </button>
                       )}
                     </div>
-                  )}
+                  ))
+                )}
+              </div>
+            )}
 
-                  {!latestVerdict && runOutput && (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <VerdictBadge verdict={runOutput.verdict} />
-                        <span className="text-slate-600 dark:text-zinc-400">Time: {runOutput.execution_time_ms}ms</span>
-                        <span className="text-slate-600 dark:text-zinc-400">Memory: {runOutput.memory_used_kb}KB</span>
-                      </div>
-                      {runOutput.stdout && (
-                        <div>
-                          <span className="text-slate-400 dark:text-zinc-500 block mb-1">Standard Output</span>
-                          <pre className="bg-slate-50 dark:bg-zinc-950 p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-200 font-mono whitespace-pre-wrap">
-                            {runOutput.stdout}
-                          </pre>
-                        </div>
-                      )}
-                      {runOutput.stderr && (
-                        <div>
-                          <span className="text-rose-500 block mb-1">Standard Error</span>
-                          <pre className="bg-rose-50 dark:bg-rose-950/40 p-2.5 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-mono whitespace-pre-wrap">
-                            {runOutput.stderr}
-                          </pre>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {!latestVerdict && !runOutput && (
-                    <div className="text-center py-8 text-slate-400 dark:text-zinc-500">
-                      Run code with custom input or submit stage to view execution metrics.
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* History Tab */}
-              {activeBottomTab === 'history' && (
-                <div className="space-y-2">
-                  {history.length === 0 ? (
-                    <div className="text-center py-6 text-slate-400 dark:text-zinc-500 text-xs">
-                      No submissions recorded for this stage yet.
-                    </div>
-                  ) : (
-                    history.map((sub, idx) => (
-                      <div
-                        key={sub.id}
-                        className="p-3 bg-slate-50 dark:bg-zinc-900 rounded-xl border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between text-xs font-mono shadow-soft-sm"
-                      >
-                        <div className="flex items-center gap-3">
-                          <VerdictBadge verdict={sub.verdict} />
-                          <span className="text-slate-600 dark:text-zinc-400">
-                            {sub.execution_time_ms !== null ? `${sub.execution_time_ms}ms` : '—'}
-                          </span>
-                          <span className="text-slate-400 dark:text-zinc-500">
-                            {new Date(sub.created_at).toLocaleTimeString()}
-                          </span>
-                        </div>
-                        {idx > 0 && (
-                          <button
-                            onClick={() => handleCompare(history[idx].id, history[0].id)}
-                            className="px-2.5 py-1 rounded-lg bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 text-brand-600 dark:text-brand-400 border border-brand-200/60 text-[11px] font-semibold flex items-center gap-1"
-                          >
-                            <GitCompare size={12} /> Diff with Latest
-                          </button>
-                        )}
-                      </div>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
           </div>
         </div>
+
+        {/* Draggable Horizontal Splitter (Desktop) */}
+        {!isMaximized && (
+          <div
+            onMouseDown={() => setIsDraggingH(true)}
+            className="hidden md:flex w-1 hover:w-1.5 bg-[#333333] hover:bg-brand-500 cursor-col-resize items-center justify-center transition-all rounded-full my-auto h-20 select-none shrink-0"
+            title="Drag to resize panes"
+          />
+        )}
+
+        {/* Right Code Editor & Testcase Card */}
+        <div
+          ref={rightPaneRef}
+          style={{ width: isMaximized ? '100%' : `${100 - leftWidth}%` }}
+          className="h-full bg-[#262626] border border-[#333333] rounded-xl overflow-hidden flex flex-col min-w-0 shadow-soft-sm"
+        >
+          {/* Upper Section: CodeEditor */}
+          <div 
+            style={{ height: isDrawerCollapsed ? 'calc(100% - 36px)' : `calc(100% - ${drawerHeight}px)` }} 
+            className="w-full overflow-hidden flex flex-col min-h-0"
+          >
+            <CodeEditor
+              code={code}
+              onChange={(newVal) => setCode(newVal)}
+              onReset={() => {
+                if (problem) {
+                  setCode(generateStarterBoilerplate(problem));
+                }
+              }}
+              isMaximized={isMaximized}
+              onToggleMaximize={() => setIsMaximized(!isMaximized)}
+            />
+          </div>
+
+          {/* Draggable Vertical Splitter */}
+          {!isDrawerCollapsed && (
+            <div
+              onMouseDown={() => setIsDraggingV(true)}
+              className="h-1 hover:h-1.5 bg-[#333333] hover:bg-brand-500 cursor-row-resize flex items-center justify-center transition-all select-none shrink-0"
+              title="Drag to resize drawer"
+            />
+          )}
+
+          {/* Bottom Testcase / Test Result Drawer */}
+          <div
+            style={{ height: isDrawerCollapsed ? '36px' : `${drawerHeight}px` }}
+            className="w-full bg-[#1e1e1e] flex flex-col overflow-hidden shrink-0"
+          >
+            {/* Drawer Tabs Header */}
+            <div className="h-9 bg-[#262626] border-b border-[#333333] px-3 flex items-center justify-between text-xs select-none shrink-0">
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    setBottomTab('testcase');
+                    if (isDrawerCollapsed) setIsDrawerCollapsed(false);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    bottomTab === 'testcase' 
+                      ? 'text-white bg-[#1e1e1e] font-semibold' 
+                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                  }`}
+                >
+                  <CheckSquare size={13} className={bottomTab === 'testcase' ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <span>Testcase</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    setBottomTab('testresult');
+                    if (isDrawerCollapsed) setIsDrawerCollapsed(false);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    bottomTab === 'testresult' 
+                      ? 'text-white bg-[#1e1e1e] font-semibold' 
+                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                  }`}
+                >
+                  <Terminal size={13} className={bottomTab === 'testresult' ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <span>Test Result</span>
+                </button>
+
+                {journey && (
+                  <button
+                    onClick={() => {
+                      setBottomTab('journey');
+                      if (isDrawerCollapsed) setIsDrawerCollapsed(false);
+                    }}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                      bottomTab === 'journey' 
+                        ? 'text-white bg-[#1e1e1e] font-semibold' 
+                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                    }`}
+                  >
+                    <span>Optimization Journey</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Collapse/Expand Toggle */}
+              <button
+                onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
+                className="p-1 text-zinc-500 hover:text-zinc-200 rounded hover:bg-[#333333] transition-colors"
+                title={isDrawerCollapsed ? "Expand Drawer" : "Collapse Drawer"}
+              >
+                {isDrawerCollapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              </button>
+            </div>
+
+            {/* Drawer Tab Body */}
+            {!isDrawerCollapsed && (
+              <div className="flex-1 overflow-y-auto p-3.5 bg-[#1e1e1e] text-xs font-mono space-y-3">
+                
+                {/* Tab: Testcase */}
+                {bottomTab === 'testcase' && (
+                  <div className="space-y-2.5 h-full flex flex-col">
+                    {/* Sample Case Quick Fill Buttons */}
+                    {problem.sample_test_cases && problem.sample_test_cases.length > 0 && (
+                      <div className="flex items-center gap-2">
+                        {problem.sample_test_cases.map((tc, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setCustomInput(tc.input || '')}
+                            className={`px-2.5 py-1 rounded-md text-xs font-sans transition-colors ${
+                              customInput === tc.input 
+                                ? 'bg-[#333333] text-white border border-[#444444]' 
+                                : 'bg-[#262626] text-zinc-400 hover:text-zinc-200 hover:bg-[#2d2d2d] border border-[#333333]'
+                            }`}
+                          >
+                            Case {idx + 1}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="flex-1 flex flex-col min-h-0">
+                      <span className="text-[11px] text-zinc-500 font-sans block mb-1">Standard Input (stdin):</span>
+                      <textarea
+                        value={customInput}
+                        onChange={(e) => setCustomInput(e.target.value)}
+                        placeholder="Enter standard input for your program..."
+                        className="w-full flex-1 min-h-[90px] bg-[#181818] text-zinc-200 border border-[#333333] rounded-lg p-2.5 resize-none focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* Tab: Test Result */}
+                {bottomTab === 'testresult' && (
+                  <div className="space-y-3">
+                    {/* Segmentation Fault Helper */}
+                    {(
+                      (runOutput?.stderr && (runOutput.stderr.includes('signal 11') || runOutput.stderr.includes('dumped core') || runOutput.stderr.toLowerCase().includes('segmentation fault'))) ||
+                      (latestVerdict?.compile_output && (latestVerdict.compile_output.includes('signal 11') || latestVerdict.compile_output.includes('dumped core')))
+                    ) && (
+                      <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/40 text-amber-200 space-y-1.5 font-sans">
+                        <div className="flex items-center gap-1.5 font-bold text-xs text-amber-400">
+                          <AlertTriangle size={14} />
+                          <span>Diagnosis: Runtime Segmentation Fault (Signal 11 / Core Dump)</span>
+                        </div>
+                        <p className="text-[11px] text-zinc-300">
+                          Your code compiled and executed, but accessed an unallocated vector or invalid index out of bounds.
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Verdict Display */}
+                    {latestVerdict && (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-3">
+                          <VerdictBadge verdict={latestVerdict.verdict} />
+                          {latestVerdict.execution_time_ms !== undefined && (
+                            <span className="text-zinc-400">Time: {latestVerdict.execution_time_ms}ms</span>
+                          )}
+                          {latestVerdict.memory_used_kb !== undefined && (
+                            <span className="text-zinc-400">Memory: {latestVerdict.memory_used_kb}KB</span>
+                          )}
+                        </div>
+
+                        {latestVerdict.feedback_message && (
+                          <div className={`p-3 rounded-lg border text-xs font-sans ${
+                            latestVerdict.verdict === 'ACCEPTED'
+                              ? 'bg-emerald-950/30 border-emerald-800/40 text-emerald-300'
+                              : latestVerdict.verdict === 'COMPLEXITY_MISMATCH'
+                              ? 'bg-amber-950/40 border-amber-600/50 text-amber-200 shadow-sm'
+                              : 'bg-zinc-800/40 border-zinc-700/40 text-zinc-300'
+                          }`}>
+                            <div className="font-semibold flex items-center gap-1.5 mb-1">
+                              {latestVerdict.verdict === 'ACCEPTED' ? (
+                                <span className="text-emerald-400">✓ Stage Accepted</span>
+                              ) : latestVerdict.verdict === 'COMPLEXITY_MISMATCH' ? (
+                                <span className="text-amber-400">⚠️ Stage Complexity Requirement</span>
+                              ) : (
+                                <span>Notice</span>
+                              )}
+                            </div>
+                            <p className="leading-relaxed text-[11px] opacity-90">{latestVerdict.feedback_message}</p>
+                          </div>
+                        )}
+
+                        {latestVerdict.compile_output && (
+                          <div className="bg-rose-950/30 p-2.5 rounded-lg border border-rose-800/50 text-rose-300 whitespace-pre-wrap font-mono text-xs">
+                            {latestVerdict.compile_output}
+                          </div>
+                        )}
+
+                        {latestVerdict.analysis && (
+                          <ComplexityCard analysis={latestVerdict.analysis} />
+                        )}
+                      </div>
+                    )}
+
+                    {/* Run Custom Output Display */}
+                    {!latestVerdict && runOutput && (
+                      <div className="space-y-2.5">
+                        <div className="flex items-center gap-3">
+                          <VerdictBadge verdict={runOutput.verdict} />
+                          <span className="text-zinc-400">Time: {runOutput.execution_time_ms}ms</span>
+                          <span className="text-zinc-400">Memory: {runOutput.memory_used_kb}KB</span>
+                        </div>
+
+                        {runOutput.stdout && (
+                          <div>
+                            <span className="text-zinc-500 text-[10px] block mb-1">Standard Output</span>
+                            <pre className="bg-[#181818] p-2.5 rounded-lg border border-[#333333] text-zinc-200 font-mono whitespace-pre-wrap text-xs">
+                              {runOutput.stdout}
+                            </pre>
+                          </div>
+                        )}
+
+                        {runOutput.stderr && (
+                          <div>
+                            <span className="text-rose-400 text-[10px] block mb-1">Standard Error</span>
+                            <pre className="bg-rose-950/20 p-2.5 rounded-lg border border-rose-800/40 text-rose-300 font-mono whitespace-pre-wrap text-xs">
+                              {runOutput.stderr}
+                            </pre>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!latestVerdict && !runOutput && (
+                      <div className="text-center py-8 text-zinc-500">
+                        Run custom input or submit code to view execution metrics.
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Tab: Optimization Journey */}
+                {bottomTab === 'journey' && journey && (
+                  <div className="space-y-3">
+                    <OptimizationJourney journey={journey} />
+                  </div>
+                )}
+
+              </div>
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -13,6 +13,11 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 
 function getRouteFromPath(pathname, isAuthenticated) {
   const path = pathname.toLowerCase().replace(/\/$/, '');
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const problemId = searchParams?.get('id');
+  if (problemId && (path === '/problems' || path === '')) {
+    return isAuthenticated ? 'problem-detail' : 'signin';
+  }
   if (!path || path === '') return isAuthenticated ? 'dashboard' : 'landing';
   if (path === '/landing') return 'landing';
   if (path === '/signin' || path === '/login') return 'signin';
@@ -48,12 +53,21 @@ function MainApp() {
   const [currentRoute, setCurrentRoute] = useState(() => {
     return getRouteFromPath(window.location.pathname, isAuthenticated);
   });
-  const [selectedProblemId, setSelectedProblemId] = useState(null);
+  const [selectedProblemId, setSelectedProblemId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      return searchParams.get('id') || null;
+    }
+    return null;
+  });
   const [routeParams, setRouteParams] = useState({});
 
   useEffect(() => {
     if (!loading) {
       const route = getRouteFromPath(window.location.pathname, isAuthenticated);
+      const searchParams = new URLSearchParams(window.location.search);
+      const pid = searchParams.get('id');
+      if (pid) setSelectedProblemId(pid);
       setCurrentRoute(route);
     }
   }, [isAuthenticated, loading]);
@@ -61,6 +75,9 @@ function MainApp() {
   useEffect(() => {
     const handlePopState = () => {
       const route = getRouteFromPath(window.location.pathname, isAuthenticated);
+      const searchParams = new URLSearchParams(window.location.search);
+      const pid = searchParams.get('id');
+      setSelectedProblemId(pid || null);
       setCurrentRoute(route);
     };
 
@@ -150,6 +167,7 @@ function MainApp() {
           <ProblemDetailPage
             problemId={selectedProblemId}
             onBack={handleBackToList}
+            onNavigateProblem={handleSelectProblem}
           />
         ) : (
           <ProblemListPage onSelectProblem={handleSelectProblem} />
@@ -162,8 +180,10 @@ function MainApp() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-brand-500/20 selection:text-brand-700 dark:selection:text-brand-300 transition-colors duration-200">
-      <Navbar onNavigate={navigate} currentPage={currentRoute} />
-      <main className="flex-1">
+      {currentRoute !== 'problem-detail' && (
+        <Navbar onNavigate={navigate} currentPage={currentRoute} />
+      )}
+      <main className={`flex-1 ${currentRoute === 'problem-detail' ? 'h-screen overflow-hidden' : ''}`}>
         {renderCurrentPage()}
       </main>
     </div>

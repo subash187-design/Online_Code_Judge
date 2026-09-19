@@ -1,4 +1,4 @@
-﻿const db = require('../../config/database');
+const db = require('../../config/database');
 const { SYSTEM_PROMPT, buildFeedbackPrompt, buildHintPrompt } = require('./prompts');
 
 let GoogleGenerativeAI;
@@ -182,6 +182,17 @@ class MentorService {
     );
 
     return saved.rows[0];
+  }
+
+  /**
+   * Retrieves all unlocked hints for a user and stage
+   */
+  static async getStageHints(userId = 1, stageId) {
+    const res = await db.query(
+      `SELECT * FROM mentor_hints WHERE user_id = $1 AND stage_id = $2 ORDER BY hint_level ASC`,
+      [userId, stageId]
+    );
+    return res.rows;
   }
 
   static _sanitizeOutput(obj) {

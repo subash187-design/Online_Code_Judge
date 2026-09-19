@@ -1,9 +1,11 @@
 const db = require('../config/database');
 const JudgeService = require('../services/judge.service');
 const ProblemService = require('../services/problem.service');
+const Logger = require('../utils/logger');
 
 exports.submitCode = async (req, res) => {
   try {
+    Logger.info('SubmissionController', 'POST /submitCode entered');
     const effectiveUserId = (req.user && req.user.id) ? req.user.id : (req.body.user_id || 1);
     const { problem_id, language = 'cpp', code } = req.body;
 
@@ -53,15 +55,17 @@ exports.submitCode = async (req, res) => {
       result.compile_output || null
     ]);
 
+    Logger.info('SubmissionController', `Submission evaluated: ${result.verdict}`);
     return res.status(201).json(saved.rows[0]);
   } catch (err) {
-    console.error('Submission error:', err);
+    Logger.error('SubmissionController', 'Submission processing error', err);
     return res.status(500).json({ error: 'Failed to process submission' });
   }
 };
 
 exports.runCustom = async (req, res) => {
   try {
+    Logger.info('SubmissionController', 'POST /runCustom entered');
     const { language = 'cpp', code, custom_input = '', time_limit_ms = 1000, memory_limit_kb = 262144 } = req.body;
 
     if (!code) {
@@ -73,9 +77,10 @@ exports.runCustom = async (req, res) => {
     }
 
     const result = JudgeService.runCustomInput(code, custom_input, time_limit_ms, memory_limit_kb);
+    Logger.info('SubmissionController', `Custom run completed with verdict: ${result.verdict}`);
     return res.json(result);
   } catch (err) {
-    console.error('Custom run error:', err);
+    Logger.error('SubmissionController', 'Custom run error', err);
     return res.status(500).json({ error: 'Failed to run code' });
   }
 };
@@ -100,7 +105,7 @@ exports.getSubmissionHistory = async (req, res) => {
     const result = await db.query(query, params);
     return res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching submissions:', err);
+    Logger.error('SubmissionController', 'Error fetching submissions', err);
     return res.status(500).json({ error: 'Failed to fetch submissions' });
   }
 };

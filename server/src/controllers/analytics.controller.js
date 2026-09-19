@@ -1,9 +1,9 @@
-﻿const AnalyticsService = require('../services/analytics.service');
+const AnalyticsService = require('../services/analytics.service');
 
 exports.getProblemJourney = async (req, res) => {
   try {
     const problemId = parseInt(req.params.problem_id, 10);
-    const userId = parseInt(req.query.user_id, 10) || 1;
+    const userId = req.user?.id || parseInt(req.query.user_id, 10) || 1;
 
     if (isNaN(problemId)) return res.status(400).json({ error: 'Invalid problem ID' });
 
@@ -18,7 +18,7 @@ exports.getProblemJourney = async (req, res) => {
 exports.compareSubmissions = async (req, res) => {
   try {
     const { sub_a, sub_b } = req.query;
-    const userId = parseInt(req.query.user_id, 10) || 1;
+    const userId = req.user?.id || parseInt(req.query.user_id, 10) || 1;
 
     if (!sub_a || !sub_b) {
       return res.status(400).json({ error: 'sub_a and sub_b UUID parameters are required' });
@@ -35,7 +35,7 @@ exports.compareSubmissions = async (req, res) => {
 
 exports.getDashboard = async (req, res) => {
   try {
-    const userId = parseInt(req.query.user_id, 10) || 1;
+    const userId = req.user?.id || parseInt(req.query.user_id, 10) || 1;
     const dashboard = await AnalyticsService.getUserDashboard(userId);
     return res.json(dashboard);
   } catch (err) {

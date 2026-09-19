@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const db = require('./config/database');
 
@@ -12,7 +12,9 @@ async function seed() {
       '003_phase3_code_analysis.sql',
       '004_phase4_mentor_system.sql',
       '005_phase5_optimization_analytics.sql',
-      '006_phase6_advanced_testing.sql'
+      '006_phase6_advanced_testing.sql',
+      '007_auth_system.sql',
+      '008_problem_metadata.sql'
     ];
 
     for (const m of migrations) {
@@ -55,14 +57,17 @@ async function seed() {
       ON CONFLICT DO NOTHING;
     `);
 
-    // Problem Stages for Problem 1
+    // Problem Stages for Problem 1 (Single Solution Problem -> Exactly 1 Stage)
     await db.query(`
       INSERT INTO problem_stages (id, problem_id, name, description, order_index, is_required, expected_time_complexity, expected_space_complexity)
       VALUES 
-        (1, 1, 'Stage 1: Direct Computation', 'Read inputs and output sum directly without auxiliary storage.', 1, TRUE, 'O(1)', 'O(1)'),
-        (2, 1, 'Stage 2: Guarded Arithmetic', 'Ensure handling of boundary constraints and negative integers.', 2, TRUE, 'O(1)', 'O(1)'),
-        (3, 1, 'Stage 3: Optimal Fast I/O', 'Use fast C++ I/O synchronization (cin.tie(NULL)).', 3, TRUE, 'O(1)', 'O(1)')
-      ON CONFLICT (problem_id, order_index) DO NOTHING;
+        (1, 1, 'Stage 1: Direct Computation', 'Read inputs and output sum directly without auxiliary storage.', 1, TRUE, 'O(1)', 'O(1)')
+      ON CONFLICT (problem_id, order_index) DO UPDATE SET
+        name = EXCLUDED.name,
+        description = EXCLUDED.description,
+        is_required = EXCLUDED.is_required,
+        expected_time_complexity = EXCLUDED.expected_time_complexity,
+        expected_space_complexity = EXCLUDED.expected_space_complexity;
     `);
 
     // Phase 6: Reference Solution Oracle for Problem 1
@@ -116,7 +121,10 @@ async function seed() {
       ON CONFLICT (problem_id, order_index) DO NOTHING;
     `);
 
-    console.log('✓ Seeding complete for all 6 Phases!');
+    const seed100Problems = require('./seeders/seed100Problems');
+    await seed100Problems();
+
+    console.log('✓ Seeding complete for all 102 problems (Phases 1 through 8)!');
     process.exit(0);
   } catch (err) {
     console.error('Seeding failed:', err);

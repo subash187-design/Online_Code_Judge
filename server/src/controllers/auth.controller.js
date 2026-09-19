@@ -44,6 +44,9 @@ class AuthController {
 
       return res.status(201).json(result);
     } catch (err) {
+      if (err.message.includes('already exists') || err.message.includes('duplicate')) {
+        return res.status(409).json({ error: err.message });
+      }
       return res.status(400).json({ error: err.message });
     }
   }
@@ -123,6 +126,7 @@ class AuthController {
         return res.status(403).json({
           error: err.message,
           requiresVerification: true,
+          email_verified: false,
           email: err.email
         });
       }
@@ -133,7 +137,7 @@ class AuthController {
   async getMe(req, res) {
     try {
       const user = await authService.getProfile(req.user.id);
-      return res.status(200).json({ user });
+      return res.status(200).json({ user, ...user });
     } catch (err) {
       return res.status(404).json({ error: err.message });
     }
