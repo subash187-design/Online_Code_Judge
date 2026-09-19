@@ -41,67 +41,69 @@
   }
 }
 
-/* Enforce black & white typography everywhere except Monaco Code Editor */
-body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text) {
-  --tw-text-opacity: 1;
-}
+/* ==========================================================================
+   THEME CONTRAST & TYPOGRAPHY RULES
+   Text colors strictly follow their background theme:
+   - Light background => Black / Dark text
+   - Dark background => White / Light text
+   - White button in Dark theme => Black text
+   - Black button in Light theme => White text
+   ========================================================================== */
 
-/* ----------------------------------------------------
-   1. Light Mode Typography: Pure black text against light background
-   ---------------------------------------------------- */
-html:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
-  color: #000000 !important;
-}
-
-html:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
-  color: #0F172A;
-}
-
-html:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
+/* 1. Neutralize colored text utilities (blue, purple, emerald, etc.) so only black & white text is used, except in Monaco editor */
+:not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
   [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
   [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
   [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
 ) {
-  color: #000000 !important;
+  color: inherit;
 }
 
-/* Light mode text-white on dark buttons / surfaces */
-html:not(.dark) .text-white,
-html:not(.dark) [class*="text-white"],
+/* 2. Light Theme defaults */
+html:not(.dark) {
+  color: #0F172A;
+}
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6,
+html:not(.dark) strong,
+html:not(.dark) b {
+  color: #000000;
+}
+
+/* 3. Dark Theme defaults */
+html.dark {
+  color: #F8FAFC;
+}
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6,
+html.dark strong,
+html.dark b {
+  color: #FFFFFF;
+}
+
+/* 4. Buttons: Text color follows button background strictly */
+/* Light Mode: Buttons with dark/black background have crisp WHITE text */
 html:not(.dark) button[class*="bg-black"],
 html:not(.dark) button[class*="bg-black"] *,
 html:not(.dark) a[class*="bg-black"],
-html:not(.dark) a[class*="bg-black"] * {
+html:not(.dark) a[class*="bg-black"] *,
+html:not(.dark) button[class*="bg-slate-900"],
+html:not(.dark) button[class*="bg-slate-900"] *,
+html:not(.dark) button[class*="bg-zinc-900"],
+html:not(.dark) button[class*="bg-zinc-900"] * {
   color: #FFFFFF !important;
   stroke: #FFFFFF !important;
 }
 
-/* ----------------------------------------------------
-   2. Dark Mode Typography: Crisp white text against dark background
-   ---------------------------------------------------- */
-html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
-  color: #FFFFFF !important;
-}
-
-html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
-  color: #F8FAFC;
-}
-
-html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
-  color: #FFFFFF !important;
-}
-
-html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
-  [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
-  [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
-  [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
-) {
-  color: #FFFFFF !important;
-}
-
-/* ----------------------------------------------------
-   3. EXCEPT: In Dark Mode, ONLY buttons with a WHITE background have BLACK text
-   ---------------------------------------------------- */
+/* Dark Mode: Buttons with white background have pure BLACK text (fixes the invisible text in Action pills) */
 html.dark button[class*="dark:bg-white"],
 html.dark button[class*="dark:bg-white"] *,
 html.dark a[class*="dark:bg-white"],
@@ -112,6 +114,25 @@ html.dark [class*="dark:bg-white"]:is(button, a),
 html.dark [class*="dark:bg-white"]:is(button, a) * {
   color: #000000 !important;
   stroke: #000000 !important;
+}
+
+/* Dark Mode: Buttons with dark background have WHITE text */
+html.dark button[class*="dark:bg-zinc-800"],
+html.dark button[class*="dark:bg-zinc-800"] *,
+html.dark button[class*="dark:bg-slate-800"],
+html.dark button[class*="dark:bg-slate-800"] * {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+}
+
+/* Dark sidebar (#1E222A) always has white/light text in both modes */
+aside[class*="bg-[#1E222A]"],
+aside[class*="bg-[#1E222A]"] span,
+aside[class*="bg-[#1E222A]"] h1,
+aside[class*="bg-[#1E222A]"] h2,
+aside[class*="bg-[#1E222A]"] h3,
+aside[class*="bg-[#1E222A]"] button:not(.active) {
+  color: #F8FAFC;
 }
 
 /* Custom modern scrollbars */
