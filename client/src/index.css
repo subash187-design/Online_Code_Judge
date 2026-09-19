@@ -60,9 +60,9 @@ body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):no
   color: #000000 !important;
 }
 
-/* Dark mode: All text is purely crisp white, never colored */
+/* Dark mode: All text is purely crisp white, never colored by default */
 .dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
-  color: #FFFFFF !important;
+  color: #FFFFFF;
 }
 
 /* Neutralize all colored text classes in dark mode to pure white */
@@ -74,9 +74,31 @@ body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):no
   color: #FFFFFF !important;
 }
 
-/* Explicit white text on dark surfaces */
-.text-white {
+/* Light mode text-white on dark surfaces */
+body:not(.dark) .text-white {
   color: #FFFFFF !important;
+}
+
+/* Dark mode text-white ONLY when the element does not have a white background or dark:text-black */
+.dark .text-white:not([class*="dark:text-black"]):not([class*="dark:bg-white"]):not([class*="bg-white"]):not(.dark\:bg-white) {
+  color: #FFFFFF !important;
+}
+
+/* CRITICAL: In dark theme, all letters and icons in buttons or elements with white background MUST have BLACK text */
+.dark button[class*="dark:bg-white"],
+.dark button[class*="dark:bg-white"] *,
+.dark a[class*="dark:bg-white"],
+.dark a[class*="dark:bg-white"] *,
+.dark button.bg-white:not([class*="dark:bg-"]),
+.dark button.bg-white:not([class*="dark:bg-"]) *,
+.dark [class*="dark:bg-white"] button,
+.dark [class*="dark:bg-white"] button *,
+.dark [class*="dark:text-black"],
+.dark [class*="dark:text-black"] *,
+.dark .dark\:text-black,
+.dark .dark\:text-black * {
+  color: #000000 !important;
+  stroke: #000000 !important;
 }
 
 /* Custom modern scrollbars */
