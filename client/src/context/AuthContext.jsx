@@ -96,8 +96,15 @@ export const AuthProvider = ({ children }) => {
     return fetch(url, { ...options, headers });
   };
 
+  const updateUser = (updatedData) => {
+    const updated = { ...user, ...updatedData };
+    setUser(updated);
+    localStorage.setItem('user', JSON.stringify(updated));
+    return updated;
+  };
+
   return (
-    <AuthContext.Provider value={{ token, user, login, logout, authFetch, loading, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{ token, user, login, logout, register, updateUser, authFetch, loading, isAuthenticated: !!token }}>
       {children}
     </AuthContext.Provider>
   );

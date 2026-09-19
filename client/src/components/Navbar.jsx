@@ -144,9 +144,19 @@ export default function Navbar({ onNavigate, currentPage }) {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80">
-                <div className="w-7 h-7 rounded-lg bg-zinc-800 dark:bg-zinc-700 text-white flex items-center justify-center font-bold text-xs">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : <User size={13} />}
+              <div 
+                onClick={() => handleNav('profile')}
+                className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80 cursor-pointer hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors"
+                title="View Profile"
+              >
+                <div className="w-7 h-7 rounded-lg bg-zinc-800 dark:bg-zinc-700 text-white flex items-center justify-center font-bold text-xs overflow-hidden">
+                  {user?.avatar ? (
+                    <img src={user.avatar} alt={user.name || 'User'} className="w-full h-full object-cover" />
+                  ) : user?.name ? (
+                    user.name.charAt(0).toUpperCase()
+                  ) : (
+                    <User size={13} />
+                  )}
                 </div>
                 <div className="flex flex-col text-left">
                   <div className="flex items-center gap-1.5">

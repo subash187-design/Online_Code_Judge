@@ -26,20 +26,80 @@ import {
   Settings,
   BookOpen,
   Check,
-  AlertCircle
+  AlertCircle,
+  Camera,
+  Upload,
+  Save,
+  Moon,
+  Sun,
+  MapPin,
+  Building,
+  Phone,
+  Mail,
+  Shield
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import VerdictBadge from '../components/VerdictBadge';
 
-export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
-  const { user, authFetch, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('studio'); // 'studio' | 'problems' | 'journey' | 'telemetry'
+export default function UserDashboardPage({ onNavigate, onSelectProblem, initialTab = 'studio' }) {
+  const { user, authFetch, logout, updateUser } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
+  const [activeTab, setActiveTab] = useState(initialTab || 'studio'); // 'studio' | 'problems' | 'journey' | 'telemetry' | 'profile' | 'settings'
   const [submissions, setSubmissions] = useState([]);
   const [dashboardMetrics, setDashboardMetrics] = useState(null);
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('ALL');
+
+  // Profile management state
+  const [profileData, setProfileData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    phone: user?.phone || '+91 9876543210',
+    organization: user?.organization || 'Greenfield High School',
+    location: user?.location || 'Coimbatore, India',
+    bio: user?.bio || 'Algorithm enthusiast learning progressive asymptotic complexities.'
+  });
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || null);
+  const [profileSaved, setProfileSaved] = useState(false);
+
+  // Settings management state
+  const [editorSettings, setEditorSettings] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('algomind_editor_settings')) || {
+        fontSize: '14',
+        tabSize: '4'
+      };
+    } catch (e) {
+      return { fontSize: '14', tabSize: '4' };
+    }
+  });
+  const [settingsSaved, setSettingsSaved] = useState(false);
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (user) {
+      setProfileData(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone,
+        organization: user.organization || prev.organization,
+        location: user.location || prev.location,
+        bio: user.bio || prev.bio
+      }));
+      if (user.avatar) {
+        setAvatarPreview(user.avatar);
+      }
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user?.id) {
@@ -85,6 +145,39 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
     return matchesSearch && matchesDiff;
   });
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 3 * 1024 * 1024) {
+        alert('Please select an image smaller than 3MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAvatarPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveProfile = (e) => {
+    e.preventDefault();
+    if (updateUser) {
+      updateUser({
+        ...profileData,
+        avatar: avatarPreview
+      });
+    }
+    setProfileSaved(true);
+    setTimeout(() => setProfileSaved(false), 4000);
+  };
+
+  const handleSaveSettings = () => {
+    localStorage.setItem('algomind_editor_settings', JSON.stringify(editorSettings));
+    setSettingsSaved(true);
+    setTimeout(() => setSettingsSaved(false), 3000);
+  };
+
   return (
     <div className="flex min-h-[calc(100vh-4rem)] bg-[#F6F8FA] dark:bg-[#0E1117] text-slate-900 dark:text-zinc-100 transition-colors">
       
@@ -107,7 +200,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
             </div>
           </div>
 
-          {/* Navigation Items (PDF Layout: Dashboard, My assignments, Assessments, AI Learning path, Profile) */}
+          {/* Navigation Items (PDF Layout: Dashboard, My assignments, Assessments, AI Learning path, Profile, Settings) */}
           <nav className="space-y-1.5 pt-2">
             <button
               onClick={() => setActiveTab('studio')}
@@ -158,16 +251,24 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
             </button>
 
             <button
-              onClick={() => setActiveTab('studio')}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              onClick={() => setActiveTab('profile')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'profile'
+                  ? 'bg-[#2D3342] text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               <User size={16} />
               Profile
             </button>
 
             <button
-              onClick={() => setActiveTab('studio')}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'settings'
+                  ? 'bg-[#2D3342] text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
             >
               <Settings size={16} />
               Settings
@@ -175,15 +276,29 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
           </nav>
         </div>
 
-        {/* User Card at Sidebar Bottom (from PDF) */}
+        {/* User Card at Sidebar Bottom (Click to navigate to profile) */}
         <div className="pt-4 border-t border-slate-800/80 space-y-3">
-          <div className="flex items-center gap-3 px-2 py-1">
-            <div className="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-xs border border-slate-700">
-              {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+          <div 
+            onClick={() => setActiveTab('profile')}
+            className="flex items-center gap-3 px-2 py-1.5 rounded-xl cursor-pointer hover:bg-white/5 transition-colors group"
+            title="Open Profile Page"
+          >
+            <div className="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-xs border border-slate-700 overflow-hidden shrink-0">
+              {avatarPreview ? (
+                <img src={avatarPreview} alt={profileData.name || 'User'} className="w-full h-full object-cover" />
+              ) : profileData.name ? (
+                profileData.name.charAt(0).toUpperCase()
+              ) : (
+                'U'
+              )}
             </div>
             <div className="flex flex-col overflow-hidden text-left">
-              <span className="text-xs font-bold text-white truncate">{user?.name || user?.username || 'Developer'}</span>
-              <span className="text-[10px] text-slate-400 truncate">Software Engineer</span>
+              <span className="text-xs font-bold text-white truncate group-hover:underline">
+                {profileData.name || user?.username || 'Developer'}
+              </span>
+              <span className="text-[10px] text-slate-400 truncate">
+                {profileData.organization || 'Software Engineer'}
+              </span>
             </div>
           </div>
 
@@ -207,19 +322,23 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
       {/* 2. Main Canvas */}
       <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full overflow-y-auto space-y-6">
         
-        {/* Top Header Greeting from PDF ("Welcome back, [Name]! Stay prepared, Stay safe") */}
+        {/* Top Header Greeting from PDF */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/90 dark:border-zinc-800">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-black dark:text-white tracking-tight">
-              Welcome back, {user?.name ? user.name.split(' ')[0] : 'Developer'}!
+              {activeTab === 'profile' && `Profile & Account Details`}
+              {activeTab === 'settings' && `Platform Settings`}
+              {activeTab !== 'profile' && activeTab !== 'settings' && `Welcome back, ${profileData.name ? profileData.name.split(' ')[0] : 'Developer'}!`}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-normal">
-              Stay prepared, Stay safe. Here's an overview of your algorithmic performance.
+              {activeTab === 'profile' && 'Manage your personal details, profile picture, and learning achievements.'}
+              {activeTab === 'settings' && 'Configure theme preferences, code editor, and notification settings.'}
+              {activeTab !== 'profile' && activeTab !== 'settings' && "Stay prepared, Stay safe. Here's an overview of your algorithmic performance."}
             </p>
           </div>
 
           {/* Quick Tab Switcher */}
-          <div className="flex items-center gap-2 bg-slate-200/70 dark:bg-zinc-900 p-1 rounded-xl border border-slate-300/60 dark:border-zinc-800">
+          <div className="flex items-center flex-wrap gap-1.5 bg-slate-200/70 dark:bg-zinc-900 p-1 rounded-xl border border-slate-300/60 dark:border-zinc-800">
             <button
               onClick={() => setActiveTab('studio')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -260,80 +379,131 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
             >
               Telemetry
             </button>
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'profile'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-white shadow-sm font-bold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              Profile
+            </button>
+            <button
+              onClick={() => setActiveTab('settings')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'settings'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-white shadow-sm font-bold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              Settings
+            </button>
           </div>
         </div>
 
-        {/* 3. Primary KPI Metric Cards (From PDF: Preparedness Score, Assigned, Completed + Radial Donut) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          
-          {/* Card 1: Preparedness Score */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Score</div>
-              <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{solveRate}%</div>
+        {/* 3. Primary KPI Metric Cards (Always visible on Studio Dashboard) */}
+        {activeTab === 'studio' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            {/* Card 1: Preparedness Score */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Score</div>
+                <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{solveRate}%</div>
+              </div>
+              <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
+                Keep it up!, you are doing great.
+              </div>
             </div>
-            <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
-              Keep it up!, you are doing great.
+
+            {/* Card 2: Simulations Assigned */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Simulations assigned</div>
+                <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{problems.length || 3}</div>
+              </div>
+              <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
+                Multi-stage challenges
+              </div>
+            </div>
+
+            {/* Card 3: Completed Simulations */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Completed simulations</div>
+                <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">+{acceptedCount}</div>
+              </div>
+              <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
+                Verified in Docker sandbox
+              </div>
+            </div>
+
+            {/* Card 4: Donut Radial Gauge */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+              <div>
+                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Overview</div>
+                <div className="text-[11px] text-slate-600 dark:text-zinc-400 mt-1">Consistent progress</div>
+              </div>
+              <div className="relative w-14 h-14 flex items-center justify-center">
+                <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 36 36">
+                  <path
+                    className="text-slate-200 dark:text-zinc-700"
+                    strokeWidth="3.5"
+                    stroke="currentColor"
+                    fill="none"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  />
+                  <path
+                    className="text-black dark:text-white"
+                    strokeDasharray="78, 100"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    stroke="currentColor"
+                    fill="none"
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  />
+                </svg>
+                <span className="absolute text-[11px] font-extrabold text-black dark:text-white">78%</span>
+              </div>
             </div>
           </div>
+        )}
 
-          {/* Card 2: Simulations Assigned */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Simulations assigned</div>
-              <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{problems.length || 3}</div>
-            </div>
-            <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
-              Multi-stage challenges
-            </div>
-          </div>
-
-          {/* Card 3: Completed Simulations */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Completed simulations</div>
-              <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">+{acceptedCount}</div>
-            </div>
-            <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
-              Verified in Docker sandbox
-            </div>
-          </div>
-
-          {/* Card 4: Donut Radial Gauge (Directly from PDF!) */}
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex items-center justify-between">
-            <div>
-              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Overview</div>
-              <div className="text-[11px] text-slate-600 dark:text-zinc-400 mt-1">Consistent progress</div>
-            </div>
-            <div className="relative w-14 h-14 flex items-center justify-center">
-              <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 36 36">
-                <path
-                  className="text-slate-200 dark:text-zinc-700"
-                  strokeWidth="3.5"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  className="text-black dark:text-white"
-                  strokeDasharray="78, 100"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  stroke="currentColor"
-                  fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-              </svg>
-              <span className="absolute text-[11px] font-extrabold text-black dark:text-white">78%</span>
-            </div>
-          </div>
-        </div>
-
-        {/* TAB 1: STUDIO VIEW (Assigned Simulations + AI Adaptive Learning) */}
+        {/* TAB 1: STUDIO VIEW */}
         {activeTab === 'studio' && (
           <div className="space-y-6">
             
-            {/* 1. Assigned Simulation Table (From PDF Screen 4) */}
+            {/* Quick Profile Link Banner */}
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 overflow-hidden flex items-center justify-center">
+                  {avatarPreview ? (
+                    <img src={avatarPreview} alt={profileData.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <User size={18} className="text-black dark:text-white" />
+                  )}
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-black dark:text-white">
+                    {profileData.name || 'Developer Profile'}
+                  </div>
+                  <div className="text-[11px] text-slate-500 dark:text-zinc-400">
+                    {profileData.organization || 'Greenfield High School'} &bull; {profileData.location || 'India'}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setActiveTab('profile')}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-black dark:text-white text-xs font-semibold transition-all border border-slate-200 dark:border-zinc-700 flex items-center gap-1.5"
+              >
+                Edit Profile & Photo
+                <ArrowUpRight size={14} />
+              </button>
+            </div>
+
+            {/* Assigned Simulation Table */}
             <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
               <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -409,10 +579,8 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
               </div>
             </div>
 
-            {/* 2. AI Adaptive Learning Panel (From PDF Screen 5) */}
+            {/* AI Adaptive Learning Panel */}
             <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm p-6 space-y-6">
-              
-              {/* Header */}
               <div>
                 <h2 className="text-base font-extrabold text-black dark:text-white">
                   AI Adaptive Learning
@@ -422,10 +590,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                 </p>
               </div>
 
-              {/* Sub-grid: Learning Intelligence Card + Strong Areas / Focus Areas */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Left Card: Your Learning Intelligence */}
                 <div className="p-5 rounded-2xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
@@ -444,7 +609,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                     </div>
                   </div>
 
-                  {/* Strong Areas List */}
                   <div className="pt-2 border-t border-slate-200/80 dark:border-zinc-800">
                     <div className="text-xs font-bold text-black dark:text-white mb-2">Strong Areas</div>
                     <div className="flex flex-wrap gap-2">
@@ -461,14 +625,12 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                   </div>
                 </div>
 
-                {/* Right Card: Learning Focus Areas (Weak 35%, Average 50%) */}
                 <div className="p-5 rounded-2xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-4">
                   <div>
                     <div className="text-xs font-bold text-black dark:text-white">Learning Focus Areas</div>
                     <div className="text-[11px] text-slate-500 dark:text-zinc-400">Topics you should focus on</div>
                   </div>
 
-                  {/* Topic 1 */}
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-xs">
                       <span className="font-bold text-black dark:text-white">Fire Evacuation / Recursion Depth</span>
@@ -482,7 +644,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                     </div>
                   </div>
 
-                  {/* Topic 2 */}
                   <div className="space-y-1.5 pt-2">
                     <div className="flex justify-between text-xs">
                       <span className="font-bold text-black dark:text-white">Emergency Planning / Memory Allocation</span>
@@ -495,16 +656,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                       Learn how to optimize space tradeoffs and memory footprint limits.
                     </div>
                   </div>
-
-                  <button className="text-xs font-semibold text-black dark:text-white hover:underline pt-1 block">
-                    View All Focus Areas
-                  </button>
                 </div>
-
               </div>
             </div>
 
-            {/* 3. Submissions Telemetry Table */}
+            {/* Submissions Telemetry Table */}
             <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
               <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
                 <div>
@@ -568,10 +724,9 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
           </div>
         )}
 
-        {/* TAB 2: PROBLEM CATALOG (Integrated on same page) */}
+        {/* TAB 2: PROBLEMS VIEW */}
         {activeTab === 'problems' && (
           <div className="space-y-4">
-            {/* Search & Filters */}
             <div className="p-4 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center gap-3">
               <div className="relative flex-1 w-full">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
@@ -603,7 +758,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
               </div>
             </div>
 
-            {/* Problem List Items */}
             <div className="space-y-3">
               {filteredProblems.length === 0 ? (
                 <div className="py-16 text-center text-slate-500 dark:text-zinc-400 text-xs bg-white dark:bg-[#181B22] rounded-2xl border border-slate-200/90 dark:border-zinc-800">
@@ -652,7 +806,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
           </div>
         )}
 
-        {/* TAB 3: OPTIMIZATION JOURNEY (Integrated on same page) */}
+        {/* TAB 3: JOURNEY VIEW */}
         {activeTab === 'journey' && (
           <div className="space-y-6">
             <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-5">
@@ -670,7 +824,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                 </div>
               </div>
 
-              {/* Journey Metrics Overview */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block">Total Runtime Drop</span>
@@ -691,7 +844,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                 </div>
               </div>
 
-              {/* Latency Drop Trend */}
               <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold text-black dark:text-white flex items-center gap-1.5">
@@ -719,10 +871,9 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
           </div>
         )}
 
-        {/* TAB 4: AST CODE TELEMETRY & SANDBOXING (Integrated on same page) */}
+        {/* TAB 4: TELEMETRY VIEW */}
         {activeTab === 'telemetry' && (
           <div className="space-y-6">
-            {/* AST Diagnostics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-4">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black dark:text-white">
@@ -755,7 +906,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                 </div>
               </div>
 
-              {/* Linux Cgroup Sandbox Telemetry */}
               <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-4">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black dark:text-white">
                   <ShieldCheck size={16} /> Docker Containment Telemetry
@@ -788,7 +938,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
               </div>
             </div>
 
-            {/* Historical Sandbox Runs */}
             <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
               <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
                 <h2 className="text-sm font-bold text-black dark:text-white flex items-center gap-2">
@@ -838,6 +987,383 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                   </table>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: PROFILE VIEW (PDF Screen 12 Layout) */}
+        {activeTab === 'profile' && (
+          <div className="space-y-6">
+            
+            {profileSaved && (
+              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 flex items-center justify-between text-xs text-black dark:text-white shadow-sm">
+                <div className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 size={16} />
+                  Profile details and photo updated successfully!
+                </div>
+                <button
+                  onClick={() => setActiveTab('studio')}
+                  className="px-3.5 py-1.5 rounded-xl bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm"
+                >
+                  Move to Dashboard →
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              {/* Left Column: Avatar & Overview */}
+              <div className="lg:col-span-4 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm flex flex-col items-center text-center space-y-5">
+                
+                {/* Avatar Display */}
+                <div className="relative">
+                  <div className="w-28 h-28 rounded-full bg-slate-100 dark:bg-zinc-800 border-2 border-slate-200 dark:border-zinc-700 flex items-center justify-center overflow-hidden shadow-sm">
+                    {avatarPreview ? (
+                      <img src={avatarPreview} alt={profileData.name || 'User Avatar'} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-3xl font-extrabold text-black dark:text-white">
+                        {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <label 
+                    htmlFor="avatar-upload-btn"
+                    className="absolute bottom-0 right-0 p-2 rounded-full bg-black text-white dark:bg-white dark:text-black cursor-pointer shadow-md hover:scale-105 transition-transform"
+                    title="Upload profile picture"
+                  >
+                    <Camera size={15} />
+                    <input 
+                      id="avatar-upload-btn"
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleAvatarChange}
+                      className="hidden" 
+                    />
+                  </label>
+                </div>
+
+                <div>
+                  <h2 className="text-lg font-bold text-black dark:text-white">
+                    {profileData.name || 'Developer'}
+                  </h2>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                    {user?.email || profileData.email || 'developer@algomind.dev'}
+                  </p>
+                  <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-zinc-800 text-black dark:text-white border border-slate-200 dark:border-zinc-700">
+                    Software Developer
+                  </span>
+                </div>
+
+                <div className="w-full flex items-center justify-center gap-2 pt-1">
+                  <label 
+                    htmlFor="avatar-upload-btn" 
+                    className="px-3.5 py-1.5 rounded-xl bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold cursor-pointer transition-all shadow-sm flex items-center gap-1.5"
+                  >
+                    <Upload size={13} />
+                    Upload Photo
+                  </label>
+                  {avatarPreview && (
+                    <button 
+                      type="button" 
+                      onClick={() => setAvatarPreview(null)}
+                      className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors border border-slate-200 dark:border-zinc-700"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+
+                {/* Quick Stats from PDF Screen 12 */}
+                <div className="w-full pt-4 border-t border-slate-100 dark:border-zinc-800 space-y-3 text-left">
+                  <div className="text-xs font-bold text-black dark:text-white">Quick Stats</div>
+                  
+                  <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
+                    <span className="text-xs text-slate-600 dark:text-zinc-400">Simulations Completed</span>
+                    <span className="text-sm font-bold font-mono text-black dark:text-white">+{acceptedCount}</span>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
+                    <span className="text-xs text-slate-600 dark:text-zinc-400">Total Learning Time</span>
+                    <span className="text-sm font-bold font-mono text-black dark:text-white">8h 16m</span>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
+                    <span className="text-xs text-slate-600 dark:text-zinc-400">Preparedness Score</span>
+                    <span className="text-sm font-bold font-mono text-black dark:text-white">{solveRate}%</span>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Right Column: Personal Information Form */}
+              <div className="lg:col-span-8 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-6">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-4">
+                  <div>
+                    <h2 className="text-base font-extrabold text-black dark:text-white">
+                      Personal Information
+                    </h2>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                      Enter and update your personal details and developer background
+                    </p>
+                  </div>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('studio')}
+                    className="text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    Move to Dashboard →
+                  </button>
+                </div>
+
+                <form onSubmit={handleSaveProfile} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                        Full Name
+                      </label>
+                      <input 
+                        type="text"
+                        required
+                        value={profileData.name}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                        placeholder="Your full name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                        Email Address
+                      </label>
+                      <input 
+                        type="email"
+                        disabled
+                        value={user?.email || profileData.email}
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-700 text-xs text-slate-500 dark:text-zinc-500 cursor-not-allowed"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                        Mobile / Phone Number
+                      </label>
+                      <input 
+                        type="tel"
+                        value={profileData.phone}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                        placeholder="+91 9876543210"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                        School / Organization
+                      </label>
+                      <input 
+                        type="text"
+                        value={profileData.organization}
+                        onChange={(e) => setProfileData(prev => ({ ...prev, organization: e.target.value }))}
+                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                        placeholder="e.g. Greenfield High School"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      Address / Location
+                    </label>
+                    <input 
+                      type="text"
+                      value={profileData.location}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                      placeholder="e.g. Coimbatore, India"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      Bio / Description
+                    </label>
+                    <textarea 
+                      rows={3}
+                      value={profileData.bio}
+                      onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                      placeholder="Tell us about your algorithmic journey..."
+                    />
+                  </div>
+
+                  <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <button
+                      type="submit"
+                      className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-black text-white hover:bg-zinc-800 active:bg-zinc-900 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                    >
+                      <Save size={14} />
+                      Save Details & Photo
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('studio')}
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors border border-slate-200 dark:border-zinc-700 flex items-center justify-center gap-1.5"
+                    >
+                      Move to Dashboard →
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: SETTINGS VIEW */}
+        {activeTab === 'settings' && (
+          <div className="space-y-6">
+            
+            {settingsSaved && (
+              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 flex items-center justify-between text-xs text-black dark:text-white shadow-sm">
+                <div className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 size={16} />
+                  Settings saved successfully!
+                </div>
+                <button
+                  onClick={() => setActiveTab('studio')}
+                  className="px-3.5 py-1.5 rounded-xl bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm"
+                >
+                  Move to Dashboard →
+                </button>
+              </div>
+            )}
+
+            <div className="max-w-4xl space-y-6">
+              
+              {/* Appearance & Theme */}
+              <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-4">
+                <div>
+                  <h2 className="text-base font-bold text-black dark:text-white">Appearance & Theme</h2>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Customize interface theme for day and night practice</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    type="button"
+                    onClick={() => { if (isDark) toggleTheme(); }}
+                    className={`p-4 rounded-xl border flex items-center gap-3 transition-all ${
+                      !isDark 
+                        ? 'border-black dark:border-white bg-slate-100 dark:bg-zinc-800 shadow-sm font-bold' 
+                        : 'border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                    }`}
+                  >
+                    <Sun size={20} className="text-black dark:text-white" />
+                    <div className="text-left">
+                      <div className="text-xs font-bold text-black dark:text-white">Light Mode</div>
+                      <div className="text-[10px] text-slate-500 dark:text-zinc-400">High contrast day theme</div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => { if (!isDark) toggleTheme(); }}
+                    className={`p-4 rounded-xl border flex items-center gap-3 transition-all ${
+                      isDark 
+                        ? 'border-white bg-zinc-800 shadow-sm font-bold' 
+                        : 'border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                    }`}
+                  >
+                    <Moon size={20} className="text-black dark:text-white" />
+                    <div className="text-left">
+                      <div className="text-xs font-bold text-black dark:text-white">Dark Mode</div>
+                      <div className="text-[10px] text-slate-500 dark:text-zinc-400">Deep slate night theme</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Code Editor Settings */}
+              <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-4">
+                <div>
+                  <h2 className="text-base font-bold text-black dark:text-white">Code Editor Preferences</h2>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Configure Monaco editor typography and indentation</p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      Font Size
+                    </label>
+                    <select
+                      value={editorSettings.fontSize}
+                      onChange={(e) => setEditorSettings(prev => ({ ...prev, fontSize: e.target.value }))}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                    >
+                      <option value="12">12px — Compact</option>
+                      <option value="14">14px — Standard</option>
+                      <option value="16">16px — Large</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      Tab Indentation
+                    </label>
+                    <select
+                      value={editorSettings.tabSize}
+                      onChange={(e) => setEditorSettings(prev => ({ ...prev, tabSize: e.target.value }))}
+                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                    >
+                      <option value="2">2 Spaces (Google C++ Style)</option>
+                      <option value="4">4 Spaces (Standard)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Account Security Info */}
+              <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-4">
+                <div>
+                  <h2 className="text-base font-bold text-black dark:text-white">Account & Authentication</h2>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Your sign-in credentials and security</p>
+                </div>
+
+                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-black dark:text-white">Registered Email</div>
+                    <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">{user?.email || 'user@algomind.dev'}</div>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-zinc-700 text-black dark:text-white">
+                    Verified
+                  </span>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={handleSaveSettings}
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-black text-white hover:bg-zinc-800 active:bg-zinc-900 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                >
+                  <Save size={14} />
+                  Save Settings
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('studio')}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors border border-slate-200 dark:border-zinc-700 flex items-center justify-center gap-1.5"
+                >
+                  Move to Dashboard →
+                </button>
+              </div>
+
             </div>
           </div>
         )}

@@ -19,6 +19,8 @@ function getRouteFromPath(pathname, isAuthenticated) {
   if (path === '/signup' || path === '/register') return 'signup';
   if (path === '/verify-email') return 'verify-email';
   if (path === '/dashboard') return isAuthenticated ? 'dashboard' : 'signin';
+  if (path === '/profile') return isAuthenticated ? 'profile' : 'signin';
+  if (path === '/settings') return isAuthenticated ? 'settings' : 'signin';
   if (path === '/admin') return 'admin';
   if (path === '/problems') return isAuthenticated ? 'problems' : 'signin';
   return isAuthenticated ? 'dashboard' : 'landing';
@@ -28,6 +30,8 @@ function getPathFromRoute(route, params = {}, isAuthenticated = false) {
   switch (route) {
     case 'landing': return '/';
     case 'dashboard': return '/dashboard';
+    case 'profile': return '/profile';
+    case 'settings': return '/settings';
     case 'signin': return '/signin';
     case 'signup': return '/signup';
     case 'verify-email': return '/verify-email';
@@ -97,7 +101,13 @@ function MainApp() {
 
     switch (currentRoute) {
       case 'dashboard':
-        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />;
+        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} initialTab="studio" />;
+
+      case 'profile':
+        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} initialTab="profile" />;
+
+      case 'settings':
+        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} initialTab="settings" />;
 
       case 'landing':
         return <LandingPage onNavigate={navigate} />;
