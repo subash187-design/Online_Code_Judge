@@ -51,7 +51,7 @@ export default function Navbar({ onNavigate, currentPage }) {
           </div>
         </div>
 
-        {/* Center: Global Direct Workspace Navigation (Shown for authenticated users) */}
+        {/* Center: Navigation */}
         {isAuthenticated ? (
           <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/70 dark:bg-zinc-900/70 p-1 rounded-xl border border-slate-200/60 dark:border-zinc-800/60">
             <button
@@ -83,8 +83,8 @@ export default function Navbar({ onNavigate, currentPage }) {
                 onClick={() => handleNav('admin')}
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
                   currentPage === 'admin'
-                    ? 'text-brand-600 dark:text-brand-400 bg-white dark:bg-zinc-800 shadow-soft-sm'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400'
+                    ? 'text-slate-900 dark:text-white bg-white dark:bg-zinc-800 shadow-soft-sm'
+                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <Shield size={14} />
@@ -93,7 +93,35 @@ export default function Navbar({ onNavigate, currentPage }) {
             )}
           </nav>
         ) : (
-          <div className="hidden md:block" />
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-zinc-400">
+            <button 
+              onClick={() => handleNav('landing')} 
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+            >
+              Home
+            </button>
+            <a 
+              href="#features" 
+              onClick={() => handleNav('landing')} 
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+            >
+              Features
+            </a>
+            <a 
+              href="#how-it-works" 
+              onClick={() => handleNav('landing')} 
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+            >
+              How it Works
+            </a>
+            <a 
+              href="#about" 
+              onClick={() => handleNav('landing')} 
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
+            >
+              About
+            </a>
+          </nav>
         )}
 
         {/* Right Controls: [Theme Toggle] | [Sign In / User Avatar] */}
@@ -103,7 +131,7 @@ export default function Navbar({ onNavigate, currentPage }) {
             onClick={toggleTheme}
             title={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
             aria-label="Toggle theme"
-            className="p-2 rounded-xl text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700/80 transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+            className="p-2 rounded-xl text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-zinc-800/80 hover:bg-slate-200 dark:hover:bg-zinc-700/80 border border-slate-200 dark:border-zinc-700/80 transition-all focus:outline-none focus:ring-2 focus:ring-slate-400"
           >
             {isDark ? (
               <Sun size={17} className="text-amber-400 transition-transform rotate-0 hover:rotate-45" />
@@ -116,8 +144,8 @@ export default function Navbar({ onNavigate, currentPage }) {
 
           {isAuthenticated ? (
             <div className="flex items-center gap-2.5">
-              <div className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80">
-                <div className="w-7 h-7 rounded-lg bg-brand-500/10 dark:bg-brand-500/20 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold text-xs">
+              <div className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800/80">
+                <div className="w-7 h-7 rounded-lg bg-zinc-800 dark:bg-zinc-700 text-white flex items-center justify-center font-bold text-xs">
                   {user?.name ? user.name.charAt(0).toUpperCase() : <User size={13} />}
                 </div>
                 <div className="flex flex-col text-left">
@@ -126,7 +154,7 @@ export default function Navbar({ onNavigate, currentPage }) {
                       {user?.name || user?.username}
                     </span>
                     {user?.role === 'ADMIN' && (
-                      <span className="text-[9px] bg-brand-50 dark:bg-brand-950 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800 px-1 rounded uppercase font-bold">
+                      <span className="text-[9px] bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-zinc-100 border border-slate-300 dark:border-zinc-700 px-1 rounded uppercase font-bold">
                         Admin
                       </span>
                     )}
@@ -144,25 +172,23 @@ export default function Navbar({ onNavigate, currentPage }) {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => handleNav('signin')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                className={`text-sm font-semibold transition-colors px-3 py-1.5 ${
                   currentPage === 'signin'
-                    ? 'text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200/60 dark:border-brand-800/60'
-                    : 'text-slate-700 dark:text-zinc-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-800'
+                    ? 'text-slate-900 dark:text-white font-bold'
+                    : 'text-slate-700 dark:text-zinc-300 hover:text-black dark:hover:text-white'
                 }`}
               >
-                <LogIn size={14} />
-                Sign In
+                Login
               </button>
 
               <button
                 onClick={() => handleNav('signup')}
-                className="px-4 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-semibold transition-all shadow-soft-sm hover:shadow-glow-brand flex items-center gap-1.5"
+                className="px-4 py-2 rounded-xl bg-black hover:bg-zinc-800 active:bg-zinc-900 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-white text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5"
               >
-                <UserPlus size={14} />
-                Sign Up
+                Get started
               </button>
             </div>
           )}
@@ -218,13 +244,13 @@ export default function Navbar({ onNavigate, currentPage }) {
                   onClick={() => handleNav('signin')}
                   className="w-full py-2.5 rounded-xl text-center text-sm font-semibold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center justify-center gap-2"
                 >
-                  <LogIn size={15} /> Sign In
+                  <LogIn size={15} /> Login
                 </button>
                 <button
                   onClick={() => handleNav('signup')}
-                  className="w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-brand-600 hover:bg-brand-700 text-white flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-black dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-200 flex items-center justify-center gap-2 shadow-sm"
                 >
-                  <UserPlus size={15} /> Sign Up
+                  <UserPlus size={15} /> Get started
                 </button>
               </div>
             </>

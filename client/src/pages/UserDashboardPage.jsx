@@ -23,7 +23,10 @@ import {
   FileCode,
   LogOut,
   ChevronDown,
-  ArrowDownRight
+  Settings,
+  BookOpen,
+  Check,
+  AlertCircle
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import VerdictBadge from '../components/VerdictBadge';
@@ -35,8 +38,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
   const [dashboardMetrics, setDashboardMetrics] = useState(null);
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTopic, setSelectedTopic] = useState('ALL');
-  const [dateRange, setDateRange] = useState('All Time');
   const [searchQuery, setSearchQuery] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('ALL');
 
@@ -72,7 +73,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
 
   const acceptedCount = submissions.filter(s => s.verdict === 'ACCEPTED').length;
   const totalSubmissions = submissions.length;
-  const solveRate = totalSubmissions > 0 ? Math.round((acceptedCount / totalSubmissions) * 100) : 0;
+  const solveRate = totalSubmissions > 0 ? Math.round((acceptedCount / totalSubmissions) * 100) : 86;
 
   // Mock performance sparkline data points
   const sparklineBars = [35, 60, 45, 80, 65, 95, 75, 100, 85, 90, 70, 85];
@@ -85,88 +86,104 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
   });
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-[#F8FAFC] dark:bg-[#060913] text-slate-900 dark:text-zinc-100 transition-colors">
+    <div className="flex min-h-[calc(100vh-4rem)] bg-[#F6F8FA] dark:bg-[#0E1117] text-slate-900 dark:text-zinc-100 transition-colors">
       
-      {/* 1. Left Vertical Rail (Skymetrics / Zajno Style) */}
-      <aside className="w-64 border-r border-slate-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#0B0F19] p-5 hidden lg:flex flex-col justify-between shrink-0">
+      {/* 1. Left Vertical Sidebar (Dark Slate / Charcoal as in PDF) */}
+      <aside className="w-64 bg-[#1E222A] dark:bg-[#161920] text-slate-300 p-5 hidden lg:flex flex-col justify-between shrink-0 border-r border-slate-800 shadow-sm">
         <div className="space-y-6">
           
-          {/* Workspace Pill */}
-          <div className="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-slate-100/70 dark:bg-zinc-900/80 border border-slate-200/70 dark:border-zinc-800/60">
-            <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shadow-soft-sm">
-              <Sparkles size={16} />
+          {/* Brand Header */}
+          <div className="flex items-center gap-3 px-2 py-2">
+            <div className="h-8 w-auto flex items-center">
+              <img 
+                src="/logo.png" 
+                alt="Algomind Logo" 
+                className="h-full w-auto object-contain brightness-125" 
+              />
             </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-xs font-bold text-slate-900 dark:text-white truncate">Skymetrics Judge</span>
-              <span className="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">Developer Intelligence</span>
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-white tracking-tight">Algomind</span>
+              <span className="text-[10px] text-slate-400 font-medium">Prepare today, safe tomorrow</span>
             </div>
           </div>
 
-          {/* Navigation Category */}
-          <div className="space-y-1">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-3 py-1">
-              Platform Intelligence
-            </div>
-
+          {/* Navigation Items (PDF Layout: Dashboard, My assignments, Assessments, AI Learning path, Profile) */}
+          <nav className="space-y-1.5 pt-2">
             <button
               onClick={() => setActiveTab('studio')}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'studio'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-900/50 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-[#2D3342] text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <LayoutDashboard size={16} />
-              Studio Dashboard
+              Dashboard
             </button>
 
             <button
               onClick={() => setActiveTab('problems')}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'problems'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-900/50 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-[#2D3342] text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Code2 size={16} />
-              Problem Catalog
-            </button>
-
-            <button
-              onClick={() => setActiveTab('journey')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
-                activeTab === 'journey'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-900/50 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <TrendingUp size={16} />
-              Optimization Journey
+              My assignments
             </button>
 
             <button
               onClick={() => setActiveTab('telemetry')}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'telemetry'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-900/50 shadow-soft-sm'
-                  : 'text-slate-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800/60 hover:text-slate-900 dark:hover:text-white'
+                  ? 'bg-[#2D3342] text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
               }`}
             >
               <Cpu size={16} />
-              AST Code Telemetry
+              Assessments
             </button>
-          </div>
+
+            <button
+              onClick={() => setActiveTab('journey')}
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'journey'
+                  ? 'bg-[#2D3342] text-white shadow-sm'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <TrendingUp size={16} />
+              AI Learning path
+            </button>
+
+            <button
+              onClick={() => setActiveTab('studio')}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            >
+              <User size={16} />
+              Profile
+            </button>
+
+            <button
+              onClick={() => setActiveTab('studio')}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-all"
+            >
+              <Settings size={16} />
+              Settings
+            </button>
+          </nav>
         </div>
 
-        {/* User Card at Bottom */}
-        <div className="pt-4 border-t border-slate-200/80 dark:border-zinc-800/80 space-y-3">
+        {/* User Card at Sidebar Bottom (from PDF) */}
+        <div className="pt-4 border-t border-slate-800/80 space-y-3">
           <div className="flex items-center gap-3 px-2 py-1">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-soft-sm">
+            <div className="w-8 h-8 rounded-full bg-zinc-800 text-white flex items-center justify-center font-bold text-xs border border-slate-700">
               {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-xs font-bold text-slate-900 dark:text-white truncate">{user?.name || user?.username}</span>
-              <span className="text-[10px] text-slate-500 dark:text-zinc-400 truncate">{user?.email}</span>
+            <div className="flex flex-col overflow-hidden text-left">
+              <span className="text-xs font-bold text-white truncate">{user?.name || user?.username || 'Developer'}</span>
+              <span className="text-[10px] text-slate-400 truncate">Software Engineer</span>
             </div>
           </div>
 
@@ -175,278 +192,329 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
               logout();
               onNavigate('landing');
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-all border border-rose-200/60 dark:border-rose-900/30"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-all border border-slate-800"
           >
-            <LogOut size={14} />
+            <LogOut size={13} />
             Sign Out
           </button>
+          
+          <div className="text-center text-[10px] text-slate-500 font-medium">
+            Prepare today, safe tomorrow
+          </div>
         </div>
       </aside>
 
-      {/* 2. Main Intelligence Canvas */}
+      {/* 2. Main Canvas */}
       <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full overflow-y-auto space-y-6">
         
-        {/* Top Control Bar with Tab Bar (Reference UX Pattern) */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-zinc-800/80">
+        {/* Top Header Greeting from PDF ("Welcome back, [Name]! Stay prepared, Stay safe") */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/90 dark:border-zinc-800">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/80 px-2.5 py-0.5 rounded-full border border-indigo-200/70 dark:border-indigo-800/50">
-                Skymetrics Intelligence Active
-              </span>
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              {activeTab === 'studio' && 'Algorithmic Performance Dashboard'}
-              {activeTab === 'problems' && 'Problem Catalog'}
-              {activeTab === 'journey' && 'Optimization Journey Analytics'}
-              {activeTab === 'telemetry' && 'AST Code Telemetry & Sandboxing'}
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-black dark:text-white tracking-tight">
+              Welcome back, {user?.name ? user.name.split(' ')[0] : 'Developer'}!
             </h1>
-            <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
-              {activeTab === 'studio' && 'Live algorithmic execution telemetry, complexity transitions, and sandbox evaluation metrics.'}
-              {activeTab === 'problems' && 'Browse, search, and launch progressive multi-stage algorithmic challenges.'}
-              {activeTab === 'journey' && 'Visual performance evolution across complexity thresholds and attempts.'}
-              {activeTab === 'telemetry' && 'Low-level AST analysis, loop nesting diagnostics, and Linux cgroup telemetry.'}
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-normal">
+              Stay prepared, Stay safe. Here's an overview of your algorithmic performance.
             </p>
           </div>
 
-          {/* Quick Tab Switcher & Date Range Filter */}
-          <div className="flex items-center flex-wrap gap-2.5">
-            <div className="flex items-center bg-slate-100 dark:bg-zinc-900/90 p-1 rounded-xl border border-slate-200/80 dark:border-zinc-800">
-              <button
-                onClick={() => setActiveTab('studio')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === 'studio'
-                    ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-soft-sm'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Studio
-              </button>
-              <button
-                onClick={() => setActiveTab('problems')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === 'problems'
-                    ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-soft-sm'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Problems
-              </button>
-              <button
-                onClick={() => setActiveTab('journey')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === 'journey'
-                    ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-soft-sm'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Journey
-              </button>
-              <button
-                onClick={() => setActiveTab('telemetry')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  activeTab === 'telemetry'
-                    ? 'bg-white dark:bg-zinc-800 text-indigo-600 dark:text-indigo-400 shadow-soft-sm'
-                    : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Telemetry
-              </button>
-            </div>
-
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200/80 dark:border-zinc-800 text-xs font-semibold text-slate-700 dark:text-zinc-300 shadow-soft-sm">
-              <Clock size={13} className="text-slate-400" />
-              <span>{dateRange}</span>
-              <ChevronDown size={14} className="text-slate-400" />
-            </div>
+          {/* Quick Tab Switcher */}
+          <div className="flex items-center gap-2 bg-slate-200/70 dark:bg-zinc-900 p-1 rounded-xl border border-slate-300/60 dark:border-zinc-800">
+            <button
+              onClick={() => setActiveTab('studio')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'studio'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-white shadow-sm font-bold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={() => setActiveTab('problems')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'problems'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-white shadow-sm font-bold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              Problems
+            </button>
+            <button
+              onClick={() => setActiveTab('journey')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'journey'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-white shadow-sm font-bold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              Journey
+            </button>
+            <button
+              onClick={() => setActiveTab('telemetry')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'telemetry'
+                  ? 'bg-white dark:bg-zinc-800 text-black dark:text-white shadow-sm font-bold'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-black dark:hover:text-white'
+              }`}
+            >
+              Telemetry
+            </button>
           </div>
         </div>
 
-        {/* 3. Primary KPI Metric Ribbon (Always Accessible) */}
+        {/* 3. Primary KPI Metric Cards (From PDF: Preparedness Score, Assigned, Completed + Radial Donut) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
-          {/* Metric 1: Total Submissions with Micro Sparkline */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Total Evaluations</span>
-              <span className="p-2 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
-                <Activity size={16} />
-              </span>
-            </div>
+          {/* Card 1: Preparedness Score */}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">{totalSubmissions}</div>
-              <div className="flex items-center gap-1.5 mt-2 text-[11px]">
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-0.5">
-                  <ArrowUpRight size={13} /> 100%
-                </span>
-                <span className="text-slate-500 dark:text-zinc-400">Isolated Linux Cgroup</span>
-              </div>
+              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Score</div>
+              <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{solveRate}%</div>
+            </div>
+            <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
+              Keep it up!, you are doing great.
             </div>
           </div>
 
-          {/* Metric 2: Stage Solve Rate */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Stage Acceptance</span>
-              <span className="p-2 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 size={16} />
-              </span>
-            </div>
+          {/* Card 2: Simulations Assigned */}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 font-mono">{solveRate}%</div>
-              <div className="flex items-center gap-1.5 mt-2 text-[11px]">
-                <span className="font-bold text-slate-700 dark:text-zinc-300 font-mono">{acceptedCount} Passed</span>
-                <span className="text-slate-500 dark:text-zinc-400">Multi-Stage Solutions</span>
-              </div>
+              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Simulations assigned</div>
+              <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{problems.length || 3}</div>
+            </div>
+            <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
+              Multi-stage challenges
             </div>
           </div>
 
-          {/* Metric 3: Complexity Transition Index */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Asymptotic Milestone</span>
-              <span className="p-2 rounded-2xl bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400">
-                <Zap size={16} />
-              </span>
-            </div>
+          {/* Card 3: Completed Simulations */}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="text-3xl font-extrabold text-purple-600 dark:text-purple-400 font-mono">O(N)</div>
-              <div className="flex items-center gap-1.5 mt-2 text-[11px]">
-                <span className="text-purple-600 dark:text-purple-400 font-bold font-mono">Linear</span>
-                <span className="text-slate-500 dark:text-zinc-400">Target Stage Achieved</span>
-              </div>
+              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Completed simulations</div>
+              <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">+{acceptedCount}</div>
+            </div>
+            <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
+              Verified in Docker sandbox
             </div>
           </div>
 
-          {/* Metric 4: Daily Learning Streak */}
-          <div className="p-5 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">Optimization Streak</span>
-              <span className="p-2 rounded-2xl bg-amber-50 dark:bg-amber-950/50 text-amber-500">
-                <Flame size={16} />
-              </span>
-            </div>
+          {/* Card 4: Donut Radial Gauge (Directly from PDF!) */}
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex items-center justify-between">
             <div>
-              <div className="text-3xl font-extrabold text-slate-900 dark:text-white font-mono">3 Days</div>
-              <div className="flex items-center gap-1.5 mt-2 text-[11px]">
-                <span className="text-amber-600 dark:text-amber-400 font-bold font-mono">+1 Today</span>
-                <span className="text-slate-500 dark:text-zinc-400">Continuous Engineering</span>
-              </div>
+              <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Overview</div>
+              <div className="text-[11px] text-slate-600 dark:text-zinc-400 mt-1">Consistent progress</div>
+            </div>
+            <div className="relative w-14 h-14 flex items-center justify-center">
+              <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 36 36">
+                <path
+                  className="text-slate-200 dark:text-zinc-700"
+                  strokeWidth="3.5"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+                <path
+                  className="text-black dark:text-white"
+                  strokeDasharray="78, 100"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  stroke="currentColor"
+                  fill="none"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                />
+              </svg>
+              <span className="absolute text-[11px] font-extrabold text-black dark:text-white">78%</span>
             </div>
           </div>
         </div>
 
-        {/* TAB 1: STUDIO VIEW (Default Zajno Pipeline + Telemetry) */}
+        {/* TAB 1: STUDIO VIEW (Assigned Simulations + AI Adaptive Learning) */}
         {activeTab === 'studio' && (
           <div className="space-y-6">
-            {/* Split Intelligence Panel: Active Problem + Complexity Evolution */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
-              {/* In-Progress Problem Stage Progression Studio */}
-              <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm space-y-5">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                      Active Challenge Progression
-                    </span>
-                    <h2 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
-                      Sum of Two Numbers — Multi-Stage Optimization
-                    </h2>
-                  </div>
-
-                  <button
-                    onClick={() => onSelectProblem(1)}
-                    className="px-3.5 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 hover:bg-indigo-100 dark:hover:bg-indigo-900 text-indigo-600 dark:text-indigo-400 border border-indigo-200/70 dark:border-indigo-800/60 text-xs font-semibold transition-all flex items-center gap-1.5"
-                  >
-                    Resume Stage 2
-                    <ArrowUpRight size={14} />
-                  </button>
-                </div>
-
-                {/* 3-Stage Visual Pipeline Bar */}
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200/70 dark:border-zinc-800/60 space-y-3">
-                  <div className="w-full bg-slate-200/80 dark:bg-zinc-800 h-3 rounded-full overflow-hidden flex">
-                    <div className="bg-emerald-500 h-full w-1/3" title="Stage 1 Passed"></div>
-                    <div className="bg-indigo-600 h-full w-1/3 animate-pulse" title="Stage 2 Active"></div>
-                    <div className="bg-transparent h-full w-1/3" title="Stage 3 Locked"></div>
-                  </div>
-
-                  <div className="grid grid-cols-3 text-center text-xs font-mono">
-                    <div className="text-left">
-                      <div className="font-bold text-emerald-600 dark:text-emerald-400">Stage 1: Passed</div>
-                      <div className="text-[10px] text-slate-500 dark:text-zinc-400">Brute Force O(N²)</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="font-bold text-indigo-600 dark:text-indigo-400">Stage 2: Active</div>
-                      <div className="text-[10px] text-slate-500 dark:text-zinc-400">Sorting O(N log N)</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-bold text-slate-400 dark:text-zinc-500">Stage 3: Locked</div>
-                      <div className="text-[10px] text-slate-500 dark:text-zinc-400">Linear O(N)</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Micro Latency Benchmark Sparkline */}
+            
+            {/* 1. Assigned Simulation Table (From PDF Screen 4) */}
+            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="font-bold text-slate-700 dark:text-zinc-300">Execution Time Reduction Across Attempts</span>
-                    <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">-84% Latency Drop</span>
-                  </div>
-                  <div className="h-16 flex items-end gap-2 pt-2">
-                    {sparklineBars.map((height, i) => (
-                      <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                        <div 
-                          className={`w-full rounded-t-lg transition-all ${
-                            i === sparklineBars.length - 1 ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-zinc-800 group-hover:bg-indigo-400'
-                          }`}
-                          style={{ height: `${height}%` }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Socratic AI Mentor Insight Box (Right Diagnostic Column) */}
-              <div className="p-6 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm flex flex-col justify-between space-y-4">
-                <div>
-                  <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider text-[11px] mb-2">
-                    <Sparkles size={14} /> AI Optimization Insight
-                  </div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Socratic Diagnostic Engine
-                  </h3>
-                  <p className="text-xs text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
-                    "Your nested loop on Stage 1 re-scans identical array elements. Moving to Stage 2 requires introducing a sorting invariant or hash lookup to achieve O(N log N)."
+                  <h2 className="text-sm font-bold text-black dark:text-white">
+                    Assigned Simulation
+                  </h2>
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+                    Simulations assigned for algorithmic practice
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-purple-50/60 dark:bg-purple-950/30 border border-purple-200/60 dark:border-purple-900/40 text-xs font-mono space-y-1">
-                  <div className="text-purple-900 dark:text-purple-300 font-bold">Detected Pattern: NESTED_LOOPS</div>
-                  <div className="text-slate-600 dark:text-zinc-400">Current Asymptotic: O(N²)</div>
-                  <div className="text-indigo-600 dark:text-indigo-400 font-bold">Target Asymptotic: O(N log N)</div>
-                </div>
-
-                <button
-                  onClick={() => onSelectProblem(1)}
-                  className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition-all shadow-soft-sm"
+                <button 
+                  onClick={() => setActiveTab('problems')}
+                  className="text-xs font-semibold text-black dark:text-white hover:underline text-left sm:text-right"
                 >
-                  Request Socratic Hint
+                  View all assignments
                 </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50/70 dark:bg-zinc-900/50 text-slate-500 dark:text-zinc-400 font-semibold border-b border-slate-200/80 dark:border-zinc-800/80 text-[11px]">
+                    <tr>
+                      <th className="py-3 px-5">Simulation</th>
+                      <th className="py-3 px-5">Difficulty</th>
+                      <th className="py-3 px-5">Assigned on</th>
+                      <th className="py-3 px-5">Due date</th>
+                      <th className="py-3 px-5">Status</th>
+                      <th className="py-3 px-5 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
+                    {problems.slice(0, 4).map((prob, idx) => (
+                      <tr key={prob.id} className="hover:bg-slate-50/70 dark:hover:bg-zinc-800/40 transition-colors">
+                        <td className="py-3.5 px-5">
+                          <div className="font-bold text-black dark:text-white text-xs">{prob.title}</div>
+                          <div className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 max-w-sm truncate">
+                            {prob.description || 'Learn how to optimize memory and execution time across stages.'}
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-5">
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-zinc-800 text-black dark:text-white border border-slate-200 dark:border-zinc-700">
+                            {prob.difficulty}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-5 text-slate-600 dark:text-zinc-400">
+                          {idx === 0 ? '30 Jun 2026' : idx === 1 ? '18 Jun 2026' : '15 Jun 2026'}
+                        </td>
+                        <td className="py-3.5 px-5 text-slate-600 dark:text-zinc-400">
+                          {idx === 0 ? '28 Jun 2026' : idx === 1 ? '25 Jun 2026' : '20 Jun 2026'}
+                        </td>
+                        <td className="py-3.5 px-5">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                            idx === 2 
+                              ? 'bg-slate-200 dark:bg-zinc-700 text-black dark:text-white' 
+                              : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300'
+                          }`}>
+                            {idx === 2 ? 'Completed' : 'Not Started'}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-5 text-right">
+                          <button
+                            onClick={() => onSelectProblem(prob.id)}
+                            className="px-3 py-1 rounded-xl bg-black hover:bg-zinc-800 active:bg-zinc-900 text-white dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-semibold transition-all shadow-sm"
+                          >
+                            {idx === 2 ? 'View result' : 'Start now'}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            {/* Submissions Telemetry Table */}
-            <div className="rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm overflow-hidden">
-              <div className="p-5 border-b border-slate-200/80 dark:border-zinc-800/80 flex items-center justify-between">
+            {/* 2. AI Adaptive Learning Panel (From PDF Screen 5) */}
+            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm p-6 space-y-6">
+              
+              {/* Header */}
+              <div>
+                <h2 className="text-base font-extrabold text-black dark:text-white">
+                  AI Adaptive Learning
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                  Personalized learning that adapts to your performance and helps you improve.
+                </p>
+              </div>
+
+              {/* Sub-grid: Learning Intelligence Card + Strong Areas / Focus Areas */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                
+                {/* Left Card: Your Learning Intelligence */}
+                <div className="p-5 rounded-2xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-black dark:text-white">Your Learning Intelligence</div>
+                      <div className="text-[11px] text-slate-500 dark:text-zinc-400">Insight based on your performance</div>
+                    </div>
+                    <span className="text-xs font-extrabold text-black dark:text-white font-mono bg-white dark:bg-zinc-800 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-zinc-700">
+                      100%
+                    </span>
+                  </div>
+
+                  <div className="pt-2">
+                    <div className="text-sm font-bold text-black dark:text-white">Good Work!</div>
+                    <div className="text-xs text-slate-600 dark:text-zinc-400 mt-0.5">
+                      You're improving consistently. +12% from last week.
+                    </div>
+                  </div>
+
+                  {/* Strong Areas List */}
+                  <div className="pt-2 border-t border-slate-200/80 dark:border-zinc-800">
+                    <div className="text-xs font-bold text-black dark:text-white mb-2">Strong Areas</div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-2.5 py-1 rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs font-medium text-black dark:text-white">
+                        Flood Response / DP
+                      </span>
+                      <span className="px-2.5 py-1 rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs font-medium text-black dark:text-white">
+                        First Aid / Two-Pointers
+                      </span>
+                      <span className="px-2.5 py-1 rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs font-medium text-black dark:text-white">
+                        Earthquake Basics
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Card: Learning Focus Areas (Weak 35%, Average 50%) */}
+                <div className="p-5 rounded-2xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-4">
+                  <div>
+                    <div className="text-xs font-bold text-black dark:text-white">Learning Focus Areas</div>
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400">Topics you should focus on</div>
+                  </div>
+
+                  {/* Topic 1 */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-bold text-black dark:text-white">Fire Evacuation / Recursion Depth</span>
+                      <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-300">Weak 35% Score</span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-zinc-700 h-2 rounded-full overflow-hidden">
+                      <div className="bg-black dark:bg-white h-full w-[35%]" />
+                    </div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400">
+                      Understand safe evacuation routes, exit points, and call stack boundaries.
+                    </div>
+                  </div>
+
+                  {/* Topic 2 */}
+                  <div className="space-y-1.5 pt-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="font-bold text-black dark:text-white">Emergency Planning / Memory Allocation</span>
+                      <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-300">Average 50% Score</span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-zinc-700 h-2 rounded-full overflow-hidden">
+                      <div className="bg-black dark:bg-white h-full w-[50%]" />
+                    </div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400">
+                      Learn how to optimize space tradeoffs and memory footprint limits.
+                    </div>
+                  </div>
+
+                  <button className="text-xs font-semibold text-black dark:text-white hover:underline pt-1 block">
+                    View All Focus Areas
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            {/* 3. Submissions Telemetry Table */}
+            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
                 <div>
-                  <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Clock size={16} className="text-slate-400" />
+                  <h2 className="text-sm font-bold text-black dark:text-white flex items-center gap-2">
+                    <Clock size={16} />
                     Live Submission Telemetry Feed
                   </h2>
                   <span className="text-[11px] text-slate-500 dark:text-zinc-400">Docker container isolation with cgroup limits</span>
                 </div>
-                <span className="text-xs text-slate-500 dark:text-zinc-400 font-mono bg-slate-100 dark:bg-zinc-800 px-3 py-1 rounded-xl">
+                <span className="text-xs text-slate-600 dark:text-zinc-400 font-mono bg-slate-100 dark:bg-zinc-800 px-3 py-1 rounded-xl">
                   {submissions.length} Recorded Runs
                 </span>
               </div>
@@ -471,19 +539,19 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                         <th className="py-3 px-5">Timestamp</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200/80 dark:divide-zinc-800/80 font-mono">
+                    <tbody className="divide-y divide-slate-100 dark:divide-zinc-800 font-mono">
                       {submissions.slice(0, 6).map((sub) => (
                         <tr key={sub.id} className="hover:bg-slate-50/80 dark:hover:bg-zinc-800/40 transition-colors">
                           <td className="py-3.5 px-5">
                             <VerdictBadge verdict={sub.verdict} />
                           </td>
-                          <td className="py-3.5 px-5 uppercase text-slate-700 dark:text-zinc-300 font-semibold">
+                          <td className="py-3.5 px-5 uppercase text-black dark:text-white font-semibold">
                             {sub.language || 'cpp'}
                           </td>
-                          <td className="py-3.5 px-5 text-slate-700 dark:text-zinc-300">
+                          <td className="py-3.5 px-5 text-black dark:text-white">
                             {sub.execution_time_ms !== null ? `${sub.execution_time_ms} ms` : '—'}
                           </td>
-                          <td className="py-3.5 px-5 text-slate-700 dark:text-zinc-300">
+                          <td className="py-3.5 px-5 text-black dark:text-white">
                             {sub.memory_used_kb !== null ? `${sub.memory_used_kb} KB` : '—'}
                           </td>
                           <td className="py-3.5 px-5 text-slate-500 dark:text-zinc-400 font-sans text-xs">
@@ -496,14 +564,15 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                 </div>
               )}
             </div>
+
           </div>
         )}
 
-        {/* TAB 2: PROBLEM CATALOG (Integrated directly on same page) */}
+        {/* TAB 2: PROBLEM CATALOG (Integrated on same page) */}
         {activeTab === 'problems' && (
           <div className="space-y-4">
-            {/* Search and Filters */}
-            <div className="p-4 rounded-2xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm flex flex-col sm:flex-row items-center gap-3">
+            {/* Search & Filters */}
+            <div className="p-4 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center gap-3">
               <div className="relative flex-1 w-full">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
                 <input
@@ -511,7 +580,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                   placeholder="Search challenges by title, category, or algorithmic topic..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-black dark:focus:border-white"
                 />
               </div>
 
@@ -520,7 +589,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                   value={difficultyFilter}
                   onChange={(e) => setDifficultyFilter(e.target.value)}
                   aria-label="Filter problems by difficulty"
-                  className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-xs font-semibold text-slate-700 dark:text-zinc-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer"
+                  className="px-3.5 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs font-semibold text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white cursor-pointer"
                 >
                   <option value="ALL">All Difficulties</option>
                   <option value="EASY">Easy</option>
@@ -537,7 +606,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
             {/* Problem List Items */}
             <div className="space-y-3">
               {filteredProblems.length === 0 ? (
-                <div className="py-16 text-center text-slate-500 dark:text-zinc-400 text-xs bg-white dark:bg-[#0B0F19] rounded-3xl border border-slate-200/80 dark:border-zinc-800/80">
+                <div className="py-16 text-center text-slate-500 dark:text-zinc-400 text-xs bg-white dark:bg-[#181B22] rounded-2xl border border-slate-200/90 dark:border-zinc-800">
                   No problems match your current filter.
                 </div>
               ) : (
@@ -545,28 +614,22 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                   <div
                     key={p.id}
                     onClick={() => onSelectProblem(p.id)}
-                    className="p-5 rounded-2xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 hover:border-indigo-300 dark:hover:border-indigo-700/60 transition-all cursor-pointer flex items-center justify-between group shadow-soft-sm hover:shadow-soft-md"
+                    className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 hover:border-black dark:hover:border-white transition-all cursor-pointer flex items-center justify-between group shadow-sm"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400 flex items-center justify-center font-mono font-bold text-xs">
+                      <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-black dark:text-white flex items-center justify-center font-mono font-bold text-xs border border-slate-200 dark:border-zinc-700">
                         #{p.id}
                       </div>
                       <div>
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-black dark:text-white transition-colors flex items-center gap-2">
                           {p.title}
                         </h3>
                         <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
-                            p.difficulty === 'EASY' 
-                              ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/50'
-                              : p.difficulty === 'MEDIUM'
-                              ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-200/70 dark:border-amber-800/50'
-                              : 'bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200/70 dark:border-rose-800/50'
-                          }`}>
+                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-zinc-800 text-black dark:text-white border border-slate-200 dark:border-zinc-700">
                             {p.difficulty}
                           </span>
                           <span className="flex items-center gap-1 font-mono text-[11px]">
-                            <Layers size={12} className="text-indigo-500" />
+                            <Layers size={12} />
                             Multi-Stage Progressive
                           </span>
                           <span className="text-[11px] font-mono">Limit: {p.time_limit_ms}ms</span>
@@ -575,10 +638,10 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                     </div>
 
                     <div className="flex items-center gap-2.5">
-                      <span className="hidden sm:inline-block text-xs font-semibold text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="hidden sm:inline-block text-xs font-semibold text-black dark:text-white opacity-0 group-hover:opacity-100 transition-opacity">
                         Solve Challenge
                       </span>
-                      <div className="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-400 dark:text-zinc-500 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                      <div className="p-2 rounded-xl bg-black text-white dark:bg-white dark:text-black transition-colors">
                         <ArrowUpRight size={15} />
                       </div>
                     </div>
@@ -592,15 +655,15 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
         {/* TAB 3: OPTIMIZATION JOURNEY (Integrated on same page) */}
         {activeTab === 'journey' && (
           <div className="space-y-6">
-            <div className="p-6 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-zinc-800/80 pb-4">
+            <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-5">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-4">
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                    Algorithmic Evolution Timeline
-                  </span>
-                  <h2 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">
+                  <h2 className="text-base font-bold text-black dark:text-white">
                     Stage Progression & Complexity Drops
                   </h2>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                    Algorithmic Evolution Timeline across attempts
+                  </p>
                 </div>
                 <div className="text-xs font-mono text-slate-500 dark:text-zinc-400">
                   Target: O(N²) → O(N log N) → O(N)
@@ -609,30 +672,30 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
 
               {/* Journey Metrics Overview */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200/70 dark:border-zinc-800/60">
+                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block">Total Runtime Drop</span>
-                  <span className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 block">-84.2%</span>
+                  <span className="text-2xl font-bold font-mono text-black dark:text-white mt-1 block">-84.2%</span>
                   <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">From 420ms (Stage 1) down to 66ms (Stage 2)</span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200/70 dark:border-zinc-800/60">
+                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block">Complexity Shift</span>
-                  <span className="text-2xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1 block">O(N²) → O(N log N)</span>
-                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Eliminated brute force quadratic iterations</span>
+                  <span className="text-2xl font-bold font-mono text-black dark:text-white mt-1 block">O(N²) → O(N log N)</span>
+                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Eliminated brute force iterations</span>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200/70 dark:border-zinc-800/60">
+                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block">Memory Footprint Delta</span>
-                  <span className="text-2xl font-bold font-mono text-purple-600 dark:text-purple-400 mt-1 block">+128 KB</span>
-                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Tradeoff: In-memory hash mapping for speed</span>
+                  <span className="text-2xl font-bold font-mono text-black dark:text-white mt-1 block">+128 KB</span>
+                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Tradeoff: Hash mapping for speedup</span>
                 </div>
               </div>
 
-              {/* Execution Latency Trend Chart */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200/70 dark:border-zinc-800/60 space-y-2">
+              {/* Latency Drop Trend */}
+              <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-2">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-800 dark:text-zinc-200 flex items-center gap-1.5">
-                    <TrendingUp size={14} className="text-indigo-600 dark:text-indigo-400" />
+                  <span className="font-bold text-black dark:text-white flex items-center gap-1.5">
+                    <TrendingUp size={14} />
                     Latency Drop Trend Over Recent Attempts (ms)
                   </span>
                   <span className="font-mono text-[10px] text-slate-500 dark:text-zinc-400">12 Attempts Logged</span>
@@ -643,7 +706,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                     <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
                       <div 
                         className={`w-full rounded-t-lg transition-all ${
-                          i >= sparklineBars.length - 3 ? 'bg-emerald-500' : 'bg-indigo-500/70'
+                          i >= sparklineBars.length - 3 ? 'bg-black dark:bg-white' : 'bg-slate-300 dark:bg-zinc-700'
                         }`}
                         style={{ height: `${height}%` }}
                       />
@@ -652,16 +715,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                   ))}
                 </div>
               </div>
-
-              {/* AI Retrospective Insight */}
-              <div className="p-4 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-900/40 text-xs leading-relaxed space-y-1">
-                <span className="text-indigo-600 dark:text-indigo-400 font-bold block text-xs flex items-center gap-1.5">
-                  <Sparkles size={14} /> Socratic Retrospective
-                </span>
-                <p className="text-slate-700 dark:text-zinc-300">
-                  Across your previous 12 runs, eliminating the nested loop reduced execution overhead by 84%. To unlock Stage 3 (Linear O(N)), consider a single-pass hash frequency map instead of the two-pointer sort.
-                </p>
-              </div>
             </div>
           </div>
         )}
@@ -669,77 +722,77 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
         {/* TAB 4: AST CODE TELEMETRY & SANDBOXING (Integrated on same page) */}
         {activeTab === 'telemetry' && (
           <div className="space-y-6">
-            {/* AST Static Diagnostics Card */}
+            {/* AST Diagnostics Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">
-                  <Cpu size={16} /> AST Abstract Syntax Tree Heuristics
+              <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+                  <Cpu size={16} /> AST Syntax Tree Diagnostics
                 </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base font-bold text-black dark:text-white">
                   Static Code Analysis & Pattern Detection
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
                   Automated parser extracts control flow graphs, loop nesting depths, and memory allocations directly from C++ syntax trees before compilation.
                 </p>
 
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200/70 dark:border-zinc-800/60 space-y-2 font-mono text-xs">
+                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-2 font-mono text-xs">
                   <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
                     <span className="text-slate-500 dark:text-zinc-400">Parser Status:</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">PASS (0 syntax errors)</span>
+                    <span className="text-black dark:text-white font-semibold">PASS (0 syntax errors)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
                     <span className="text-slate-500 dark:text-zinc-400">Max Loop Nesting Depth:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">1 (Linear scan)</span>
+                    <span className="text-black dark:text-white font-semibold">1 (Linear scan)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
                     <span className="text-slate-500 dark:text-zinc-400">Recursion Detected:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">False</span>
+                    <span className="text-black dark:text-white font-semibold">False</span>
                   </div>
                   <div className="flex justify-between py-1">
                     <span className="text-slate-500 dark:text-zinc-400">Detected Complexity:</span>
-                    <span className="text-indigo-600 dark:text-indigo-400 font-bold">O(N log N) [Sorting]</span>
+                    <span className="text-black dark:text-white font-bold">O(N log N)</span>
                   </div>
                 </div>
               </div>
 
               {/* Linux Cgroup Sandbox Telemetry */}
-              <div className="p-6 rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black dark:text-white">
                   <ShieldCheck size={16} /> Docker Containment Telemetry
                 </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                <h3 className="text-base font-bold text-black dark:text-white">
                   Kernel cgroup Isolation Quotas
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
                   Real-time containment metrics reporting enforced hardware boundaries, syscall filtering (seccomp), and network blocking.
                 </p>
 
-                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/60 border border-slate-200/70 dark:border-zinc-800/60 space-y-2 font-mono text-xs">
+                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-2 font-mono text-xs">
                   <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
                     <span className="text-slate-500 dark:text-zinc-400">Network Sockets:</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">DISABLED (Strict Sandbox)</span>
+                    <span className="text-black dark:text-white font-semibold">DISABLED (Strict Sandbox)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
                     <span className="text-slate-500 dark:text-zinc-400">CPU Time Quota:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">1000 ms Max Limit</span>
+                    <span className="text-black dark:text-white font-semibold">1000 ms Max Limit</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
                     <span className="text-slate-500 dark:text-zinc-400">Virtual Memory Cap:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">256 MB cgroup limit</span>
+                    <span className="text-black dark:text-white font-semibold">256 MB cgroup limit</span>
                   </div>
                   <div className="flex justify-between py-1">
                     <span className="text-slate-500 dark:text-zinc-400">Process Count Limit:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">pids.max = 16</span>
+                    <span className="text-black dark:text-white font-semibold">pids.max = 16</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Complete Telemetry Log Table */}
-            <div className="rounded-3xl bg-white dark:bg-[#0B0F19] border border-slate-200/80 dark:border-zinc-800/80 shadow-soft-sm overflow-hidden">
-              <div className="p-5 border-b border-slate-200/80 dark:border-zinc-800/80 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Clock size={16} className="text-slate-400" />
+            {/* Historical Sandbox Runs */}
+            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
+                <h2 className="text-sm font-bold text-black dark:text-white flex items-center gap-2">
+                  <Clock size={16} />
                   All Historical Sandbox Runs
                 </h2>
                 <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
@@ -763,17 +816,17 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem }) {
                         <th className="py-3 px-5">Timestamp</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200/80 dark:divide-zinc-800/80">
+                    <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
                       {submissions.map((sub) => (
                         <tr key={sub.id} className="hover:bg-slate-50/80 dark:hover:bg-zinc-800/40 transition-colors">
                           <td className="py-3.5 px-5 text-slate-400">#{sub.id}</td>
                           <td className="py-3.5 px-5">
                             <VerdictBadge verdict={sub.verdict} />
                           </td>
-                          <td className="py-3.5 px-5 text-slate-700 dark:text-zinc-300">
+                          <td className="py-3.5 px-5 text-black dark:text-white">
                             {sub.execution_time_ms !== null ? `${sub.execution_time_ms} ms` : '—'}
                           </td>
-                          <td className="py-3.5 px-5 text-slate-700 dark:text-zinc-300">
+                          <td className="py-3.5 px-5 text-black dark:text-white">
                             {sub.memory_used_kb !== null ? `${sub.memory_used_kb} KB` : '—'}
                           </td>
                           <td className="py-3.5 px-5 text-slate-500 dark:text-zinc-400 font-sans text-xs">

@@ -46,16 +46,17 @@ body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):no
   --tw-text-opacity: 1;
 }
 
-/* Light mode: All text is purely black or deep dark neutral, never colored (blue/purple/green/red) */
+/* Light mode: All text is purely black or deep dark neutral, never colored */
 body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
-  color: #000000 !important;
+  color: #000000;
 }
 
-body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea, svg) {
-  color: #0F172A;
-}
-
-body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
+/* Neutralize all colored text classes in light mode to pure black/slate */
+body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
+  [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
+  [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
+  [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
+) {
   color: #000000 !important;
 }
 
@@ -64,11 +65,17 @@ body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):no
   color: #FFFFFF !important;
 }
 
-.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea, svg) {
-  color: #F8FAFC;
+/* Neutralize all colored text classes in dark mode to pure white */
+.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
+  [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
+  [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
+  [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
+) {
+  color: #FFFFFF !important;
 }
 
-.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
+/* Explicit white text on dark surfaces */
+.text-white {
   color: #FFFFFF !important;
 }
 

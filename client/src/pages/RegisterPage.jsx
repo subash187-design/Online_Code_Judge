@@ -1,5 +1,5 @@
-﻿import React, { useState } from 'react';
-import { UserPlus, Mail, Lock, User, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function RegisterPage({ onNavigate }) {
@@ -8,6 +8,7 @@ export default function RegisterPage({ onNavigate }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('STUDENT');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -26,116 +27,125 @@ export default function RegisterPage({ onNavigate }) {
       const res = await register(name.trim(), email.trim(), password, confirmPassword);
       onNavigate('verify-email', { email: res.email || email.trim() });
     } catch (err) {
-      setError(err.message || 'Registration failed.');
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-slate-50 dark:bg-[#030712] transition-colors">
-      <div className="w-full max-w-md bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-3xl p-8 shadow-soft-xl">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <img src="/logo.png" alt="Algomind Logo" className="h-10 w-auto object-contain dark:brightness-110" />
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-[#F8F9FA] dark:bg-[#0E1117] transition-colors">
+      <div className="w-full max-w-md bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 rounded-3xl p-8 shadow-sm">
+        
+        {/* Brand Header from PDF */}
+        <div className="text-left mb-6 space-y-1">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="h-6 w-auto flex items-center">
+              <img src="/logo.png" alt="Algomind Logo" className="h-full w-auto object-contain dark:brightness-110" />
+            </div>
+            <span className="font-bold text-sm tracking-tight text-black dark:text-white">Algomind</span>
           </div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Create Algomind Account</h2>
-          <p className="text-slate-500 dark:text-zinc-400 text-sm mt-1">
-            Start mastering algorithmic optimization today
+          <h2 className="text-2xl font-extrabold text-black dark:text-white tracking-tight">
+            Create your account
+          </h2>
+          <p className="text-slate-500 dark:text-zinc-400 text-xs font-normal">
+            Start your algorithmic preparedness journey
           </p>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-sm flex items-start gap-3">
-            <AlertCircle size={18} className="shrink-0 mt-0.5" />
+          <div className="mb-5 p-3.5 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 text-black dark:text-white text-xs flex items-start gap-2.5">
+            <AlertCircle size={16} className="shrink-0 mt-0.5 text-black dark:text-white" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
-              Full Name
+            <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+              Full name:
             </label>
-            <div className="relative">
-              <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Alex Mercer"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 shadow-soft-sm"
-              />
-            </div>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your full name"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-sm text-black dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-black dark:focus:border-white transition-all"
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
-              Email Address
+            <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+              Enter your email:
             </label>
-            <div className="relative">
-              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 shadow-soft-sm"
-              />
-            </div>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-sm text-black dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-black dark:focus:border-white transition-all"
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
-              Password
+            <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+              Enter your pass:
             </label>
-            <div className="relative">
-              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimum 8 characters"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 shadow-soft-sm"
-              />
-            </div>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="•••••••••"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-sm text-black dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-black dark:focus:border-white transition-all"
+            />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
-              Confirm Password
+            <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+              Confirm password:
             </label>
-            <div className="relative">
-              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-              <input
-                type="password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat password"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-500/20 shadow-soft-sm"
-              />
-            </div>
+            <input
+              type="password"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="•••••••••"
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-sm text-black dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-black dark:focus:border-white transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+              Select your role:
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-sm text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white transition-all"
+            >
+              <option value="STUDENT">Student / Learner</option>
+              <option value="DEVELOPER">Software Developer</option>
+              <option value="EDUCATOR">Educator / Teacher</option>
+            </select>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold text-sm transition-all shadow-soft-sm hover:shadow-glow-brand flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full mt-2 py-3 rounded-xl bg-black hover:bg-zinc-800 active:bg-zinc-900 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5 dark:bg-white dark:text-black dark:hover:bg-zinc-200 disabled:opacity-50"
           >
-            {loading ? 'Creating Account...' : 'Sign Up'}
-            {!loading && <ArrowRight size={16} />}
+            {loading ? 'Creating account...' : 'Create your account'}
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-slate-200/80 dark:border-zinc-800/80 text-center text-xs text-slate-500 dark:text-zinc-400">
-          Already registered?{' '}
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-zinc-800 text-center text-xs text-slate-500 dark:text-zinc-400">
+          Already have an account?{' '}
           <button
             onClick={() => onNavigate('signin')}
-            className="text-brand-600 dark:text-brand-400 hover:underline font-semibold"
+            className="text-black dark:text-white hover:underline font-bold"
           >
             Sign in
           </button>

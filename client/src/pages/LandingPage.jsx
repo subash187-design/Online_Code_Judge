@@ -9,153 +9,326 @@ import {
   Zap, 
   ChevronRight,
   Lock,
-  Terminal
+  Terminal,
+  CheckCircle2,
+  Code2,
+  Clock,
+  TrendingUp,
+  Award,
+  Search,
+  Check
 } from 'lucide-react';
 
 export default function LandingPage({ onNavigate }) {
   const features = [
     {
-      icon: <Layers className="text-brand-600 dark:text-brand-400" size={24} />,
-      bg: "bg-brand-50 border-brand-200/70 dark:bg-brand-950/40 dark:border-brand-900/50",
-      title: "Progressive Multi-Stage Problems",
-      desc: "Problems evolve across increasing constraints (e.g. O(N²) to O(N log N) to O(N)). Unlock stages through optimal algorithmic complexity and strict scale boundaries."
+      icon: <Layers size={22} />,
+      title: "Interactive Problem Drills",
+      desc: "Immersive scenario-based challenges covering progressive constraints (e.g. O(N²) to O(N log N) to O(N)). Build genuine muscle memory for optimal complexities."
     },
     {
-      icon: <Cpu className="text-brand-600 dark:text-brand-400" size={24} />,
-      bg: "bg-brand-50 border-brand-200/70 dark:bg-brand-950/40 dark:border-brand-900/50",
-      title: "AST & Static Complexity Analysis",
-      desc: "Automated Abstract Syntax Tree parsing and heuristic profilers that detect recursion depths, nested loops, and memory space allocations before compilation."
+      icon: <Cpu size={22} />,
+      title: "AI Adaptive Learning",
+      desc: "Our AI engine analyzes AST code structures, identifies recursion depths and nested bottlenecks, ensuring targeted recommendations for every attempt."
     },
     {
-      icon: <Sparkles className="text-purple-600 dark:text-purple-400" size={24} />,
-      bg: "bg-purple-50 border-purple-200/70 dark:bg-purple-950/40 dark:border-purple-900/50",
-      title: "AI Interactive Mentor",
-      desc: "Tiered Socratic assistance. Request hints ranging from gentle algorithmic direction to structural pseudocode and bottleneck diagnostics without spoiling the solution."
+      icon: <Activity size={22} />,
+      title: "Studio Dashboard",
+      desc: "A unified command center for developers and educators. Assign challenges, track class or personal progress, identify bottlenecks, and inspect telemetry in one click."
     },
     {
-      icon: <Activity className="text-blue-600 dark:text-blue-400" size={24} />,
-      bg: "bg-blue-50 border-blue-200/70 dark:bg-blue-950/40 dark:border-blue-900/50",
+      icon: <Sparkles size={22} />,
+      title: "AI Socratic Mentor",
+      desc: "Progressive tiered hints keep developers guided through algorithmic intuition without spoiling full solutions, analyzing your code AST in real time."
+    },
+    {
+      icon: <Zap size={22} />,
+      title: "AST Telemetry & Sandboxing",
+      desc: "Deep-dive into syntax tree depth, nested loop heuristics, Linux Docker cgroup limits, execution timings, and memory quotas in an isolated sandbox."
+    },
+    {
+      icon: <TrendingUp size={22} />,
       title: "Optimization Journey Analytics",
-      desc: "Interactive visual dashboard showing your execution time progression, memory footprint curves, and side-by-side submission diffs across attempts."
+      desc: "Bird's-eye view across all attempts, execution time progression curves, memory footprint benchmarks, and side-by-side submission code diffs."
+    }
+  ];
+
+  const steps = [
+    {
+      step: "01",
+      title: "Register Your Account",
+      desc: "Sign up in seconds. Configure your developer profile and launch your personalized algorithmic workspace."
     },
     {
-      icon: <ShieldAlert className="text-brand-600 dark:text-brand-400" size={24} />,
-      bg: "bg-brand-50 border-brand-200/70 dark:bg-brand-950/40 dark:border-brand-900/50",
-      title: "Adversarial Stress Testing",
-      desc: "Automatic randomized corner-case generators with dual-reference verification comparing naive vs optimal logic to catch subtle edge cases."
+      step: "02",
+      title: "Browse Challenges",
+      desc: "Explore our curated catalog of progressive multi-stage problems across dynamic programming, graphs, and trees."
     },
     {
-      icon: <Zap className="text-amber-500" size={24} />,
-      bg: "bg-amber-50 border-amber-200/70 dark:bg-amber-950/40 dark:border-amber-900/50",
-      title: "Isolated Container Sandbox",
-      desc: "Direct Linux Docker containment with strict cgroup limits (time limit enforcement, memory quotas, disabled network sockets) for tamper-proof C++ evaluation."
+      step: "03",
+      title: "Students & Devs Practice",
+      desc: "Complete interactive drills at your own pace. Clean code editor with isolated Linux Docker containment ensures tamper-proof evaluation."
+    },
+    {
+      step: "04",
+      title: "Assess & Score",
+      desc: "Automated test suites evaluate correctness, edge cases, and measure precise execution metrics and memory footprints instantly."
+    },
+    {
+      step: "05",
+      title: "AI Recommendations",
+      desc: "Our AI analyzes your AST syntax tree and generates tailored optimization paths to close algorithmic weaknesses efficiently."
+    },
+    {
+      step: "06",
+      title: "Track on Dashboard",
+      desc: "Monitor your performance evolution in real time. Generate reports, compare benchmark diffs, and inspect telemetry."
     }
   ];
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 transition-colors duration-200">
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-[#F8F9FA] dark:bg-[#0E1117] text-slate-900 dark:text-zinc-100 transition-colors duration-200">
       
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-16 pb-20 md:pt-20 md:pb-28 border-b border-slate-200/80 dark:border-zinc-800/80">
-        
-        {/* Subtle Ambient Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-brand-500/15 via-purple-500/10 to-transparent blur-[120px] pointer-events-none -z-0" />
+      {/* 1. Hero Section (PDF Design) */}
+      <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 border-b border-slate-200/80 dark:border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Content */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              {/* Tagline Pill Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/70 dark:bg-zinc-800 text-xs font-semibold text-slate-800 dark:text-zinc-200 border border-slate-300/60 dark:border-zinc-700 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-black dark:bg-white animate-pulse" />
+                Prepare Today, Safe Tomorrow
+              </div>
 
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
-          {/* Clean Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-black dark:text-white tracking-tight leading-[1.15] max-w-4xl mx-auto">
-            Master Algorithmic Optimization with{' '}
-            <span className="text-black dark:text-white font-extrabold underline decoration-slate-300 dark:decoration-zinc-700">
-              Intelligent Guidance
-            </span>
-          </h1>
+              {/* Main Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-black dark:text-white tracking-tight leading-[1.12]">
+                AI-Powered <br className="hidden sm:inline" />
+                <span className="text-black dark:text-white">Algorithmic Preparedness</span> <br />
+                Learning Platform
+              </h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-slate-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed font-normal">
-            More than just an online judge. Experience progressive complexity stages, real-time AST analysis, interactive AI mentoring, and stress test generators in an isolated sandbox.
-          </p>
+              {/* Subtitle Description */}
+              <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400 max-w-xl leading-relaxed font-normal">
+                Prepare developers for complex scale, progressive multi-stage constraints, and strict algorithmic boundaries through interactive simulations, AI-powered adaptive hints, and real-time AST telemetry.
+              </p>
 
-          {/* CTA Buttons */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-            <button
-              onClick={() => onNavigate('signup')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold text-base transition-all shadow-md hover:shadow-glow-brand flex items-center justify-center gap-2 group"
-            >
-              Get Started Free
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={() => onNavigate('signin')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 font-semibold text-base transition-all border border-slate-200 dark:border-zinc-800 shadow-soft-sm flex items-center justify-center gap-2"
-            >
-              <Lock size={16} className="text-slate-500 dark:text-zinc-400" />
-              Sign In to Practice
-            </button>
-          </div>
+              {/* CTA Action Button */}
+              <div className="pt-2 flex flex-col sm:flex-row items-center gap-3.5">
+                <button
+                  onClick={() => onNavigate('signup')}
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-black hover:bg-zinc-800 active:bg-zinc-900 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 dark:bg-white dark:text-black dark:hover:bg-zinc-200 group"
+                >
+                  Get started
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+                <button
+                  onClick={() => onNavigate('signin')}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 font-semibold text-sm transition-all border border-slate-300 dark:border-zinc-700 shadow-sm flex items-center justify-center gap-2"
+                >
+                  <Lock size={15} />
+                  Sign In to Practice
+                </button>
+              </div>
+            </div>
 
-          {/* Quick Metrics */}
-          <div className="mt-14 pt-8 border-t border-slate-200 dark:border-zinc-800 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto text-left">
-            <div className="p-3.5 bg-white dark:bg-zinc-900/90 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-soft-sm">
-              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">6 Phases</div>
-              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Fully Integrated Engine</div>
+            {/* Right Interactive Preview Card (From PDF) */}
+            <div className="lg:col-span-5 relative">
+              <div className="rounded-3xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-md relative z-10 space-y-5">
+                
+                {/* Card Top: Status Pills */}
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-black dark:bg-white" />
+                    <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                      Algomind AI Platform
+                    </span>
+                  </div>
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 font-semibold border border-slate-200 dark:border-zinc-700">
+                    Live Active
+                  </span>
+                </div>
+
+                {/* Floating Interactive Badge Tags (from PDF) */}
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="p-3 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/70 dark:border-zinc-800">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Complexity Drill</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">O(N) Optimal</div>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/70 dark:border-zinc-800">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Static AST</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">Heuristics Active</div>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/70 dark:border-zinc-800">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Linux Sandbox</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">Docker Isolated</div>
+                  </div>
+                  <div className="p-3 rounded-2xl bg-slate-50 dark:bg-zinc-900 border border-slate-200/70 dark:border-zinc-800">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">AI Feedback</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">Socratic Hints</div>
+                  </div>
+                </div>
+
+                {/* Preparedness / Score Gauge (from PDF Donut Gauge) */}
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-zinc-900/80 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Preparedness Score</div>
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">Algorithmic readiness metric</div>
+                    <div className="text-2xl font-extrabold text-black dark:text-white mt-1">86%</div>
+                  </div>
+
+                  {/* Donut SVG Meter */}
+                  <div className="relative w-14 h-14 flex items-center justify-center">
+                    <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        className="text-slate-200 dark:text-zinc-700"
+                        strokeWidth="3.5"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path
+                        className="text-black dark:text-white"
+                        strokeDasharray="86, 100"
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        stroke="currentColor"
+                        fill="none"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                    </svg>
+                    <span className="absolute text-[11px] font-bold text-black dark:text-white">86%</span>
+                  </div>
+                </div>
+
+                {/* Quick Status Sub-bar */}
+                <div className="pt-2 flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
+                  <span className="flex items-center gap-1.5">
+                    <Check size={14} className="text-black dark:text-white" />
+                    Docker Sandbox Verified
+                  </span>
+                  <span className="font-semibold text-slate-800 dark:text-zinc-200">6 Phases Active</span>
+                </div>
+              </div>
             </div>
-            <div className="p-3.5 bg-white dark:bg-zinc-900/90 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-soft-sm">
-              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">Isolated</div>
-              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Linux Docker Sandbox</div>
-            </div>
-            <div className="p-3.5 bg-white dark:bg-zinc-900/90 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-soft-sm">
-              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono">Automated</div>
-              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">AST Complexity Heuristics</div>
-            </div>
-            <div className="p-3.5 bg-white dark:bg-zinc-900/90 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-soft-sm">
-              <div className="text-2xl font-bold text-black dark:text-white font-mono">AI-Powered</div>
-              <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Socratic Code Mentoring</div>
-            </div>
+
           </div>
         </div>
       </section>
 
-      {/* Unique Capabilities Grid */}
-      <section className="py-20 bg-slate-100/60 dark:bg-zinc-950/60 border-b border-slate-200/80 dark:border-zinc-800/80">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
-              Built for Deep Algorithmic Mastery
+      {/* 2. Platform Features Section (From PDF) */}
+      <section id="features" className="py-20 bg-white dark:bg-[#0E1117] border-b border-slate-200/80 dark:border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-black dark:text-white tracking-tight">
+              Platform Features
             </h2>
-            <p className="text-slate-600 dark:text-zinc-400 mt-3 text-base sm:text-lg">
-              Traditional code judges only verify whether your code yields correct outputs. Algomind inspects how your solution computes and evolves.
+            <p className="text-slate-600 dark:text-zinc-400 mt-3 text-base sm:text-lg font-normal">
+              From individual student drills to district-wide and system-wide AST telemetry analytics.
             </p>
           </div>
 
+          {/* 6 Feature Cards Grid (3x2 layout as in PDF) */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((feat, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 hover:border-brand-300 dark:hover:border-brand-700/60 transition-all shadow-soft-sm hover:shadow-soft-md group relative"
+                className="p-7 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 hover:border-slate-400 dark:hover:border-zinc-600 transition-all shadow-sm hover:shadow-md flex flex-col justify-between group"
               >
-                <div className={`p-3 w-fit rounded-xl ${feat.bg} border mb-4 group-hover:scale-105 transition-transform shadow-soft-sm`}>
-                  {feat.icon}
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-800 text-black dark:text-white flex items-center justify-center mb-5 border border-slate-200 dark:border-zinc-700 shadow-sm group-hover:scale-105 transition-transform">
+                    {feat.icon}
+                  </div>
+                  <h3 className="text-lg font-bold text-black dark:text-white mb-2">
+                    {feat.title}
+                  </h3>
+                  <p className="text-slate-600 dark:text-zinc-400 text-sm leading-relaxed font-normal">
+                    {feat.desc}
+                  </p>
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{feat.title}</h3>
-                <p className="text-slate-600 dark:text-zinc-400 text-sm leading-relaxed">{feat.desc}</p>
               </div>
             ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 3. How It Works Section (01 - 06 Steps layout from PDF) */}
+      <section id="how-it-works" className="py-20 bg-[#F8F9FA] dark:bg-[#12151C] border-b border-slate-200/80 dark:border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Header */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-black dark:text-white tracking-tight">
+              How It Works
+            </h2>
+            <p className="text-slate-600 dark:text-zinc-400 mt-3 text-base sm:text-lg font-normal">
+              A streamlined, comprehensive pathway to progressive algorithmic mastery.
+            </p>
+          </div>
+
+          {/* Steps Grid: 6 Steps (3 columns x 2 rows) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {steps.map((item, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm relative space-y-3"
+              >
+                {/* Step Number Badge */}
+                <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs font-extrabold text-black dark:text-white font-mono">
+                  {item.step}
+                </div>
+                
+                <h3 className="text-base font-bold text-black dark:text-white">
+                  {item.title}
+                </h3>
+                
+                <p className="text-slate-600 dark:text-zinc-400 text-sm leading-relaxed font-normal">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* 4. Bottom Call to Action Banner (From PDF "Prepare today, safe tomorrow") */}
+      <section className="py-16 bg-white dark:bg-[#0E1117] border-b border-slate-200/80 dark:border-zinc-800 text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-black dark:text-white tracking-tight">
+            Prepare Today, Safe Tomorrow
+          </h2>
+          <p className="text-slate-600 dark:text-zinc-400 text-sm sm:text-base mt-2 max-w-xl mx-auto font-normal">
+            Join developers and educators mastering algorithmic complexities and telemetry analytics.
+          </p>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => onNavigate('signup')}
+              className="px-8 py-3.5 rounded-xl bg-black hover:bg-zinc-800 active:bg-zinc-900 text-white font-semibold text-sm transition-all shadow-sm flex items-center gap-2 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+            >
+              Get started →
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Clean Footer */}
-      <footer className="mt-auto border-t border-slate-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#030712] py-6 text-center text-xs text-slate-500 dark:text-zinc-400 transition-colors">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* 5. Clean Footer */}
+      <footer id="about" className="mt-auto bg-[#F8F9FA] dark:bg-[#0E1117] py-8 text-center text-xs text-slate-500 dark:text-zinc-400 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="h-6 w-auto flex items-center">
               <img src="/logo.png" alt="Algomind Logo" className="h-full w-auto object-contain dark:brightness-110" />
             </div>
-            <span className="font-semibold text-slate-900 dark:text-zinc-100">Online Code Judge</span>
+            <span className="font-semibold text-black dark:text-white">Online Code Judge</span>
             <span>&copy; {new Date().getFullYear()} Algomind Inc.</span>
           </div>
-          <div className="flex gap-6 font-medium">
-            <button onClick={() => onNavigate('signin')} className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Sign In</button>
-            <button onClick={() => onNavigate('signup')} className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">Sign Up</button>
+          <div className="flex gap-6 font-medium text-slate-700 dark:text-zinc-300">
+            <button onClick={() => onNavigate('signin')} className="hover:text-black dark:hover:text-white transition-colors">Login</button>
+            <button onClick={() => onNavigate('signup')} className="hover:text-black dark:hover:text-white transition-colors">Get started</button>
           </div>
         </div>
       </footer>
