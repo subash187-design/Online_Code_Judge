@@ -46,57 +46,53 @@ body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):no
   --tw-text-opacity: 1;
 }
 
-/* Light mode: All text is purely black or deep dark neutral, never colored */
+/* ----------------------------------------------------
+   1. Light Mode Typography: Pure black text
+   ---------------------------------------------------- */
 body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
-  color: #000000;
-}
-
-/* Neutralize all colored text classes in light mode to pure black/slate */
-body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
-  [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
-  [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
-  [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
-) {
   color: #000000 !important;
 }
 
-/* Dark mode: All text is purely crisp white, never colored by default */
+body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
+  color: #0F172A;
+}
+
+body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"]:not(.text-white):not([class*="text-white"]):not([class*="bg-black"] *):not(button[class*="bg-black"]) {
+  color: #000000 !important;
+}
+
+/* Light mode text-white on dark buttons / surfaces */
+body:not(.dark) .text-white,
+body:not(.dark) [class*="text-white"],
+body:not(.dark) button[class*="bg-black"],
+body:not(.dark) button[class*="bg-black"] * {
+  color: #FFFFFF !important;
+}
+
+/* ----------------------------------------------------
+   2. Dark Mode Typography: Crisp white text everywhere
+   ---------------------------------------------------- */
 .dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
-  color: #FFFFFF;
-}
-
-/* Neutralize all colored text classes in dark mode to pure white */
-.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
-  [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
-  [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
-  [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
-) {
   color: #FFFFFF !important;
 }
 
-/* Light mode text-white on dark surfaces */
-body:not(.dark) .text-white {
+.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
+  color: #F8FAFC;
+}
+
+.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
   color: #FFFFFF !important;
 }
 
-/* Dark mode text-white ONLY when the element does not have a white background or dark:text-black */
-.dark .text-white:not([class*="dark:text-black"]):not([class*="dark:bg-white"]):not([class*="bg-white"]):not(.dark\:bg-white) {
-  color: #FFFFFF !important;
-}
-
-/* CRITICAL: In dark theme, all letters and icons in buttons or elements with white background MUST have BLACK text */
+/* ----------------------------------------------------
+   3. EXCEPT: In Dark Mode, ONLY buttons with a WHITE background have BLACK text
+   ---------------------------------------------------- */
 .dark button[class*="dark:bg-white"],
 .dark button[class*="dark:bg-white"] *,
 .dark a[class*="dark:bg-white"],
 .dark a[class*="dark:bg-white"] *,
 .dark button.bg-white:not([class*="dark:bg-"]),
-.dark button.bg-white:not([class*="dark:bg-"]) *,
-.dark [class*="dark:bg-white"] button,
-.dark [class*="dark:bg-white"] button *,
-.dark [class*="dark:text-black"],
-.dark [class*="dark:text-black"] *,
-.dark .dark\:text-black,
-.dark .dark\:text-black * {
+.dark button.bg-white:not([class*="dark:bg-"]) * {
   color: #000000 !important;
   stroke: #000000 !important;
 }
