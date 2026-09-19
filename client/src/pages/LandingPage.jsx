@@ -63,9 +63,9 @@ export default function LandingPage({ onNavigate }) {
 
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
           {/* Clean Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.15] max-w-4xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-black dark:text-white tracking-tight leading-[1.15] max-w-4xl mx-auto">
             Master Algorithmic Optimization with{' '}
-            <span className="text-blue-600 dark:text-blue-400 font-extrabold">
+            <span className="text-black dark:text-white font-extrabold underline decoration-slate-300 dark:decoration-zinc-700">
               Intelligent Guidance
             </span>
           </h1>
@@ -107,7 +107,7 @@ export default function LandingPage({ onNavigate }) {
               <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">AST Complexity Heuristics</div>
             </div>
             <div className="p-3.5 bg-white dark:bg-zinc-900/90 rounded-xl border border-slate-200 dark:border-zinc-800 shadow-soft-sm">
-              <div className="text-2xl font-bold text-brand-600 dark:text-brand-400 font-mono">AI-Powered</div>
+              <div className="text-2xl font-bold text-black dark:text-white font-mono">AI-Powered</div>
               <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Socratic Code Mentoring</div>
             </div>
           </div>

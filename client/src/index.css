@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -39,6 +39,37 @@
   a, button, input, textarea, select {
     transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
+}
+
+/* Enforce black & white typography everywhere except Monaco Code Editor */
+body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text) {
+  --tw-text-opacity: 1;
+}
+
+/* Light mode: All text is purely black or deep dark neutral, never colored (blue/purple/green/red) */
+body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
+  color: #000000 !important;
+}
+
+body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea, svg) {
+  color: #0F172A;
+}
+
+body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
+  color: #000000 !important;
+}
+
+/* Dark mode: All text is purely crisp white, never colored */
+.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
+  color: #FFFFFF !important;
+}
+
+.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea, svg) {
+  color: #F8FAFC;
+}
+
+.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
+  color: #FFFFFF !important;
 }
 
 /* Custom modern scrollbars */
