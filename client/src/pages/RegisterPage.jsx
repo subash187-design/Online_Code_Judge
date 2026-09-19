@@ -8,7 +8,6 @@ export default function RegisterPage({ onNavigate }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('STUDENT');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -117,20 +116,7 @@ export default function RegisterPage({ onNavigate }) {
             />
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
-              Select your role:
-            </label>
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-sm text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white transition-all"
-            >
-              <option value="STUDENT">Student / Learner</option>
-              <option value="DEVELOPER">Software Developer</option>
-              <option value="EDUCATOR">Educator / Teacher</option>
-            </select>
-          </div>
+
 
           <button
             type="submit"
