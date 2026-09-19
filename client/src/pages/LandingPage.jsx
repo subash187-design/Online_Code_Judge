@@ -87,30 +87,30 @@ export default function LandingPage({ onNavigate }) {
   ];
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-[#121212] text-zinc-100 transition-colors duration-200">
+    <div className="flex flex-col min-h-[calc(100vh-4rem)] bg-[#f2f4f7] text-slate-800 dark:bg-[#121212] dark:text-zinc-100 transition-colors duration-200">
       
       {/* 1. Hero Section (PDF Design) */}
-      <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 border-b border-[#2d2d2d]">
+      <section className="relative overflow-hidden pt-12 pb-16 md:pt-20 md:pb-24 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6 text-left">
               {/* Tagline Pill Badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#1e1e1e] text-xs font-semibold text-zinc-300 border border-[#2d2d2d] shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#1e1e1e] text-xs font-semibold text-slate-700 dark:text-zinc-300 border border-[#e0e2e6] dark:border-[#2d2d2d] shadow-xs">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Prepare Today, Safe Tomorrow
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.12]">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.12]">
                 AI-Powered <br className="hidden sm:inline" />
-                <span className="text-emerald-400">Algorithmic Preparedness</span> <br />
+                <span className="text-emerald-600 dark:text-emerald-400">Algorithmic Preparedness</span> <br />
                 Learning Platform
               </h1>
 
               {/* Subtitle Description */}
-              <p className="text-base sm:text-lg text-zinc-400 max-w-xl leading-relaxed font-normal">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400 max-w-xl leading-relaxed font-normal">
                 Prepare developers for complex scale, progressive multi-stage constraints, and strict algorithmic boundaries through interactive simulations, AI-powered adaptive hints, and real-time AST telemetry.
               </p>
 
@@ -125,7 +125,7 @@ export default function LandingPage({ onNavigate }) {
                 </button>
                 <button
                   onClick={() => onNavigate('signin')}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#1e1e1e] hover:bg-[#282828] text-zinc-200 font-semibold text-sm transition-all border border-[#2d2d2d] shadow-sm flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-semibold text-sm transition-all border border-[#d5d9de] shadow-xs flex items-center justify-center gap-2 dark:bg-[#1e1e1e] dark:hover:bg-[#282828] dark:text-zinc-200 dark:border-[#2d2d2d]"
                 >
                   <Lock size={15} />
                   Sign In to Practice
@@ -135,54 +135,54 @@ export default function LandingPage({ onNavigate }) {
 
             {/* Right Interactive Preview Card (From PDF) */}
             <div className="lg:col-span-5 relative">
-              <div className="rounded-3xl bg-[#1e1e1e] border border-[#2d2d2d] p-6 shadow-xl relative z-10 space-y-5">
+              <div className="rounded-3xl bg-white border border-[#e2e4e8] p-6 shadow-md relative z-10 space-y-5 dark:bg-[#1e1e1e] dark:border-[#2d2d2d]">
                 
                 {/* Card Top: Status Pills */}
-                <div className="flex items-center justify-between border-b border-[#2d2d2d] pb-4">
+                <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-                    <span className="text-xs font-bold text-white uppercase tracking-wider">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                       Algomind AI Platform
                     </span>
                   </div>
-                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 font-semibold border border-emerald-800/60">
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">
                     Live Active
                   </span>
                 </div>
 
                 {/* Floating Interactive Badge Tags (from PDF) */}
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="p-3 rounded-2xl bg-[#141414] border border-[#2d2d2d]">
-                    <div className="text-[11px] text-zinc-400 font-medium">Complexity Drill</div>
-                    <div className="text-xs font-bold text-emerald-400 mt-0.5">O(N) Optimal</div>
+                  <div className="p-3 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d]">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Complexity Drill</div>
+                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">O(N) Optimal</div>
                   </div>
-                  <div className="p-3 rounded-2xl bg-[#141414] border border-[#2d2d2d]">
-                    <div className="text-[11px] text-zinc-400 font-medium">Static AST</div>
-                    <div className="text-xs font-bold text-white mt-0.5">Heuristics Active</div>
+                  <div className="p-3 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d]">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Static AST</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">Heuristics Active</div>
                   </div>
-                  <div className="p-3 rounded-2xl bg-[#141414] border border-[#2d2d2d]">
-                    <div className="text-[11px] text-zinc-400 font-medium">Linux Sandbox</div>
-                    <div className="text-xs font-bold text-white mt-0.5">Docker Isolated</div>
+                  <div className="p-3 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d]">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Linux Sandbox</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white mt-0.5">Docker Isolated</div>
                   </div>
-                  <div className="p-3 rounded-2xl bg-[#141414] border border-[#2d2d2d]">
-                    <div className="text-[11px] text-zinc-400 font-medium">AI Feedback</div>
-                    <div className="text-xs font-bold text-emerald-400 mt-0.5">Socratic Hints</div>
+                  <div className="p-3 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d]">
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">AI Feedback</div>
+                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Socratic Hints</div>
                   </div>
                 </div>
 
                 {/* Preparedness / Score Gauge (from PDF Donut Gauge) */}
-                <div className="p-4 rounded-2xl bg-[#141414] border border-[#2d2d2d] flex items-center justify-between">
+                <div className="p-4 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] flex items-center justify-between dark:bg-[#141414] dark:border-[#2d2d2d]">
                   <div>
-                    <div className="text-xs font-bold text-white">Preparedness Score</div>
-                    <div className="text-[11px] text-zinc-400 mt-0.5">Algorithmic readiness metric</div>
-                    <div className="text-2xl font-extrabold text-emerald-400 mt-1">86%</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Preparedness Score</div>
+                    <div className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">Algorithmic readiness metric</div>
+                    <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">86%</div>
                   </div>
 
                   {/* Donut SVG Meter */}
                   <div className="relative w-14 h-14 flex items-center justify-center">
                     <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 36 36">
                       <path
-                        className="text-[#2d2d2d]"
+                        className="text-slate-200 dark:text-[#2d2d2d]"
                         strokeWidth="3.5"
                         stroke="currentColor"
                         fill="none"
@@ -198,17 +198,17 @@ export default function LandingPage({ onNavigate }) {
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       />
                     </svg>
-                    <span className="absolute text-[11px] font-bold text-white">86%</span>
+                    <span className="absolute text-[11px] font-bold text-slate-800 dark:text-white">86%</span>
                   </div>
                 </div>
 
                 {/* Quick Status Sub-bar */}
-                <div className="pt-2 flex items-center justify-between text-xs text-zinc-400">
+                <div className="pt-2 flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
                   <span className="flex items-center gap-1.5">
-                    <Check size={14} className="text-emerald-400" />
+                    <Check size={14} className="text-emerald-600 dark:text-emerald-400" />
                     Docker Sandbox Verified
                   </span>
-                  <span className="font-semibold text-zinc-200">6 Phases Active</span>
+                  <span className="font-semibold text-slate-700 dark:text-zinc-200">6 Phases Active</span>
                 </div>
               </div>
             </div>
@@ -218,15 +218,15 @@ export default function LandingPage({ onNavigate }) {
       </section>
 
       {/* 2. Platform Features Section (From PDF) */}
-      <section id="features" className="py-20 bg-[#121212] border-b border-[#2d2d2d]">
+      <section id="features" className="py-20 bg-[#f8f9fa] dark:bg-[#121212] border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Platform Features
             </h2>
-            <p className="text-zinc-400 mt-3 text-base sm:text-lg font-normal">
+            <p className="text-slate-600 dark:text-zinc-400 mt-3 text-base sm:text-lg font-normal">
               From individual student drills to district-wide and system-wide AST telemetry analytics.
             </p>
           </div>
@@ -236,16 +236,16 @@ export default function LandingPage({ onNavigate }) {
             {features.map((feat, idx) => (
               <div
                 key={idx}
-                className="p-7 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] hover:border-[#3d3d3d] hover:bg-[#222222] transition-all shadow-sm flex flex-col justify-between group"
+                className="p-7 rounded-2xl bg-white border border-[#e2e4e8] hover:border-slate-300 hover:shadow-md transition-all shadow-xs flex flex-col justify-between group dark:bg-[#1e1e1e] dark:border-[#2d2d2d] dark:hover:border-[#3d3d3d] dark:hover:bg-[#222222]"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-[#181818] text-emerald-400 flex items-center justify-center mb-5 border border-[#2d2d2d] shadow-sm group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-[#f0f2f5] text-emerald-600 flex items-center justify-center mb-5 border border-[#e0e2e6] shadow-xs group-hover:scale-105 transition-transform dark:bg-[#181818] dark:text-emerald-400 dark:border-[#2d2d2d]">
                     {feat.icon}
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-2">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
                     {feat.title}
                   </h3>
-                  <p className="text-zinc-400 text-sm leading-relaxed font-normal">
+                  <p className="text-slate-600 dark:text-zinc-400 text-sm leading-relaxed font-normal">
                     {feat.desc}
                   </p>
                 </div>
@@ -257,15 +257,15 @@ export default function LandingPage({ onNavigate }) {
       </section>
 
       {/* 3. How It Works Section (01 - 06 Steps layout from PDF) */}
-      <section id="how-it-works" className="py-20 bg-[#141414] border-b border-[#2d2d2d]">
+      <section id="how-it-works" className="py-20 bg-[#f2f4f7] dark:bg-[#141414] border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           {/* Header */}
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               How It Works
             </h2>
-            <p className="text-zinc-400 mt-3 text-base sm:text-lg font-normal">
+            <p className="text-slate-600 dark:text-zinc-400 mt-3 text-base sm:text-lg font-normal">
               A streamlined, comprehensive pathway to progressive algorithmic mastery.
             </p>
           </div>
@@ -275,18 +275,18 @@ export default function LandingPage({ onNavigate }) {
             {steps.map((item, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm relative space-y-3"
+                className="p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-xs relative space-y-3 dark:bg-[#1e1e1e] dark:border-[#2d2d2d]"
               >
                 {/* Step Number Badge */}
-                <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#181818] border border-[#2d2d2d] text-xs font-extrabold text-emerald-400 font-mono">
+                <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#f0f2f5] border border-[#e0e2e6] text-xs font-extrabold text-emerald-700 font-mono dark:bg-[#181818] dark:border-[#2d2d2d] dark:text-emerald-400">
                   {item.step}
                 </div>
                 
-                <h3 className="text-base font-bold text-white">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
                   {item.title}
                 </h3>
                 
-                <p className="text-zinc-400 text-sm leading-relaxed font-normal">
+                <p className="text-slate-600 dark:text-zinc-400 text-sm leading-relaxed font-normal">
                   {item.desc}
                 </p>
               </div>
@@ -297,12 +297,12 @@ export default function LandingPage({ onNavigate }) {
       </section>
 
       {/* 4. Bottom Call to Action Banner */}
-      <section className="py-16 bg-[#121212] border-b border-[#2d2d2d] text-center">
+      <section className="py-16 bg-[#f8f9fa] dark:bg-[#121212] border-b border-[#e2e4e8] dark:border-[#2d2d2d] text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Prepare Today, Safe Tomorrow
           </h2>
-          <p className="text-zinc-400 text-sm sm:text-base mt-2 max-w-xl mx-auto font-normal">
+          <p className="text-slate-600 dark:text-zinc-400 text-sm sm:text-base mt-2 max-w-xl mx-auto font-normal">
             Join developers and educators mastering algorithmic complexities and telemetry analytics.
           </p>
           <div className="mt-6 flex justify-center">
@@ -317,18 +317,18 @@ export default function LandingPage({ onNavigate }) {
       </section>
 
       {/* 5. Clean Footer */}
-      <footer id="about" className="mt-auto bg-[#0e0e0e] py-8 text-center text-xs text-zinc-500 transition-colors">
+      <footer id="about" className="mt-auto bg-[#eaedf0] dark:bg-[#0e0e0e] py-8 text-center text-xs text-slate-500 dark:text-zinc-500 transition-colors border-t border-[#d8dbe0] dark:border-[#222222]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="h-6 w-auto flex items-center">
-              <img src="/logo.png" alt="Algomind Logo" className="h-full w-auto object-contain brightness-110" />
+              <img src="/logo.png" alt="Algomind Logo" className="h-full w-auto object-contain brightness-105 dark:brightness-110" />
             </div>
-            <span className="font-semibold text-white">Online Code Judge</span>
+            <span className="font-semibold text-slate-900 dark:text-white">Online Code Judge</span>
             <span>&copy; {new Date().getFullYear()} Algomind Inc.</span>
           </div>
-          <div className="flex gap-6 font-medium text-zinc-400">
-            <button onClick={() => onNavigate('signin')} className="hover:text-white transition-colors">Login</button>
-            <button onClick={() => onNavigate('signup')} className="hover:text-white transition-colors">Get started</button>
+          <div className="flex gap-6 font-medium text-slate-600 dark:text-zinc-400">
+            <button onClick={() => onNavigate('signin')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Login</button>
+            <button onClick={() => onNavigate('signup')} className="hover:text-slate-900 dark:hover:text-white transition-colors">Get started</button>
           </div>
         </div>
       </footer>

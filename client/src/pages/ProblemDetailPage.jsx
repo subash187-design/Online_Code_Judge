@@ -10,9 +10,10 @@ import SubmissionDiffModal from '../components/analytics/SubmissionDiffModal';
 import { 
   Play, Send, Clock, Database, ChevronLeft, ChevronRight, GitCompare, Sparkles, Layers,
   AlertTriangle, ChevronDown, ChevronUp, GripVertical, GripHorizontal, Maximize2, Minimize2,
-  Pause, RotateCcw, FileText, Lightbulb, Tag, CheckSquare, Terminal
+  Pause, RotateCcw, FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, ThumbsUp, MessageSquare, Lock
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 const DEFAULT_CPP_BOILERPLATE = `#include <iostream>
 #include <vector>
@@ -149,6 +150,7 @@ int main() {
 
 export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem }) {
   const { user, authFetch } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const effectiveUserId = user?.id || 1;
 
   const [problem, setProblem] = useState(null);
@@ -434,7 +436,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#1a1a1a] text-zinc-400 text-sm">
+      <div className="flex h-screen items-center justify-center bg-[#f2f4f7] dark:bg-[#1a1a1a] text-slate-600 dark:text-zinc-400 text-sm">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
           Loading algorithmic workspace...
@@ -445,9 +447,9 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
   if (!problem) {
     return (
-      <div className="p-8 text-center text-rose-400 bg-[#1a1a1a] min-h-screen">
+      <div className="p-8 text-center text-rose-500 bg-[#f2f4f7] dark:bg-[#1a1a1a] min-h-screen">
         Problem not found.
-        <button onClick={onBack} className="block mx-auto mt-4 text-emerald-400 underline">
+        <button onClick={onBack} className="block mx-auto mt-4 text-emerald-600 dark:text-emerald-400 underline">
           Return to problem list
         </button>
       </div>
@@ -458,7 +460,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
   const isStageLocked = activeStage?.status === 'LOCKED';
 
   return (
-    <div className="flex flex-col h-screen bg-[#181818] text-zinc-100 overflow-hidden font-sans">
+    <div className="flex flex-col h-screen bg-[#f2f4f7] text-slate-800 dark:bg-[#181818] dark:text-zinc-100 overflow-hidden font-sans">
       
       {/* Diff Modal */}
       {comparison && (
@@ -469,13 +471,13 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
       )}
 
       {/* Top LeetCode-style Navigation Header */}
-      <header className="h-11 border-b border-[#2d2d2d] bg-[#1a1a1a] px-3 flex items-center justify-between shrink-0 z-30 select-none">
+      <header className="h-11 border-b border-[#e2e4e8] dark:border-[#2d2d2d] bg-[#f8f9fa] dark:bg-[#1a1a1a] px-3 flex items-center justify-between shrink-0 z-30 select-none">
         
         {/* Left: Problem List Navigation */}
         <div className="flex items-center gap-2">
           <button
             onClick={onBack}
-            className="p-1 rounded text-zinc-400 hover:text-white hover:bg-[#282828] transition-colors"
+            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#282828] transition-colors"
             title="Back to all problems"
           >
             <ChevronLeft size={16} />
@@ -483,13 +485,13 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
           <button
             onClick={onBack}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-zinc-300 hover:text-white hover:bg-[#282828] transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-300 dark:hover:text-white dark:hover:bg-[#282828] transition-colors"
           >
-            <Layers size={13} className="text-zinc-400" />
+            <Layers size={13} className="text-slate-500 dark:text-zinc-400" />
             <span>Problem List</span>
           </button>
 
-          <div className="flex items-center text-zinc-400 bg-[#262626] rounded-md p-0.5 border border-[#333333]">
+          <div className="flex items-center text-slate-600 dark:text-zinc-400 bg-[#edeef1] dark:bg-[#262626] rounded-md p-0.5 border border-[#e0e2e6] dark:border-[#333333]">
             <button
               onClick={() => {
                 if (Number(problemId) > 1) {
@@ -498,7 +500,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 }
               }}
               title="Previous problem"
-              className="p-1 rounded hover:bg-[#333333] hover:text-white transition-colors"
+              className="p-1 rounded hover:bg-white hover:text-slate-900 dark:hover:bg-[#333333] dark:hover:text-white transition-colors"
             >
               <ChevronLeft size={12} />
             </button>
@@ -508,7 +510,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 else window.location.search = `?id=${Number(problemId) + 1}`;
               }}
               title="Next problem"
-              className="p-1 rounded hover:bg-[#333333] hover:text-white transition-colors"
+              className="p-1 rounded hover:bg-white hover:text-slate-900 dark:hover:bg-[#333333] dark:hover:text-white transition-colors"
             >
               <ChevronRight size={12} />
             </button>
@@ -520,17 +522,17 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           <button
             onClick={handleRunCode}
             disabled={running || submitting}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#282828] hover:bg-[#333333] text-zinc-200 text-xs font-medium border border-[#3c3c3c] disabled:opacity-50 transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#edeef1] hover:bg-slate-200 text-slate-800 border border-[#d5d9de] dark:bg-[#282828] dark:hover:bg-[#333333] dark:text-zinc-200 dark:border-[#3c3c3c] text-xs font-medium disabled:opacity-50 transition-all shadow-sm"
             title="Run Custom Input"
           >
-            <Play size={12} className="text-emerald-400 fill-emerald-400" />
+            <Play size={12} className="text-emerald-600 fill-emerald-600 dark:text-emerald-400 dark:fill-emerald-400" />
             <span>{running ? 'Running...' : 'Run'}</span>
           </button>
 
           <button
             onClick={handleSubmitCode}
             disabled={running || submitting || isStageLocked}
-            className="flex items-center gap-1.5 px-3.5 py-1 rounded-md bg-[#2cbb5d]/20 hover:bg-[#2cbb5d]/30 text-[#2cbb5d] border border-[#2cbb5d]/40 text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3.5 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 dark:bg-[#2cbb5d]/20 dark:hover:bg-[#2cbb5d]/30 dark:text-[#2cbb5d] dark:border-[#2cbb5d]/40 text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
             title="Submit Solution"
           >
             <Send size={12} />
@@ -541,8 +543,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
             onClick={() => setLeftTab(prev => prev === 'solutions' ? 'description' : 'solutions')}
             className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors ${
               leftTab === 'solutions'
-                ? 'bg-purple-950/60 border-purple-500 text-purple-300'
-                : 'bg-[#282828] hover:bg-[#333333] border-[#3c3c3c] text-purple-400'
+                ? 'bg-purple-100 border-purple-300 text-purple-800 dark:bg-purple-950/60 dark:border-purple-500 dark:text-purple-300'
+                : 'bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-700 dark:bg-[#282828] dark:hover:bg-[#333333] dark:border-[#3c3c3c] dark:text-purple-400'
             }`}
             title="AI Code Mentor & Socratic Hints"
           >
@@ -550,28 +552,38 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           </button>
         </div>
 
-        {/* Right: Stopwatch, Streak & Profile */}
-        <div className="flex items-center gap-3 text-xs text-zinc-400">
-          <div className="flex items-center gap-1.5 bg-[#262626] px-2.5 py-1 rounded-md border border-[#333333] font-mono text-[11px] text-zinc-300">
-            <Clock size={11} className="text-zinc-400" />
+        {/* Right: Stopwatch, Theme Toggle, Streak & Profile */}
+        <div className="flex items-center gap-2.5 text-xs text-slate-600 dark:text-zinc-400">
+          
+          {/* Quick Theme Switcher */}
+          <button
+            onClick={toggleTheme}
+            title={isDark ? "Switch to Light Theme" : "Switch to Dark Theme"}
+            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-amber-400 dark:hover:bg-[#282828] transition-colors"
+          >
+            {isDark ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} />}
+          </button>
+
+          <div className="flex items-center gap-1.5 bg-[#edeef1] dark:bg-[#262626] px-2.5 py-1 rounded-md border border-[#e0e2e6] dark:border-[#333333] font-mono text-[11px] text-slate-700 dark:text-zinc-300">
+            <Clock size={11} className="text-slate-500 dark:text-zinc-400" />
             <span>{formatTimer(timerSeconds)}</span>
             <button
               onClick={() => setIsTimerRunning(!isTimerRunning)}
               title={isTimerRunning ? "Pause timer" : "Start timer"}
-              className="hover:text-white transition-colors ml-0.5"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors ml-0.5"
             >
               {isTimerRunning ? <Pause size={10} /> : <Play size={10} />}
             </button>
             <button
               onClick={() => setTimerSeconds(0)}
               title="Reset timer"
-              className="hover:text-white transition-colors"
+              className="hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               <RotateCcw size={10} />
             </button>
           </div>
 
-          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-brand-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#444]">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#d0d3d8] dark:ring-[#444]">
             {user?.name ? user.name[0].toUpperCase() : 'U'}
           </div>
         </div>
@@ -580,23 +592,23 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
       {/* Main Two-Pane Split Screen Layout */}
       <div 
         ref={containerRef}
-        className="flex-1 flex flex-col md:flex-row p-2 gap-2 overflow-hidden bg-[#181818]"
+        className="flex-1 flex flex-col md:flex-row p-2 gap-2 overflow-hidden bg-[#f2f4f7] dark:bg-[#181818]"
       >
         
         {/* Left Problem Specifications & Stages Card */}
         <div
           style={{ width: isMaximized ? '0%' : `${leftWidth}%`, display: isMaximized ? 'none' : 'flex' }}
-          className="h-full bg-[#262626] border border-[#333333] rounded-xl overflow-hidden flex flex-col shrink-0 min-w-0 shadow-soft-sm"
+          className="h-full bg-white dark:bg-[#262626] border border-[#e2e4e8] dark:border-[#333333] rounded-xl overflow-hidden flex flex-col shrink-0 min-w-0 shadow-sm"
         >
           {/* Left Card Top Tab Bar */}
-          <div className="h-9 bg-[#262626] border-b border-[#333333] px-2 flex items-center justify-between text-xs shrink-0">
+          <div className="h-9 bg-[#f8f9fa] dark:bg-[#262626] border-b border-[#e2e4e8] dark:border-[#333333] px-2 flex items-center justify-between text-xs shrink-0">
             <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
               <button
                 onClick={() => setLeftTab('description')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'description' 
-                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
                 <FileText size={13} className={leftTab === 'description' ? 'text-blue-400' : 'text-zinc-500'} />
@@ -607,11 +619,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 onClick={() => setLeftTab('stages')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'stages' 
-                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
-                <Layers size={13} className={leftTab === 'stages' ? 'text-emerald-400' : 'text-zinc-500'} />
+                <Layers size={13} className={leftTab === 'stages' ? 'text-emerald-500' : 'text-slate-400 dark:text-zinc-500'} />
                 <span>Stages</span>
               </button>
 
@@ -619,11 +631,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 onClick={() => setLeftTab('solutions')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'solutions' 
-                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
-                <Lightbulb size={13} className={leftTab === 'solutions' ? 'text-amber-400' : 'text-zinc-500'} />
+                <Lightbulb size={13} className={leftTab === 'solutions' ? 'text-amber-500' : 'text-slate-400 dark:text-zinc-500'} />
                 <span>AI Hints</span>
               </button>
 
@@ -631,20 +643,20 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 onClick={() => setLeftTab('submissions')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'submissions' 
-                    ? 'text-white bg-[#1e1e1e] font-semibold shadow-xs' 
-                    : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
-                <Clock size={13} className={leftTab === 'submissions' ? 'text-brand-400' : 'text-zinc-500'} />
+                <Clock size={13} className={leftTab === 'submissions' ? 'text-emerald-600 dark:text-brand-400' : 'text-slate-400 dark:text-zinc-500'} />
                 <span>Submissions</span>
               </button>
             </div>
 
-            <div className="flex items-center gap-1 text-zinc-500">
+            <div className="flex items-center gap-1 text-slate-500 dark:text-zinc-500">
               <button 
                 onClick={() => setLeftWidth(prev => prev > 60 ? 46 : 70)}
                 title="Expand panel" 
-                className="p-1 hover:text-zinc-300 hover:bg-[#333333] rounded"
+                className="p-1 hover:text-slate-900 hover:bg-slate-200 dark:hover:text-zinc-300 dark:hover:bg-[#333333] rounded"
               >
                 <Maximize2 size={12} />
               </button>
@@ -652,41 +664,41 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           </div>
 
           {/* Left Card Content Area */}
-          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-[#1e1e1e] select-text text-zinc-200">
+          <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white dark:bg-[#1e1e1e] select-text text-slate-800 dark:text-zinc-200">
             
             {/* Tab: Description */}
             {leftTab === 'description' && (
               <div className="space-y-4">
                 {/* Problem Title */}
                 <div>
-                  <h1 className="text-xl font-bold text-white tracking-tight">
+                  <h1 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
                     {problem.title}
                   </h1>
                   
                   {/* Pills Row: Difficulty, Topic, Hint button */}
                   <div className="flex flex-wrap items-center gap-2 mt-2">
-                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
                       problem.difficulty === 'EASY' 
                         ? 'bg-[#00b8a3]/10 text-[#00b8a3] border border-[#00b8a3]/30'
                         : problem.difficulty === 'MEDIUM'
-                        ? 'bg-[#ffc01e]/10 text-[#ffc01e] border border-[#ffc01e]/30'
+                        ? 'bg-[#ffc01e]/15 text-[#b27b00] border border-[#ffc01e]/40'
                         : 'bg-[#ff375f]/10 text-[#ff375f] border border-[#ff375f]/30'
                     }`}>
                       {problem.difficulty}
                     </span>
 
                     {problem.topic && (
-                      <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-[#2d2d2d] text-zinc-300 border border-[#383838]">
-                        <Tag size={11} className="text-zinc-400" />
+                      <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-[#f0f2f5] text-slate-700 border border-[#e0e2e6] dark:bg-[#2d2d2d] dark:text-zinc-300 dark:border-[#383838]">
+                        <Tag size={11} className="text-slate-500 dark:text-zinc-400" />
                         {problem.topic}
                       </span>
                     )}
 
                     <button
                       onClick={() => setLeftTab('solutions')}
-                      className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-[#2d2d2d] hover:bg-[#383838] text-zinc-300 border border-[#383838] transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs bg-[#f0f2f5] hover:bg-slate-200 text-slate-700 border border-[#e0e2e6] dark:bg-[#2d2d2d] dark:hover:bg-[#383838] dark:text-zinc-300 dark:border-[#383838] transition-colors"
                     >
-                      <Lightbulb size={11} className="text-amber-400" />
+                      <Lightbulb size={11} className="text-amber-500 dark:text-amber-400" />
                       <span>Hint</span>
                     </button>
                   </div>
@@ -694,20 +706,20 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
                 {/* Active Stage Target Banner */}
                 {activeStage && (
-                  <div className="p-3.5 rounded-xl bg-[#262626] border border-[#383838] space-y-1.5">
+                  <div className="p-3.5 rounded-xl bg-[#f8f9fa] dark:bg-[#262626] border border-[#e2e4e8] dark:border-[#383838] space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-400 font-mono flex items-center gap-1.5">
+                      <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-600 dark:text-emerald-400 font-mono flex items-center gap-1.5">
                         <Sparkles size={12} /> Target Stage Requirements
                       </span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-[#1e1e1e] text-zinc-300 font-mono border border-[#333333]">
+                      <span className="text-[10px] px-2 py-0.5 rounded bg-white text-slate-700 font-mono border border-[#e0e2e6] dark:bg-[#1e1e1e] dark:text-zinc-300 dark:border-[#333333]">
                         {activeStage.status}
                       </span>
                     </div>
-                    <h4 className="text-xs font-semibold text-white">{activeStage.name}</h4>
-                    <p className="text-xs text-zinc-300 leading-relaxed">{activeStage.description}</p>
-                    <div className="flex gap-4 pt-1 text-[11px] font-mono text-zinc-400 border-t border-[#333333]">
-                      <span>Expected Time: <b className="text-emerald-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
-                      <span>Expected Space: <b className="text-emerald-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
+                    <h4 className="text-xs font-semibold text-slate-900 dark:text-white">{activeStage.name}</h4>
+                    <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{activeStage.description}</p>
+                    <div className="flex gap-4 pt-1 text-[11px] font-mono text-slate-500 dark:text-zinc-400 border-t border-[#e2e4e8] dark:border-[#333333]">
+                      <span>Expected Time: <b className="text-emerald-600 dark:text-emerald-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
+                      <span>Expected Space: <b className="text-emerald-600 dark:text-emerald-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
                     </div>
                   </div>
                 )}
@@ -722,27 +734,27 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 />
 
                 {/* Problem Description Text */}
-                <div className="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap space-y-3">
+                <div className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap space-y-3">
                   {problem.description}
                 </div>
 
                 {/* Sample Test Cases */}
                 {problem.sample_test_cases && problem.sample_test_cases.length > 0 && (
-                  <div className="space-y-3 pt-3 border-t border-[#333333]">
-                    <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+                  <div className="space-y-3 pt-3 border-t border-[#e2e4e8] dark:border-[#333333]">
+                    <h3 className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                       Examples
                     </h3>
                     {problem.sample_test_cases.map((tc, idx) => (
-                      <div key={idx} className="bg-[#262626] p-3 rounded-xl border border-[#333333] text-xs font-mono space-y-2">
-                        <div className="text-zinc-400 font-semibold text-[11px]">Example {idx + 1}:</div>
-                        <div className="bg-[#1a1a1a] p-2 rounded-lg border border-[#2d2d2d] space-y-1">
+                      <div key={idx} className="bg-[#f8f9fa] dark:bg-[#262626] p-3 rounded-xl border border-[#e2e4e8] dark:border-[#333333] text-xs font-mono space-y-2">
+                        <div className="text-slate-600 dark:text-zinc-400 font-semibold text-[11px]">Example {idx + 1}:</div>
+                        <div className="bg-white dark:bg-[#1a1a1a] p-2.5 rounded-lg border border-[#e2e4e8] dark:border-[#2d2d2d] space-y-1.5">
                           <div>
-                            <span className="text-zinc-500 text-[10px] uppercase font-bold block">Input</span>
-                            <pre className="text-zinc-200 text-xs font-mono">{tc.input}</pre>
+                            <span className="text-slate-400 dark:text-zinc-500 text-[10px] uppercase font-bold block">Input</span>
+                            <pre className="text-slate-800 dark:text-zinc-200 text-xs font-mono">{tc.input}</pre>
                           </div>
-                          <div className="pt-1 border-t border-[#2d2d2d]">
-                            <span className="text-zinc-500 text-[10px] uppercase font-bold block">Output</span>
-                            <pre className="text-emerald-400 text-xs font-mono">{tc.expected_output}</pre>
+                          <div className="pt-1.5 border-t border-[#e2e4e8] dark:border-[#2d2d2d]">
+                            <span className="text-slate-400 dark:text-zinc-500 text-[10px] uppercase font-bold block">Output</span>
+                            <pre className="text-emerald-700 dark:text-emerald-400 text-xs font-mono font-semibold">{tc.expected_output}</pre>
                           </div>
                         </div>
                       </div>
@@ -751,7 +763,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 )}
 
                 {/* Limits */}
-                <div className="flex gap-4 pt-3 text-[11px] text-zinc-500 font-mono border-t border-[#333333]">
+                <div className="flex gap-4 pt-3 text-[11px] text-slate-500 dark:text-zinc-500 font-mono border-t border-[#e2e4e8] dark:border-[#333333]">
                   <span>Time Limit: {problem.time_limit_ms}ms</span>
                   <span>Memory Limit: {Math.round(problem.memory_limit_kb / 1024)}MB</span>
                 </div>
@@ -783,33 +795,33 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
             {/* Tab: Submissions */}
             {leftTab === 'submissions' && (
               <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-[#333333]">
-                  <span className="text-xs font-semibold text-zinc-300">Submission History</span>
-                  <span className="text-[11px] text-zinc-500 font-mono">{history.length} records</span>
+                <div className="flex items-center justify-between pb-2 border-b border-[#e2e4e8] dark:border-[#333333]">
+                  <span className="text-xs font-semibold text-slate-800 dark:text-zinc-300">Submission History</span>
+                  <span className="text-[11px] text-slate-500 dark:text-zinc-500 font-mono">{history.length} records</span>
                 </div>
                 {history.length === 0 ? (
-                  <div className="text-center py-8 text-zinc-500 text-xs">
+                  <div className="text-center py-8 text-slate-500 dark:text-zinc-500 text-xs">
                     No submissions recorded yet for this problem stage.
                   </div>
                 ) : (
                   history.map((sub, idx) => (
                     <div
                       key={sub.id}
-                      className="p-3 bg-[#262626] rounded-xl border border-[#333333] flex items-center justify-between text-xs font-mono"
+                      className="p-3 bg-[#f8f9fa] dark:bg-[#262626] rounded-xl border border-[#e2e4e8] dark:border-[#333333] flex items-center justify-between text-xs font-mono"
                     >
                       <div className="flex items-center gap-3">
                         <VerdictBadge verdict={sub.verdict} />
-                        <span className="text-zinc-400 text-[11px]">
+                        <span className="text-slate-600 dark:text-zinc-400 text-[11px]">
                           {sub.execution_time_ms !== null ? `${sub.execution_time_ms}ms` : '—'}
                         </span>
-                        <span className="text-zinc-500 text-[10px]">
+                        <span className="text-slate-400 dark:text-zinc-500 text-[10px]">
                           {new Date(sub.created_at).toLocaleTimeString()}
                         </span>
                       </div>
                       {idx > 0 && (
                         <button
                           onClick={() => handleCompare(history[idx].id, history[0].id)}
-                          className="px-2 py-1 rounded-md bg-[#333333] hover:bg-[#3d3d3d] text-zinc-300 text-[11px] flex items-center gap-1 transition-colors"
+                          className="px-2 py-1 rounded-md bg-[#edeef1] hover:bg-slate-200 text-slate-700 dark:bg-[#333333] dark:hover:bg-[#3d3d3d] dark:text-zinc-300 text-[11px] flex items-center gap-1 transition-colors"
                         >
                           <GitCompare size={12} /> Diff
                         </button>
@@ -820,6 +832,24 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
               </div>
             )}
 
+          </div>
+
+          {/* Bottom Reaction & Status Bar (LeetCode Style from Screenshot) */}
+          <div className="h-9 px-4 border-t border-[#e2e4e8] dark:border-[#2d2d2d] bg-[#f8f9fa] dark:bg-[#1a1a1a] flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 shrink-0 select-none">
+            <div className="flex items-center gap-3">
+              <button className="flex items-center gap-1 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors">
+                <ThumbsUp size={13} />
+                <span>1.9K</span>
+              </button>
+              <button className="flex items-center gap-1 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors">
+                <MessageSquare size={13} />
+                <span>36</span>
+              </button>
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Online Judge Active</span>
+            </div>
           </div>
         </div>
 
@@ -836,7 +866,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
         <div
           ref={rightPaneRef}
           style={{ width: isMaximized ? '100%' : `${100 - leftWidth}%` }}
-          className="h-full bg-[#262626] border border-[#333333] rounded-xl overflow-hidden flex flex-col min-w-0 shadow-soft-sm"
+          className="h-full bg-white dark:bg-[#262626] border border-[#e2e4e8] dark:border-[#333333] rounded-xl overflow-hidden flex flex-col min-w-0 shadow-sm"
         >
           {/* Upper Section: CodeEditor */}
           <div 
@@ -860,7 +890,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           {!isDrawerCollapsed && (
             <div
               onMouseDown={() => setIsDraggingV(true)}
-              className="h-1 hover:h-1.5 bg-[#333333] hover:bg-brand-500 cursor-row-resize flex items-center justify-center transition-all select-none shrink-0"
+              className="h-1 hover:h-1.5 bg-[#e2e4e8] dark:bg-[#333333] hover:bg-emerald-500 cursor-row-resize flex items-center justify-center transition-all select-none shrink-0"
               title="Drag to resize drawer"
             />
           )}
@@ -868,10 +898,10 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           {/* Bottom Testcase / Test Result Drawer */}
           <div
             style={{ height: isDrawerCollapsed ? '36px' : `${drawerHeight}px` }}
-            className="w-full bg-[#1e1e1e] flex flex-col overflow-hidden shrink-0"
+            className="w-full bg-white dark:bg-[#1e1e1e] flex flex-col overflow-hidden shrink-0"
           >
             {/* Drawer Tabs Header */}
-            <div className="h-9 bg-[#262626] border-b border-[#333333] px-3 flex items-center justify-between text-xs select-none shrink-0">
+            <div className="h-9 bg-[#f8f9fa] dark:bg-[#262626] border-b border-[#e2e4e8] dark:border-[#333333] px-3 flex items-center justify-between text-xs select-none shrink-0">
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => {
@@ -880,11 +910,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     bottomTab === 'testcase' 
-                      ? 'text-white bg-[#1e1e1e] font-semibold' 
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                      ? 'text-slate-900 bg-white font-semibold border-t-2 border-emerald-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                   }`}
                 >
-                  <CheckSquare size={13} className={bottomTab === 'testcase' ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <CheckSquare size={13} className={bottomTab === 'testcase' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-zinc-500'} />
                   <span>Testcase</span>
                 </button>
 
@@ -895,11 +925,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     bottomTab === 'testresult' 
-                      ? 'text-white bg-[#1e1e1e] font-semibold' 
-                      : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                      ? 'text-slate-900 bg-white font-semibold border-t-2 border-emerald-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                   }`}
                 >
-                  <Terminal size={13} className={bottomTab === 'testresult' ? 'text-emerald-400' : 'text-zinc-500'} />
+                  <Terminal size={13} className={bottomTab === 'testresult' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-zinc-500'} />
                   <span>Test Result</span>
                 </button>
 
@@ -911,8 +941,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                     }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                       bottomTab === 'journey' 
-                        ? 'text-white bg-[#1e1e1e] font-semibold' 
-                        : 'text-zinc-400 hover:text-zinc-200 hover:bg-[#303030]'
+                        ? 'text-slate-900 bg-white font-semibold border-t-2 border-emerald-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                     }`}
                   >
                     <span>Optimization Journey</span>
@@ -923,7 +953,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
               {/* Collapse/Expand Toggle */}
               <button
                 onClick={() => setIsDrawerCollapsed(!isDrawerCollapsed)}
-                className="p-1 text-zinc-500 hover:text-zinc-200 rounded hover:bg-[#333333] transition-colors"
+                className="p-1 text-slate-500 hover:text-slate-900 hover:bg-slate-200 dark:text-zinc-500 dark:hover:text-zinc-200 dark:hover:bg-[#333333] rounded transition-colors"
                 title={isDrawerCollapsed ? "Expand Drawer" : "Collapse Drawer"}
               >
                 {isDrawerCollapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -932,7 +962,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
             {/* Drawer Tab Body */}
             {!isDrawerCollapsed && (
-              <div className="flex-1 overflow-y-auto p-3.5 bg-[#1e1e1e] text-xs font-mono space-y-3">
+              <div className="flex-1 overflow-y-auto p-3.5 bg-white dark:bg-[#1e1e1e] text-xs font-mono space-y-3">
                 
                 {/* Tab: Testcase */}
                 {bottomTab === 'testcase' && (
@@ -946,8 +976,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                             onClick={() => setCustomInput(tc.input || '')}
                             className={`px-2.5 py-1 rounded-md text-xs font-sans transition-colors ${
                               customInput === tc.input 
-                                ? 'bg-[#333333] text-white border border-[#444444]' 
-                                : 'bg-[#262626] text-zinc-400 hover:text-zinc-200 hover:bg-[#2d2d2d] border border-[#333333]'
+                                ? 'bg-white text-slate-900 border border-[#d5d9de] shadow-xs font-semibold dark:bg-[#333333] dark:text-white dark:border-[#444444]' 
+                                : 'bg-[#f0f2f5] text-slate-600 hover:text-slate-900 border border-[#e0e2e6] dark:bg-[#262626] dark:text-zinc-400 dark:hover:text-zinc-200 dark:border-[#333333]'
                             }`}
                           >
                             Case {idx + 1}
@@ -957,12 +987,12 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                     )}
 
                     <div className="flex-1 flex flex-col min-h-0">
-                      <span className="text-[11px] text-zinc-500 font-sans block mb-1">Standard Input (stdin):</span>
+                      <span className="text-[11px] text-slate-500 dark:text-zinc-500 font-sans block mb-1">Standard Input (stdin):</span>
                       <textarea
                         value={customInput}
                         onChange={(e) => setCustomInput(e.target.value)}
                         placeholder="Enter standard input for your program..."
-                        className="w-full flex-1 min-h-[90px] bg-[#181818] text-zinc-200 border border-[#333333] rounded-lg p-2.5 resize-none focus:outline-none focus:border-emerald-500 font-mono text-xs"
+                        className="w-full flex-1 min-h-[90px] bg-[#f8f9fa] text-slate-800 border border-[#d5d9de] focus:bg-white focus:border-emerald-500 dark:bg-[#181818] dark:text-zinc-200 dark:border-[#333333] rounded-lg p-2.5 resize-none font-mono text-xs"
                       />
                     </div>
                   </div>
@@ -976,12 +1006,12 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                       (runOutput?.stderr && (runOutput.stderr.includes('signal 11') || runOutput.stderr.includes('dumped core') || runOutput.stderr.toLowerCase().includes('segmentation fault'))) ||
                       (latestVerdict?.compile_output && (latestVerdict.compile_output.includes('signal 11') || latestVerdict.compile_output.includes('dumped core')))
                     ) && (
-                      <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/40 text-amber-200 space-y-1.5 font-sans">
-                        <div className="flex items-center gap-1.5 font-bold text-xs text-amber-400">
+                      <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 dark:bg-amber-950/30 dark:border-amber-800/40 dark:text-amber-200 space-y-1.5 font-sans">
+                        <div className="flex items-center gap-1.5 font-bold text-xs text-amber-600 dark:text-amber-400">
                           <AlertTriangle size={14} />
                           <span>Diagnosis: Runtime Segmentation Fault (Signal 11 / Core Dump)</span>
                         </div>
-                        <p className="text-[11px] text-zinc-300">
+                        <p className="text-[11px] text-slate-600 dark:text-zinc-300">
                           Your code compiled and executed, but accessed an unallocated vector or invalid index out of bounds.
                         </p>
                       </div>
@@ -993,26 +1023,26 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                         <div className="flex items-center gap-3">
                           <VerdictBadge verdict={latestVerdict.verdict} />
                           {latestVerdict.execution_time_ms !== undefined && (
-                            <span className="text-zinc-400">Time: {latestVerdict.execution_time_ms}ms</span>
+                            <span className="text-slate-600 dark:text-zinc-400">Time: {latestVerdict.execution_time_ms}ms</span>
                           )}
                           {latestVerdict.memory_used_kb !== undefined && (
-                            <span className="text-zinc-400">Memory: {latestVerdict.memory_used_kb}KB</span>
+                            <span className="text-slate-600 dark:text-zinc-400">Memory: {latestVerdict.memory_used_kb}KB</span>
                           )}
                         </div>
 
                         {latestVerdict.feedback_message && (
                           <div className={`p-3 rounded-lg border text-xs font-sans ${
                             latestVerdict.verdict === 'ACCEPTED'
-                              ? 'bg-emerald-950/30 border-emerald-800/40 text-emerald-300'
+                              ? 'bg-emerald-50 border-emerald-300 text-emerald-800 dark:bg-emerald-950/30 dark:border-emerald-800/40 dark:text-emerald-300'
                               : latestVerdict.verdict === 'COMPLEXITY_MISMATCH'
-                              ? 'bg-amber-950/40 border-amber-600/50 text-amber-200 shadow-sm'
-                              : 'bg-zinc-800/40 border-zinc-700/40 text-zinc-300'
+                              ? 'bg-amber-50 border-amber-300 text-amber-900 dark:bg-amber-950/40 dark:border-amber-600/50 dark:text-amber-200 shadow-sm'
+                              : 'bg-slate-100 border-slate-300 text-slate-800 dark:bg-zinc-800/40 dark:border-zinc-700/40 dark:text-zinc-300'
                           }`}>
                             <div className="font-semibold flex items-center gap-1.5 mb-1">
                               {latestVerdict.verdict === 'ACCEPTED' ? (
-                                <span className="text-emerald-400">✓ Stage Accepted</span>
+                                <span className="text-emerald-700 dark:text-emerald-400">✓ Stage Accepted</span>
                               ) : latestVerdict.verdict === 'COMPLEXITY_MISMATCH' ? (
-                                <span className="text-amber-400">⚠️ Stage Complexity Requirement</span>
+                                <span className="text-amber-700 dark:text-amber-400">⚠️ Stage Complexity Requirement</span>
                               ) : (
                                 <span>Notice</span>
                               )}
@@ -1022,7 +1052,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                         )}
 
                         {latestVerdict.compile_output && (
-                          <div className="bg-rose-950/30 p-2.5 rounded-lg border border-rose-800/50 text-rose-300 whitespace-pre-wrap font-mono text-xs">
+                          <div className="bg-rose-50 p-2.5 rounded-lg border border-rose-200 text-rose-700 dark:bg-rose-950/30 dark:border-rose-800/50 dark:text-rose-300 whitespace-pre-wrap font-mono text-xs">
                             {latestVerdict.compile_output}
                           </div>
                         )}
@@ -1038,14 +1068,14 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                       <div className="space-y-2.5">
                         <div className="flex items-center gap-3">
                           <VerdictBadge verdict={runOutput.verdict} />
-                          <span className="text-zinc-400">Time: {runOutput.execution_time_ms}ms</span>
-                          <span className="text-zinc-400">Memory: {runOutput.memory_used_kb}KB</span>
+                          <span className="text-slate-600 dark:text-zinc-400">Time: {runOutput.execution_time_ms}ms</span>
+                          <span className="text-slate-600 dark:text-zinc-400">Memory: {runOutput.memory_used_kb}KB</span>
                         </div>
 
                         {runOutput.stdout && (
                           <div>
-                            <span className="text-zinc-500 text-[10px] block mb-1">Standard Output</span>
-                            <pre className="bg-[#181818] p-2.5 rounded-lg border border-[#333333] text-zinc-200 font-mono whitespace-pre-wrap text-xs">
+                            <span className="text-slate-500 dark:text-zinc-500 text-[10px] block mb-1">Standard Output</span>
+                            <pre className="bg-[#f8f9fa] p-2.5 rounded-lg border border-[#e2e4e8] text-slate-800 dark:bg-[#181818] dark:border-[#333333] dark:text-zinc-200 font-mono whitespace-pre-wrap text-xs">
                               {runOutput.stdout}
                             </pre>
                           </div>
@@ -1053,8 +1083,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
                         {runOutput.stderr && (
                           <div>
-                            <span className="text-rose-400 text-[10px] block mb-1">Standard Error</span>
-                            <pre className="bg-rose-950/20 p-2.5 rounded-lg border border-rose-800/40 text-rose-300 font-mono whitespace-pre-wrap text-xs">
+                            <span className="text-rose-600 dark:text-rose-400 text-[10px] block mb-1">Standard Error</span>
+                            <pre className="bg-rose-50 p-2.5 rounded-lg border border-rose-200 text-rose-700 dark:bg-rose-950/20 dark:border-rose-800/40 dark:text-rose-300 font-mono whitespace-pre-wrap text-xs">
                               {runOutput.stderr}
                             </pre>
                           </div>
@@ -1063,7 +1093,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                     )}
 
                     {!latestVerdict && !runOutput && (
-                      <div className="text-center py-8 text-zinc-500">
+                      <div className="text-center py-8 text-slate-500 dark:text-zinc-500">
                         Run custom input or submit code to view execution metrics.
                       </div>
                     )}
