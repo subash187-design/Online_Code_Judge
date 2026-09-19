@@ -74,7 +74,7 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-[#f2f4f7] dark:bg-[#121212] transition-colors">
       <div className="w-full max-w-md bg-white border border-[#e2e4e8] shadow-xl dark:bg-[#1e1e1e] dark:border-[#2d2d2d] rounded-3xl p-8">
         <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 mb-3 border border-emerald-500/20">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 mb-3 border border-blue-500/20">
             <ShieldCheck size={24} />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Verify Your Email</h2>
@@ -91,8 +91,8 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
         )}
 
         {success && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-800 dark:text-emerald-300 text-sm flex items-start gap-3">
-            <CheckCircle size={18} className="shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
+          <div className="mb-6 p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 dark:bg-blue-950/40 dark:border-blue-800 dark:text-blue-300 text-sm flex items-start gap-3">
+            <CheckCircle size={18} className="shrink-0 mt-0.5 text-blue-600 dark:text-blue-400" />
             <span>{success}</span>
           </div>
         )}
@@ -110,7 +110,7 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500 transition-all"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500 transition-all"
               />
             </div>
           </div>
@@ -126,14 +126,14 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
               placeholder="123456"
-              className="w-full text-center tracking-[0.4em] font-mono text-xl py-3 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-600 dark:focus:border-emerald-500 transition-all"
+              className="w-full text-center tracking-[0.4em] font-mono text-xl py-3 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-600 dark:focus:border-blue-500 transition-all"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading || otp.length !== 6}
-            className="w-full mt-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full mt-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? 'Verifying...' : 'Verify Email & Activate'}
           </button>
@@ -144,7 +144,7 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
           <button
             onClick={handleResend}
             disabled={resending}
-            className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold flex items-center gap-1.5 disabled:opacity-50"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-semibold flex items-center gap-1.5 disabled:opacity-50"
           >
             <RefreshCw size={12} className={resending ? 'animate-spin' : ''} />
             {resending ? 'Resending...' : 'Resend Code'}

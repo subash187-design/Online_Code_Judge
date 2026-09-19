@@ -65,8 +65,8 @@ export default function CodeEditor({
       {/* Upper Tab Bar: </> Code */}
       <div className="h-9 bg-[#f8f9fa] dark:bg-[#262626] px-3 border-b border-[#e2e4e8] dark:border-[#333333] flex items-center justify-between text-xs text-slate-700 dark:text-zinc-300 shrink-0 select-none">
         <div className="flex items-center gap-2">
-          <span className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-white dark:bg-[#1e1e1e] rounded-t border-t-2 border-emerald-600 dark:border-emerald-500 shadow-sm">
-            <span className="text-emerald-600 dark:text-emerald-400 font-mono">&lt;/&gt;</span>
+          <span className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-blue-700 dark:text-blue-400 bg-white dark:bg-[#1e1e1e] rounded-t border-t-2 border-blue-600 dark:border-blue-500 shadow-sm">
+            <span className="text-blue-600 dark:text-blue-400 font-mono">&lt;/&gt;</span>
             Code
           </span>
         </div>
@@ -103,7 +103,7 @@ export default function CodeEditor({
             title="Copy code"
             className="p-1 rounded hover:bg-slate-200 dark:hover:bg-[#383838] text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors flex items-center gap-1 text-[11px]"
           >
-            {copied ? <Check size={12} className="text-emerald-600 dark:text-emerald-400" /> : <Copy size={12} />}
+            {copied ? <Check size={12} className="text-blue-600 dark:text-blue-400" /> : <Copy size={12} />}
           </button>
 
           {/* Maximize / Restore */}
@@ -169,7 +169,7 @@ export default function CodeEditor({
           <textarea
             value={code}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full h-full p-4 bg-white text-slate-900 dark:bg-[#1e1e1e] dark:text-zinc-100 font-mono resize-none focus:outline-none leading-relaxed border-none selection:bg-emerald-500/25"
+            className="w-full h-full p-4 bg-white text-slate-900 dark:bg-[#1e1e1e] dark:text-zinc-100 font-mono resize-none focus:outline-none leading-relaxed border-none selection:bg-blue-500/25"
             style={{ fontSize: `${fontSize}px`, tabSize: tabSize }}
             spellCheck={false}
             autoCapitalize="off"
@@ -215,7 +215,7 @@ export default function CodeEditor({
       {/* Bottom Status Bar: Saved | Ln X, Col Y */}
       <div className="h-6 bg-[#f8f9fa] dark:bg-[#262626] px-3 border-t border-[#e2e4e8] dark:border-[#333333] flex items-center justify-between text-[11px] text-slate-500 dark:text-zinc-400 select-none shrink-0">
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
           <span>Saved</span>
         </div>
         <div className="font-mono text-[10px] text-slate-500 dark:text-zinc-400">

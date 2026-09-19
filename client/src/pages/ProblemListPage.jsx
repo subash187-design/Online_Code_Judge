@@ -65,7 +65,7 @@ export default function ProblemListPage({ onSelectProblem }) {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#e2e4e8] dark:border-[#262626]">
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-md bg-white border border-[#e0e2e6] text-emerald-600 dark:bg-[#262626] dark:border-[#333333] dark:text-emerald-400 shadow-xs">
+              <span className="p-1.5 rounded-md bg-white border border-[#e0e2e6] text-blue-600 dark:bg-[#262626] dark:border-[#333333] dark:text-blue-400 shadow-xs">
                 <Terminal size={18} />
               </span>
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
@@ -79,7 +79,7 @@ export default function ProblemListPage({ onSelectProblem }) {
 
           <div className="flex items-center gap-2">
             <div className="px-3 py-1.5 rounded-lg bg-white border border-[#e0e2e6] text-xs font-mono text-slate-700 dark:bg-[#1e1e1e] dark:border-[#2e2e2e] dark:text-zinc-300 shadow-xs">
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{problems.length}</span> Challenges Loaded
+              <span className="text-blue-600 dark:text-blue-400 font-bold">{problems.length}</span> Challenges Loaded
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function ProblemListPage({ onSelectProblem }) {
               onClick={() => setTopicFilter(top.value)}
               className={`px-3 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all border ${
                 topicFilter === top.value
-                  ? 'bg-slate-900 text-white border-slate-900 font-semibold shadow-xs dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/40'
+                  ? 'bg-slate-900 text-white border-slate-900 font-semibold shadow-xs dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/40'
                   : 'bg-white text-slate-600 border-[#e0e2e6] hover:text-slate-900 hover:bg-slate-100 dark:bg-[#1e1e1e] dark:text-zinc-400 dark:border-[#2e2e2e] dark:hover:text-white dark:hover:bg-[#262626]'
               }`}
             >
@@ -110,7 +110,7 @@ export default function ProblemListPage({ onSelectProblem }) {
               placeholder="Search problems by name, pattern, topic, or tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg bg-white border border-[#d5d9de] text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-500 dark:bg-[#121212] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 transition-colors"
+              className="w-full pl-10 pr-4 py-2 rounded-lg bg-white border border-[#d5d9de] text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 dark:bg-[#121212] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 transition-colors"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function ProblemListPage({ onSelectProblem }) {
         {loading && (
           <div className="py-20 text-center text-slate-500 dark:text-zinc-400 text-sm">
             <div className="inline-flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
               Loading problem catalog...
             </div>
           </div>
@@ -169,7 +169,7 @@ export default function ProblemListPage({ onSelectProblem }) {
                     <div className="space-y-1.5 min-w-0">
                       <div className="flex items-center gap-2.5 flex-wrap">
                         <span className="text-xs font-mono text-slate-400 dark:text-zinc-500">#{p.id}</span>
-                        <h3 className="text-sm sm:text-base font-semibold text-slate-900 group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-400 transition-colors truncate">
+                        <h3 className="text-sm sm:text-base font-semibold text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 transition-colors truncate">
                           {p.title}
                         </h3>
                         {p.topic && (
@@ -211,10 +211,10 @@ export default function ProblemListPage({ onSelectProblem }) {
 
                   {/* Right: Action Button */}
                   <div className="flex items-center gap-3 shrink-0 ml-4">
-                    <span className="hidden md:inline-block text-xs font-medium text-emerald-600 dark:text-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="hidden md:inline-block text-xs font-medium text-blue-600 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity">
                       Solve Challenge
                     </span>
-                    <div className="p-2 rounded-lg bg-[#f0f2f5] border border-[#e0e2e6] text-slate-500 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-500 dark:bg-[#282828] dark:border-[#383838] dark:text-zinc-400 transition-all shadow-xs">
+                    <div className="p-2 rounded-lg bg-[#f0f2f5] border border-[#e0e2e6] text-slate-500 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-500 dark:bg-[#282828] dark:border-[#383838] dark:text-zinc-400 transition-all shadow-xs">
                       <ArrowRight size={14} />
                     </div>
                   </div>

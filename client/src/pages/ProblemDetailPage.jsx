@@ -438,7 +438,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
     return (
       <div className="flex h-screen items-center justify-center bg-[#f2f4f7] dark:bg-[#1a1a1a] text-slate-600 dark:text-zinc-400 text-sm">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
           Loading algorithmic workspace...
         </div>
       </div>
@@ -449,7 +449,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
     return (
       <div className="p-8 text-center text-rose-500 bg-[#f2f4f7] dark:bg-[#1a1a1a] min-h-screen">
         Problem not found.
-        <button onClick={onBack} className="block mx-auto mt-4 text-emerald-600 dark:text-emerald-400 underline">
+        <button onClick={onBack} className="block mx-auto mt-4 text-blue-600 dark:text-blue-400 underline">
           Return to problem list
         </button>
       </div>
@@ -525,14 +525,14 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
             className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#edeef1] hover:bg-slate-200 text-slate-800 border border-[#d5d9de] dark:bg-[#282828] dark:hover:bg-[#333333] dark:text-zinc-200 dark:border-[#3c3c3c] text-xs font-medium disabled:opacity-50 transition-all shadow-sm"
             title="Run Custom Input"
           >
-            <Play size={12} className="text-emerald-600 fill-emerald-600 dark:text-emerald-400 dark:fill-emerald-400" />
+            <Play size={12} className="text-blue-600 fill-blue-600 dark:text-blue-400 dark:fill-blue-400" />
             <span>{running ? 'Running...' : 'Run'}</span>
           </button>
 
           <button
             onClick={handleSubmitCode}
             disabled={running || submitting || isStageLocked}
-            className="flex items-center gap-1.5 px-3.5 py-1 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 dark:bg-[#2cbb5d]/20 dark:hover:bg-[#2cbb5d]/30 dark:text-[#2cbb5d] dark:border-[#2cbb5d]/40 text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-3.5 py-1 rounded-md bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold disabled:opacity-50 transition-all shadow-sm"
             title="Submit Solution"
           >
             <Send size={12} />
@@ -583,7 +583,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
             </button>
           </div>
 
-          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-emerald-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#d0d3d8] dark:ring-[#444]">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#d0d3d8] dark:ring-[#444]">
             {user?.name ? user.name[0].toUpperCase() : 'U'}
           </div>
         </div>
@@ -607,7 +607,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 onClick={() => setLeftTab('description')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'description' 
-                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-blue-500' 
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
@@ -619,11 +619,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 onClick={() => setLeftTab('stages')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'stages' 
-                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-blue-500' 
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
-                <Layers size={13} className={leftTab === 'stages' ? 'text-emerald-500' : 'text-slate-400 dark:text-zinc-500'} />
+                <Layers size={13} className={leftTab === 'stages' ? 'text-blue-500' : 'text-slate-400 dark:text-zinc-500'} />
                 <span>Stages</span>
               </button>
 
@@ -631,7 +631,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 onClick={() => setLeftTab('solutions')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'solutions' 
-                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-blue-500' 
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
@@ -643,11 +643,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 onClick={() => setLeftTab('submissions')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   leftTab === 'submissions' 
-                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-emerald-500' 
+                    ? 'text-blue-600 bg-white font-semibold shadow-xs border-t-2 border-blue-500 dark:text-white dark:bg-[#1e1e1e] dark:border-blue-500' 
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                 }`}
               >
-                <Clock size={13} className={leftTab === 'submissions' ? 'text-emerald-600 dark:text-brand-400' : 'text-slate-400 dark:text-zinc-500'} />
+                <Clock size={13} className={leftTab === 'submissions' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-zinc-500'} />
                 <span>Submissions</span>
               </button>
             </div>
@@ -708,7 +708,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 {activeStage && (
                   <div className="p-3.5 rounded-xl bg-[#f8f9fa] dark:bg-[#262626] border border-[#e2e4e8] dark:border-[#383838] space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[11px] uppercase font-bold tracking-wider text-emerald-600 dark:text-emerald-400 font-mono flex items-center gap-1.5">
+                      <span className="text-[11px] uppercase font-bold tracking-wider text-blue-600 dark:text-blue-400 font-mono flex items-center gap-1.5">
                         <Sparkles size={12} /> Target Stage Requirements
                       </span>
                       <span className="text-[10px] px-2 py-0.5 rounded bg-white text-slate-700 font-mono border border-[#e0e2e6] dark:bg-[#1e1e1e] dark:text-zinc-300 dark:border-[#333333]">
@@ -718,8 +718,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                     <h4 className="text-xs font-semibold text-slate-900 dark:text-white">{activeStage.name}</h4>
                     <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{activeStage.description}</p>
                     <div className="flex gap-4 pt-1 text-[11px] font-mono text-slate-500 dark:text-zinc-400 border-t border-[#e2e4e8] dark:border-[#333333]">
-                      <span>Expected Time: <b className="text-emerald-600 dark:text-emerald-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
-                      <span>Expected Space: <b className="text-emerald-600 dark:text-emerald-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
+                      <span>Expected Time: <b className="text-blue-600 dark:text-blue-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
+                      <span>Expected Space: <b className="text-blue-600 dark:text-blue-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
                     </div>
                   </div>
                 )}
@@ -847,7 +847,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
               </button>
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
               <span>Online Judge Active</span>
             </div>
           </div>
@@ -858,24 +858,20 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           <div
             onMouseDown={() => setIsDraggingH(true)}
             className="hidden md:flex w-1 hover:w-1.5 bg-[#333333] hover:bg-brand-500 cursor-col-resize items-center justify-center transition-all rounded-full my-auto h-20 select-none shrink-0"
-            title="Drag to resize panes"
+            title="Drag to resize panels"
           />
         )}
 
-        {/* Right Code Editor & Testcase Card */}
-        <div
-          ref={rightPaneRef}
+        {/* Right Code Editor & Execution Drawer Card */}
+        <div 
           style={{ width: isMaximized ? '100%' : `${100 - leftWidth}%` }}
-          className="h-full bg-white dark:bg-[#262626] border border-[#e2e4e8] dark:border-[#333333] rounded-xl overflow-hidden flex flex-col min-w-0 shadow-sm"
+          className="flex-1 h-full bg-white dark:bg-[#1e1e1e] border border-[#e2e4e8] dark:border-[#333333] rounded-xl overflow-hidden flex flex-col min-w-0 shadow-sm"
         >
-          {/* Upper Section: CodeEditor */}
-          <div 
-            style={{ height: isDrawerCollapsed ? 'calc(100% - 36px)' : `calc(100% - ${drawerHeight}px)` }} 
-            className="w-full overflow-hidden flex flex-col min-h-0"
-          >
+          {/* Editor Container */}
+          <div className="flex-1 overflow-hidden relative">
             <CodeEditor
               code={code}
-              onChange={(newVal) => setCode(newVal)}
+              onChange={setCode}
               onReset={() => {
                 if (problem) {
                   setCode(generateStarterBoilerplate(problem));
@@ -890,7 +886,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           {!isDrawerCollapsed && (
             <div
               onMouseDown={() => setIsDraggingV(true)}
-              className="h-1 hover:h-1.5 bg-[#e2e4e8] dark:bg-[#333333] hover:bg-emerald-500 cursor-row-resize flex items-center justify-center transition-all select-none shrink-0"
+              className="h-1 hover:h-1.5 bg-[#e2e4e8] dark:bg-[#333333] hover:bg-blue-500 cursor-row-resize flex items-center justify-center transition-all select-none shrink-0"
               title="Drag to resize drawer"
             />
           )}
@@ -910,11 +906,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     bottomTab === 'testcase' 
-                      ? 'text-slate-900 bg-white font-semibold border-t-2 border-emerald-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
+                      ? 'text-slate-900 bg-white font-semibold border-t-2 border-blue-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                   }`}
                 >
-                  <CheckSquare size={13} className={bottomTab === 'testcase' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-zinc-500'} />
+                  <CheckSquare size={13} className={bottomTab === 'testcase' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-zinc-500'} />
                   <span>Testcase</span>
                 </button>
 
@@ -925,11 +921,11 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                   }}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                     bottomTab === 'testresult' 
-                      ? 'text-slate-900 bg-white font-semibold border-t-2 border-emerald-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
+                      ? 'text-slate-900 bg-white font-semibold border-t-2 border-blue-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                   }`}
                 >
-                  <Terminal size={13} className={bottomTab === 'testresult' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 dark:text-zinc-500'} />
+                  <Terminal size={13} className={bottomTab === 'testresult' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-zinc-500'} />
                   <span>Test Result</span>
                 </button>
 
@@ -941,7 +937,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                     }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                       bottomTab === 'journey' 
-                        ? 'text-slate-900 bg-white font-semibold border-t-2 border-emerald-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
+                        ? 'text-slate-900 bg-white font-semibold border-t-2 border-blue-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
                     }`}
                   >
@@ -992,7 +988,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                         value={customInput}
                         onChange={(e) => setCustomInput(e.target.value)}
                         placeholder="Enter standard input for your program..."
-                        className="w-full flex-1 min-h-[90px] bg-[#f8f9fa] text-slate-800 border border-[#d5d9de] focus:bg-white focus:border-emerald-500 dark:bg-[#181818] dark:text-zinc-200 dark:border-[#333333] rounded-lg p-2.5 resize-none font-mono text-xs"
+                        className="w-full flex-1 min-h-[90px] bg-[#f8f9fa] text-slate-800 border border-[#d5d9de] focus:bg-white focus:border-blue-500 dark:bg-[#181818] dark:text-zinc-200 dark:border-[#333333] rounded-lg p-2.5 resize-none font-mono text-xs"
                       />
                     </div>
                   </div>

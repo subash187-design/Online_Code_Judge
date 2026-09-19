@@ -98,14 +98,14 @@ export default function LandingPage({ onNavigate }) {
             <div className="lg:col-span-7 space-y-6 text-left">
               {/* Tagline Pill Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#1e1e1e] text-xs font-semibold text-slate-700 dark:text-zinc-300 border border-[#e0e2e6] dark:border-[#2d2d2d] shadow-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
                 Prepare Today, Safe Tomorrow
               </div>
 
               {/* Main Headline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.12]">
                 AI-Powered <br className="hidden sm:inline" />
-                <span className="text-emerald-600 dark:text-emerald-400">Algorithmic Preparedness</span> <br />
+                <span className="text-blue-600 dark:text-blue-400">Algorithmic Preparedness</span> <br />
                 Learning Platform
               </h1>
 
@@ -118,7 +118,7 @@ export default function LandingPage({ onNavigate }) {
               <div className="pt-2 flex flex-col sm:flex-row items-center gap-3.5">
                 <button
                   onClick={() => onNavigate('signup')}
-                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 group"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 group"
                 >
                   Get started
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
@@ -140,12 +140,12 @@ export default function LandingPage({ onNavigate }) {
                 {/* Card Top: Status Pills */}
                 <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
                     <span className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
                       Algomind AI Platform
                     </span>
                   </div>
-                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">
+                  <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800/60">
                     Live Active
                   </span>
                 </div>
@@ -154,7 +154,7 @@ export default function LandingPage({ onNavigate }) {
                 <div className="grid grid-cols-2 gap-2.5">
                   <div className="p-3 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d]">
                     <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Complexity Drill</div>
-                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">O(N) Optimal</div>
+                    <div className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-0.5">O(N) Optimal</div>
                   </div>
                   <div className="p-3 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d]">
                     <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">Static AST</div>
@@ -166,7 +166,7 @@ export default function LandingPage({ onNavigate }) {
                   </div>
                   <div className="p-3 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d]">
                     <div className="text-[11px] text-slate-500 dark:text-zinc-400 font-medium">AI Feedback</div>
-                    <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Socratic Hints</div>
+                    <div className="text-xs font-bold text-blue-600 dark:text-blue-400 mt-0.5">Socratic Hints</div>
                   </div>
                 </div>
 
@@ -175,7 +175,7 @@ export default function LandingPage({ onNavigate }) {
                   <div>
                     <div className="text-xs font-bold text-slate-900 dark:text-white">Preparedness Score</div>
                     <div className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">Algorithmic readiness metric</div>
-                    <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">86%</div>
+                    <div className="text-2xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">86%</div>
                   </div>
 
                   {/* Donut SVG Meter */}
@@ -189,7 +189,7 @@ export default function LandingPage({ onNavigate }) {
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       />
                       <path
-                        className="text-emerald-500"
+                        className="text-blue-500"
                         strokeDasharray="86, 100"
                         strokeWidth="3.5"
                         strokeLinecap="round"
@@ -205,7 +205,7 @@ export default function LandingPage({ onNavigate }) {
                 {/* Quick Status Sub-bar */}
                 <div className="pt-2 flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400">
                   <span className="flex items-center gap-1.5">
-                    <Check size={14} className="text-emerald-600 dark:text-emerald-400" />
+                    <Check size={14} className="text-blue-600 dark:text-blue-400" />
                     Docker Sandbox Verified
                   </span>
                   <span className="font-semibold text-slate-700 dark:text-zinc-200">6 Phases Active</span>
@@ -239,7 +239,7 @@ export default function LandingPage({ onNavigate }) {
                 className="p-7 rounded-2xl bg-white border border-[#e2e4e8] hover:border-slate-300 hover:shadow-md transition-all shadow-xs flex flex-col justify-between group dark:bg-[#1e1e1e] dark:border-[#2d2d2d] dark:hover:border-[#3d3d3d] dark:hover:bg-[#222222]"
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-[#f0f2f5] text-emerald-600 flex items-center justify-center mb-5 border border-[#e0e2e6] shadow-xs group-hover:scale-105 transition-transform dark:bg-[#181818] dark:text-emerald-400 dark:border-[#2d2d2d]">
+                  <div className="w-10 h-10 rounded-xl bg-[#f0f2f5] text-blue-600 flex items-center justify-center mb-5 border border-[#e0e2e6] shadow-xs group-hover:scale-105 transition-transform dark:bg-[#181818] dark:text-blue-400 dark:border-[#2d2d2d]">
                     {feat.icon}
                   </div>
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
@@ -278,7 +278,7 @@ export default function LandingPage({ onNavigate }) {
                 className="p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-xs relative space-y-3 dark:bg-[#1e1e1e] dark:border-[#2d2d2d]"
               >
                 {/* Step Number Badge */}
-                <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#f0f2f5] border border-[#e0e2e6] text-xs font-extrabold text-emerald-700 font-mono dark:bg-[#181818] dark:border-[#2d2d2d] dark:text-emerald-400">
+                <div className="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#f0f2f5] border border-[#e0e2e6] text-xs font-extrabold text-blue-700 font-mono dark:bg-[#181818] dark:border-[#2d2d2d] dark:text-blue-400">
                   {item.step}
                 </div>
                 
@@ -308,7 +308,7 @@ export default function LandingPage({ onNavigate }) {
           <div className="mt-6 flex justify-center">
             <button
               onClick={() => onNavigate('signup')}
-              className="px-8 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center gap-2"
+              className="px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center gap-2"
             >
               Get started →
             </button>

@@ -66,7 +66,7 @@ export default function LoginPage({ onNavigate }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500 transition-all"
+              className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500 transition-all"
             />
           </div>
 
@@ -77,7 +77,7 @@ export default function LoginPage({ onNavigate }) {
               </label>
               <button
                 type="button"
-                className="text-xs text-slate-500 hover:text-emerald-600 dark:text-zinc-400 dark:hover:text-emerald-400 transition-colors"
+                className="text-xs text-slate-500 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 transition-colors"
               >
                 Forgot password?
               </button>
@@ -88,14 +88,14 @@ export default function LoginPage({ onNavigate }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="•••••••••"
-              className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500 transition-all"
+              className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500 transition-all"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50"
+            className="w-full mt-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50"
           >
             {loading ? 'Signing in...' : 'Sign in >'}
           </button>
@@ -105,7 +105,7 @@ export default function LoginPage({ onNavigate }) {
           Don't have an account?{' '}
           <button
             onClick={() => onNavigate('signup')}
-            className="text-emerald-600 dark:text-emerald-400 hover:underline font-bold"
+            className="text-blue-600 dark:text-blue-400 hover:underline font-bold"
           >
             Create one
           </button>

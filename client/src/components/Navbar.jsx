@@ -59,11 +59,11 @@ export default function Navbar({ onNavigate, currentPage }) {
               onClick={() => handleNav('dashboard')}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
                 currentPage === 'dashboard'
-                  ? 'text-slate-900 bg-white shadow-sm font-semibold border-t-2 border-emerald-500 dark:text-white dark:bg-[#1e1e1e]'
+                  ? 'text-slate-900 bg-white shadow-sm font-semibold border-t-2 border-blue-600 dark:text-white dark:bg-[#1e1e1e]'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2d2d2d]'
               }`}
             >
-              <LayoutDashboard size={13} className={currentPage === 'dashboard' ? 'text-emerald-500' : ''} />
+              <LayoutDashboard size={13} className={currentPage === 'dashboard' ? 'text-blue-600' : ''} />
               Studio Dashboard
             </button>
 
@@ -71,11 +71,11 @@ export default function Navbar({ onNavigate, currentPage }) {
               onClick={() => handleNav('problems')}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
                 currentPage === 'problems' || currentPage === 'problem-detail'
-                  ? 'text-slate-900 bg-white shadow-sm font-semibold border-t-2 border-emerald-500 dark:text-white dark:bg-[#1e1e1e]'
+                  ? 'text-slate-900 bg-white shadow-sm font-semibold border-t-2 border-blue-600 dark:text-white dark:bg-[#1e1e1e]'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2d2d2d]'
               }`}
             >
-              <Code2 size={13} className={currentPage === 'problems' ? 'text-emerald-500' : ''} />
+              <Code2 size={13} className={currentPage === 'problems' ? 'text-blue-600' : ''} />
               Problems
             </button>
 
@@ -84,7 +84,7 @@ export default function Navbar({ onNavigate, currentPage }) {
                 onClick={() => handleNav('admin')}
                 className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
                   currentPage === 'admin'
-                    ? 'text-slate-900 bg-white shadow-sm font-semibold border-t-2 border-emerald-500 dark:text-white dark:bg-[#1e1e1e]'
+                    ? 'text-slate-900 bg-white shadow-sm font-semibold border-t-2 border-blue-600 dark:text-white dark:bg-[#1e1e1e]'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2d2d2d]'
                 }`}
               >
@@ -192,7 +192,7 @@ export default function Navbar({ onNavigate, currentPage }) {
 
               <button
                 onClick={() => handleNav('signup')}
-                className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5"
+                className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5"
               >
                 Get started
               </button>
@@ -254,7 +254,7 @@ export default function Navbar({ onNavigate, currentPage }) {
                 </button>
                 <button
                   onClick={() => handleNav('signup')}
-                  className="w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-emerald-600 text-white hover:bg-emerald-500 flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full py-2.5 rounded-xl text-center text-sm font-semibold bg-blue-600 text-white hover:bg-blue-500 flex items-center justify-center gap-2 shadow-sm"
                 >
                   <UserPlus size={15} /> Get started
                 </button>

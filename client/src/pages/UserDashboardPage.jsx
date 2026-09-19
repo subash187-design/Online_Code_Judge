@@ -206,11 +206,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               onClick={() => setActiveTab('studio')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'studio'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-emerald-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-emerald-500'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
               }`}
             >
-              <LayoutDashboard size={15} className={activeTab === 'studio' ? 'text-emerald-600 dark:text-emerald-400' : ''} />
+              <LayoutDashboard size={15} className={activeTab === 'studio' ? 'text-blue-600 dark:text-blue-400' : ''} />
               Dashboard
             </button>
 
@@ -218,11 +218,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               onClick={() => setActiveTab('problems')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'problems'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-emerald-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-emerald-500'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
               }`}
             >
-              <Code2 size={15} className={activeTab === 'problems' ? 'text-emerald-600 dark:text-emerald-400' : ''} />
+              <Code2 size={15} className={activeTab === 'problems' ? 'text-blue-600 dark:text-blue-400' : ''} />
               My assignments
             </button>
 
@@ -230,11 +230,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               onClick={() => setActiveTab('telemetry')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'telemetry'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-emerald-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-emerald-500'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
               }`}
             >
-              <Cpu size={15} className={activeTab === 'telemetry' ? 'text-emerald-600 dark:text-emerald-400' : ''} />
+              <Cpu size={15} className={activeTab === 'telemetry' ? 'text-blue-600 dark:text-blue-400' : ''} />
               Assessments
             </button>
 
@@ -242,11 +242,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               onClick={() => setActiveTab('journey')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'journey'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-emerald-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-emerald-500'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
               }`}
             >
-              <TrendingUp size={15} className={activeTab === 'journey' ? 'text-emerald-600 dark:text-emerald-400' : ''} />
+              <TrendingUp size={15} className={activeTab === 'journey' ? 'text-blue-600 dark:text-blue-400' : ''} />
               AI Learning path
             </button>
 
@@ -254,11 +254,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               onClick={() => setActiveTab('profile')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'profile'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-emerald-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-emerald-500'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
               }`}
             >
-              <User size={15} className={activeTab === 'profile' ? 'text-emerald-600 dark:text-emerald-400' : ''} />
+              <User size={15} className={activeTab === 'profile' ? 'text-blue-600 dark:text-blue-400' : ''} />
               Profile
             </button>
 
@@ -266,11 +266,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'settings'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-emerald-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-emerald-500'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
               }`}
             >
-              <Settings size={15} className={activeTab === 'settings' ? 'text-emerald-600 dark:text-emerald-400' : ''} />
+              <Settings size={15} className={activeTab === 'settings' ? 'text-blue-600 dark:text-blue-400' : ''} />
               Settings
             </button>
           </nav>
@@ -573,7 +573,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         <td className="py-3.5 px-5 text-right">
                           <button
                             onClick={() => onSelectProblem(prob.id)}
-                            className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all shadow-sm"
+                            className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all shadow-sm"
                           >
                             {idx === 2 ? 'View result' : 'Start now'}
                           </button>
@@ -741,7 +741,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   placeholder="Search challenges by title, category, or algorithmic topic..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
                 />
               </div>
 
@@ -750,7 +750,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   value={difficultyFilter}
                   onChange={(e) => setDifficultyFilter(e.target.value)}
                   aria-label="Filter problems by difficulty"
-                  className="px-3.5 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs font-semibold text-slate-900 focus:outline-none focus:border-emerald-600 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white cursor-pointer"
+                  className="px-3.5 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-600 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white cursor-pointer"
                 >
                   <option value="ALL">All Difficulties</option>
                   <option value="EASY">Easy</option>
@@ -888,7 +888,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                   <Cpu size={16} /> AST Syntax Tree Diagnostics
                 </div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -901,7 +901,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d] space-y-2 font-mono text-xs">
                   <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
                     <span className="text-slate-500 dark:text-zinc-400">Parser Status:</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">PASS (0 syntax errors)</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-semibold">PASS (0 syntax errors)</span>
                   </div>
                   <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
                     <span className="text-slate-500 dark:text-zinc-400">Max Loop Nesting Depth:</span>
@@ -913,13 +913,13 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   </div>
                   <div className="flex justify-between py-1">
                     <span className="text-slate-500 dark:text-zinc-400">Detected Complexity:</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">O(N log N)</span>
+                    <span className="text-blue-600 dark:text-blue-400 font-bold">O(N log N)</span>
                   </div>
                 </div>
               </div>
 
               <div className="p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                   <ShieldCheck size={16} /> Docker Containment Telemetry
                 </div>
                 <h3 className="text-base font-bold text-slate-900 dark:text-white">
@@ -953,7 +953,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] overflow-hidden">
               <div className="p-5 border-b border-[#e2e4e8] dark:border-[#2d2d2d] flex items-center justify-between">
                 <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Clock size={16} className="text-emerald-600 dark:text-emerald-400" />
+                  <Clock size={16} className="text-blue-600 dark:text-blue-400" />
                   All Historical Sandbox Runs
                 </h2>
                 <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
@@ -1008,14 +1008,14 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           <div className="space-y-6">
             
             {profileSaved && (
-              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white flex items-center justify-between text-xs shadow-sm">
+              <div className="p-4 rounded-2xl bg-blue-50 border border-blue-300 text-blue-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white flex items-center justify-between text-xs shadow-sm">
                 <div className="flex items-center gap-2 font-semibold">
-                  <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
+                  <CheckCircle2 size={16} className="text-blue-600 dark:text-blue-400" />
                   Profile details and photo updated successfully!
                 </div>
                 <button
                   onClick={() => setActiveTab('studio')}
-                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm"
+                  className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
                 >
                   Move to Dashboard →
                 </button>
@@ -1041,7 +1041,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   
                   <label 
                     htmlFor="avatar-upload-btn"
-                    className="absolute bottom-0 right-0 p-2 rounded-full bg-emerald-600 text-white hover:bg-emerald-500 cursor-pointer shadow-md hover:scale-105 transition-all"
+                    className="absolute bottom-0 right-0 p-2 rounded-full bg-blue-600 text-white hover:bg-blue-500 cursor-pointer shadow-md hover:scale-105 transition-all"
                     title="Upload profile picture"
                   >
                     <Camera size={15} />
@@ -1062,7 +1062,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
                     {user?.email || profileData.email || 'developer@algomind.dev'}
                   </p>
-                  <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-semibold bg-[#f1f3f5] text-emerald-700 border border-emerald-200 dark:bg-[#262626] dark:text-emerald-400 dark:border-[#333333]">
+                  <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-semibold bg-[#f1f3f5] text-blue-700 border border-blue-200 dark:bg-[#262626] dark:text-blue-400 dark:border-[#333333]">
                     Software Developer
                   </span>
                 </div>
@@ -1070,7 +1070,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <div className="w-full flex items-center justify-center gap-2 pt-1">
                   <label 
                     htmlFor="avatar-upload-btn" 
-                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer transition-all shadow-sm flex items-center gap-1.5"
+                    className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold cursor-pointer transition-all shadow-sm flex items-center gap-1.5"
                   >
                     <Upload size={13} />
                     Upload Photo
@@ -1092,7 +1092,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   
                   <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] flex items-center justify-between">
                     <span className="text-xs text-slate-600 dark:text-zinc-400">Simulations Completed</span>
-                    <span className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">+{acceptedCount}</span>
+                    <span className="text-sm font-bold font-mono text-blue-600 dark:text-blue-400">+{acceptedCount}</span>
                   </div>
 
                   <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] flex items-center justify-between">
@@ -1102,7 +1102,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
 
                   <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] flex items-center justify-between">
                     <span className="text-xs text-slate-600 dark:text-zinc-400">Preparedness Score</span>
-                    <span className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">{solveRate}%</span>
+                    <span className="text-sm font-bold font-mono text-blue-600 dark:text-blue-400">{solveRate}%</span>
                   </div>
                 </div>
 
@@ -1140,7 +1140,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         required
                         value={profileData.name}
                         onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500"
+                        className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500"
                         placeholder="Your full name"
                       />
                     </div>
@@ -1167,7 +1167,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         type="tel"
                         value={profileData.phone}
                         onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500"
+                        className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500"
                         placeholder="+91 9876543210"
                       />
                     </div>
@@ -1180,7 +1180,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         type="text"
                         value={profileData.organization}
                         onChange={(e) => setProfileData(prev => ({ ...prev, organization: e.target.value }))}
-                        className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500"
+                        className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500"
                         placeholder="e.g. Greenfield High School"
                       />
                     </div>
@@ -1194,7 +1194,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                       type="text"
                       value={profileData.location}
                       onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
-                      className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500"
+                      className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500"
                       placeholder="e.g. Coimbatore, India"
                     />
                   </div>
@@ -1207,7 +1207,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                       rows={3}
                       value={profileData.bio}
                       onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))}
-                      className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-emerald-500 leading-relaxed"
+                      className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500 leading-relaxed"
                       placeholder="Tell us about your algorithmic journey..."
                     />
                   </div>
@@ -1215,7 +1215,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all shadow-sm flex items-center justify-center gap-2"
+                      className="w-full sm:w-auto px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all shadow-sm flex items-center justify-center gap-2"
                     >
                       <Save size={14} />
                       Save Details & Photo
@@ -1241,14 +1241,14 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           <div className="space-y-6">
             
             {settingsSaved && (
-              <div className="p-4 rounded-2xl bg-white border border-emerald-500/50 dark:bg-[#1e1e1e] dark:border-emerald-500/30 flex items-center justify-between text-xs text-slate-800 dark:text-white shadow-sm">
-                <div className="flex items-center gap-2 font-semibold text-emerald-600 dark:text-emerald-400">
+              <div className="p-4 rounded-2xl bg-white border border-blue-500/50 dark:bg-[#1e1e1e] dark:border-blue-500/30 flex items-center justify-between text-xs text-slate-800 dark:text-white shadow-sm">
+                <div className="flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400">
                   <CheckCircle2 size={16} />
                   Settings saved successfully!
                 </div>
                 <button
                   onClick={() => setActiveTab('studio')}
-                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm"
+                  className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
                 >
                   Move to Dashboard →
                 </button>
@@ -1270,11 +1270,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     onClick={() => { if (isDark) toggleTheme(); }}
                     className={`p-4 rounded-xl border flex items-center gap-3 transition-all ${
                       !isDark 
-                        ? 'border-emerald-600 bg-emerald-50/50 text-slate-900 shadow-sm font-bold' 
+                        ? 'border-blue-600 bg-blue-50/50 text-slate-900 shadow-sm font-bold' 
                         : 'border-[#e2e4e8] bg-[#f8f9fa] text-slate-600 hover:bg-[#edeef1] dark:border-[#2d2d2d] dark:bg-[#181818] dark:text-zinc-400 dark:hover:bg-[#222222]'
                     }`}
                   >
-                    <Sun size={20} className={!isDark ? 'text-emerald-600' : 'text-slate-400 dark:text-zinc-500'} />
+                    <Sun size={20} className={!isDark ? 'text-blue-600' : 'text-slate-400 dark:text-zinc-500'} />
                     <div className="text-left">
                       <div className="text-xs font-bold text-slate-900 dark:text-white">Light Mode</div>
                       <div className="text-[10px] text-slate-500 dark:text-zinc-400">High contrast day theme</div>
@@ -1286,11 +1286,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     onClick={() => { if (!isDark) toggleTheme(); }}
                     className={`p-4 rounded-xl border flex items-center gap-3 transition-all ${
                       isDark 
-                        ? 'border-emerald-500 bg-[#262626] text-white shadow-sm font-bold' 
+                        ? 'border-blue-500 bg-[#262626] text-white shadow-sm font-bold' 
                         : 'border-[#e2e4e8] bg-[#f8f9fa] text-slate-600 hover:bg-[#edeef1] dark:border-[#2d2d2d] dark:bg-[#181818] dark:text-zinc-400 dark:hover:bg-[#222222]'
                     }`}
                   >
-                    <Moon size={20} className={isDark ? 'text-emerald-400' : 'text-slate-400 dark:text-zinc-500'} />
+                    <Moon size={20} className={isDark ? 'text-blue-400' : 'text-slate-400 dark:text-zinc-500'} />
                     <div className="text-left">
                       <div className="text-xs font-bold text-slate-900 dark:text-white">Dark Mode</div>
                       <div className="text-[10px] text-slate-500 dark:text-zinc-400">Deep graphite IDE theme</div>
@@ -1314,7 +1314,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     <select
                       value={editorSettings.fontSize}
                       onChange={(e) => setEditorSettings(prev => ({ ...prev, fontSize: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:focus:border-emerald-500"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:focus:border-blue-500"
                     >
                       <option value="12">12px — Compact</option>
                       <option value="14">14px — Standard</option>
@@ -1329,7 +1329,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     <select
                       value={editorSettings.tabSize}
                       onChange={(e) => setEditorSettings(prev => ({ ...prev, tabSize: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 focus:outline-none focus:border-emerald-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:focus:border-emerald-500"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:focus:border-blue-500"
                     >
                       <option value="2">2 Spaces (Google C++ Style)</option>
                       <option value="4">4 Spaces (Standard)</option>
@@ -1350,7 +1350,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     <div className="text-xs font-bold text-slate-900 dark:text-white">Registered Email</div>
                     <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">{user?.email || 'user@algomind.dev'}</div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-300 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800/60">
                     Verified
                   </span>
                 </div>
@@ -1361,7 +1361,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <button
                   type="button"
                   onClick={handleSaveSettings}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
                 >
                   <Save size={14} />
                   Save Settings

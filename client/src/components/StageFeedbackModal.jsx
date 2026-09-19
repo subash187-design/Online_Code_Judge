@@ -18,7 +18,7 @@ export default function StageFeedbackBanner({ feedback, onProceed }) {
       {feedback.nextStageId && (
         <button
           onClick={() => onProceed(feedback.nextStageId)}
-          className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-sm transition-colors"
+          className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-sm transition-colors"
         >
           <span>Next Stage</span>
           <ArrowRight size={13} />

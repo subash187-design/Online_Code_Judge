@@ -9,7 +9,7 @@
   --border-subtle: #e2e4e8;
   --text-primary: #0f172a;
   --text-secondary: #64748b;
-  --brand-accent: #10b981;
+  --brand-accent: #2563eb;
 }
 
 .dark {
@@ -19,7 +19,7 @@
   --border-subtle: #2e2e2e;
   --text-primary: #f4f4f5;
   --text-secondary: #a1a1aa;
-  --brand-accent: #10b981;
+  --brand-accent: #3b82f6;
 }
 
 @layer base {
