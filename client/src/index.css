@@ -47,52 +47,69 @@ body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):no
 }
 
 /* ----------------------------------------------------
-   1. Light Mode Typography: Pure black text
+   1. Light Mode Typography: Pure black text against light background
    ---------------------------------------------------- */
-body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
+html:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
   color: #000000 !important;
 }
 
-body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
+html:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
   color: #0F172A;
 }
 
-body:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"]:not(.text-white):not([class*="text-white"]):not([class*="bg-black"] *):not(button[class*="bg-black"]) {
+html:not(.dark) :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
+  [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
+  [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
+  [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
+) {
   color: #000000 !important;
 }
 
 /* Light mode text-white on dark buttons / surfaces */
-body:not(.dark) .text-white,
-body:not(.dark) [class*="text-white"],
-body:not(.dark) button[class*="bg-black"],
-body:not(.dark) button[class*="bg-black"] * {
+html:not(.dark) .text-white,
+html:not(.dark) [class*="text-white"],
+html:not(.dark) button[class*="bg-black"],
+html:not(.dark) button[class*="bg-black"] *,
+html:not(.dark) a[class*="bg-black"],
+html:not(.dark) a[class*="bg-black"] * {
   color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
 }
 
 /* ----------------------------------------------------
-   2. Dark Mode Typography: Crisp white text everywhere
+   2. Dark Mode Typography: Crisp white text against dark background
    ---------------------------------------------------- */
-.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
+html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(h1, h2, h3, h4, h5, h6, strong, b, th) {
   color: #FFFFFF !important;
 }
 
-.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
+html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(p, span, div, a, button, label, li, td, input, select, textarea) {
   color: #F8FAFC;
 }
 
-.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
+html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text)[class*="text-"] {
+  color: #FFFFFF !important;
+}
+
+html.dark :not(.monaco-editor):not(.monaco-editor *):not(.view-lines *):not(.monaco-mouse-cursor-text):is(
+  [class*="text-blue-"], [class*="text-indigo-"], [class*="text-purple-"], [class*="text-brand-"],
+  [class*="text-emerald-"], [class*="text-green-"], [class*="text-amber-"], [class*="text-rose-"],
+  [class*="text-red-"], [class*="text-cyan-"], [class*="text-teal-"], [class*="text-violet-"], [class*="text-orange-"]
+) {
   color: #FFFFFF !important;
 }
 
 /* ----------------------------------------------------
    3. EXCEPT: In Dark Mode, ONLY buttons with a WHITE background have BLACK text
    ---------------------------------------------------- */
-.dark button[class*="dark:bg-white"],
-.dark button[class*="dark:bg-white"] *,
-.dark a[class*="dark:bg-white"],
-.dark a[class*="dark:bg-white"] *,
-.dark button.bg-white:not([class*="dark:bg-"]),
-.dark button.bg-white:not([class*="dark:bg-"]) * {
+html.dark button[class*="dark:bg-white"],
+html.dark button[class*="dark:bg-white"] *,
+html.dark a[class*="dark:bg-white"],
+html.dark a[class*="dark:bg-white"] *,
+html.dark button.bg-white:not([class*="dark:bg-"]),
+html.dark button.bg-white:not([class*="dark:bg-"]) *,
+html.dark [class*="dark:bg-white"]:is(button, a),
+html.dark [class*="dark:bg-white"]:is(button, a) * {
   color: #000000 !important;
   stroke: #000000 !important;
 }
