@@ -179,15 +179,15 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] bg-[#F6F8FA] dark:bg-[#0E1117] text-slate-900 dark:text-zinc-100 transition-colors">
+    <div className="flex min-h-[calc(100vh-3.5rem)] bg-[#121212] text-zinc-100 transition-colors">
       
-      {/* 1. Left Vertical Sidebar (Dark Slate / Charcoal as in PDF) */}
-      <aside className="w-64 bg-[#1E222A] dark:bg-[#161920] text-slate-300 p-5 hidden lg:flex flex-col justify-between shrink-0 border-r border-slate-800 shadow-sm">
-        <div className="space-y-6">
+      {/* 1. Left Vertical Sidebar */}
+      <aside className="w-60 bg-[#1a1a1a] text-zinc-300 p-4 hidden lg:flex flex-col justify-between shrink-0 border-r border-[#2d2d2d] shadow-sm">
+        <div className="space-y-5">
           
           {/* Brand Header */}
-          <div className="flex items-center gap-3 px-2 py-2">
-            <div className="h-8 w-auto flex items-center">
+          <div className="flex items-center gap-2.5 px-2 py-1">
+            <div className="h-7 w-auto flex items-center">
               <img 
                 src="/logo.png" 
                 alt="Algomind Logo" 
@@ -195,82 +195,82 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-white tracking-tight">Algomind</span>
-              <span className="text-[10px] text-slate-400 font-medium">Prepare today, safe tomorrow</span>
+              <span className="text-xs font-bold text-white tracking-tight">Algomind Studio</span>
+              <span className="text-[10px] text-zinc-500 font-medium">Algorithmic Learning</span>
             </div>
           </div>
 
-          {/* Navigation Items (PDF Layout: Dashboard, My assignments, Assessments, AI Learning path, Profile, Settings) */}
-          <nav className="space-y-1.5 pt-2">
+          {/* Navigation Items */}
+          <nav className="space-y-1 pt-1">
             <button
               onClick={() => setActiveTab('studio')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'studio'
-                  ? 'bg-[#2D3342] text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#262626] text-white border border-[#383838] border-l-2 border-l-emerald-500 font-semibold shadow-sm'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#222222]'
               }`}
             >
-              <LayoutDashboard size={16} />
+              <LayoutDashboard size={15} className={activeTab === 'studio' ? 'text-emerald-400' : ''} />
               Dashboard
             </button>
 
             <button
               onClick={() => setActiveTab('problems')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'problems'
-                  ? 'bg-[#2D3342] text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#262626] text-white border border-[#383838] border-l-2 border-l-emerald-500 font-semibold shadow-sm'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#222222]'
               }`}
             >
-              <Code2 size={16} />
+              <Code2 size={15} className={activeTab === 'problems' ? 'text-emerald-400' : ''} />
               My assignments
             </button>
 
             <button
               onClick={() => setActiveTab('telemetry')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'telemetry'
-                  ? 'bg-[#2D3342] text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#262626] text-white border border-[#383838] border-l-2 border-l-emerald-500 font-semibold shadow-sm'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#222222]'
               }`}
             >
-              <Cpu size={16} />
+              <Cpu size={15} className={activeTab === 'telemetry' ? 'text-emerald-400' : ''} />
               Assessments
             </button>
 
             <button
               onClick={() => setActiveTab('journey')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'journey'
-                  ? 'bg-[#2D3342] text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#262626] text-white border border-[#383838] border-l-2 border-l-emerald-500 font-semibold shadow-sm'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#222222]'
               }`}
             >
-              <TrendingUp size={16} />
+              <TrendingUp size={15} className={activeTab === 'journey' ? 'text-emerald-400' : ''} />
               AI Learning path
             </button>
 
             <button
               onClick={() => setActiveTab('profile')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'profile'
-                  ? 'bg-[#2D3342] text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#262626] text-white border border-[#383838] border-l-2 border-l-emerald-500 font-semibold shadow-sm'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#222222]'
               }`}
             >
-              <User size={16} />
+              <User size={15} className={activeTab === 'profile' ? 'text-emerald-400' : ''} />
               Profile
             </button>
 
             <button
               onClick={() => setActiveTab('settings')}
-              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'settings'
-                  ? 'bg-[#2D3342] text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-[#262626] text-white border border-[#383838] border-l-2 border-l-emerald-500 font-semibold shadow-sm'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#222222]'
               }`}
             >
-              <Settings size={16} />
+              <Settings size={15} className={activeTab === 'settings' ? 'text-emerald-400' : ''} />
               Settings
             </button>
           </nav>
@@ -407,7 +407,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             
             {/* Card 1: Preparedness Score */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+            <div className="p-5 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm flex flex-col justify-between">
               <div>
                 <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Score</div>
                 <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{solveRate}%</div>
@@ -418,7 +418,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </div>
 
             {/* Card 2: Simulations Assigned */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+            <div className="p-5 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm flex flex-col justify-between">
               <div>
                 <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Simulations assigned</div>
                 <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">{problems.length || 3}</div>
@@ -429,7 +429,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </div>
 
             {/* Card 3: Completed Simulations */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col justify-between">
+            <div className="p-5 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm flex flex-col justify-between">
               <div>
                 <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Completed simulations</div>
                 <div className="text-3xl font-extrabold text-black dark:text-white mt-1.5 font-mono">+{acceptedCount}</div>
@@ -440,7 +440,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </div>
 
             {/* Card 4: Donut Radial Gauge */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm flex items-center justify-between">
               <div>
                 <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Overview</div>
                 <div className="text-[11px] text-slate-600 dark:text-zinc-400 mt-1">Consistent progress</div>
@@ -475,7 +475,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           <div className="space-y-6">
             
             {/* Quick Profile Link Banner */}
-            <div className="p-4 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex items-center justify-between">
+            <div className="p-4 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 overflow-hidden flex items-center justify-center">
                   {avatarPreview ? (
@@ -504,7 +504,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </div>
 
             {/* Assigned Simulation Table */}
-            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <div className="rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm overflow-hidden">
               <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-sm font-bold text-black dark:text-white">
@@ -525,7 +525,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50/70 dark:bg-zinc-900/50 text-slate-500 dark:text-zinc-400 font-semibold border-b border-slate-200/80 dark:border-zinc-800/80 text-[11px]">
+                  <thead className="bg-[#181818] text-zinc-400 font-semibold border-b border-[#2d2d2d] text-[11px]">
                     <tr>
                       <th className="py-3 px-5">Simulation</th>
                       <th className="py-3 px-5">Difficulty</th>
@@ -535,31 +535,37 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                       <th className="py-3 px-5 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
+                  <tbody className="divide-y divide-[#2d2d2d]">
                     {problems.slice(0, 4).map((prob, idx) => (
-                      <tr key={prob.id} className="hover:bg-slate-50/70 dark:hover:bg-zinc-800/40 transition-colors">
+                      <tr key={prob.id} className="hover:bg-[#252525] transition-colors">
                         <td className="py-3.5 px-5">
-                          <div className="font-bold text-black dark:text-white text-xs">{prob.title}</div>
-                          <div className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 max-w-sm truncate">
+                          <div className="font-bold text-white text-xs">{prob.title}</div>
+                          <div className="text-[11px] text-zinc-400 mt-0.5 max-w-sm truncate">
                             {prob.description || 'Learn how to optimize memory and execution time across stages.'}
                           </div>
                         </td>
                         <td className="py-3.5 px-5">
-                          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-zinc-800 text-black dark:text-white border border-slate-200 dark:border-zinc-700">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
+                            prob.difficulty === 'Easy'
+                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                              : prob.difficulty === 'Medium'
+                              ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                              : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                          }`}>
                             {prob.difficulty}
                           </span>
                         </td>
-                        <td className="py-3.5 px-5 text-slate-600 dark:text-zinc-400">
+                        <td className="py-3.5 px-5 text-zinc-400">
                           {idx === 0 ? '30 Jun 2026' : idx === 1 ? '18 Jun 2026' : '15 Jun 2026'}
                         </td>
-                        <td className="py-3.5 px-5 text-slate-600 dark:text-zinc-400">
+                        <td className="py-3.5 px-5 text-zinc-400">
                           {idx === 0 ? '28 Jun 2026' : idx === 1 ? '25 Jun 2026' : '20 Jun 2026'}
                         </td>
                         <td className="py-3.5 px-5">
                           <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
                             idx === 2 
-                              ? 'bg-slate-200 dark:bg-zinc-700 text-black dark:text-white' 
-                              : 'bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300'
+                              ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/60' 
+                              : 'bg-[#262626] text-zinc-400 border border-[#333333]'
                           }`}>
                             {idx === 2 ? 'Completed' : 'Not Started'}
                           </span>
@@ -567,7 +573,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         <td className="py-3.5 px-5 text-right">
                           <button
                             onClick={() => onSelectProblem(prob.id)}
-                            className="px-3 py-1 rounded-xl bg-black hover:bg-zinc-800 active:bg-zinc-900 text-white dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-semibold transition-all shadow-sm"
+                            className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all shadow-sm"
                           >
                             {idx === 2 ? 'View result' : 'Start now'}
                           </button>
@@ -580,24 +586,24 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </div>
 
             {/* AI Adaptive Learning Panel */}
-            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm p-6 space-y-6">
+            <div className="rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm p-6 space-y-6">
               <div>
-                <h2 className="text-base font-extrabold text-black dark:text-white">
+                <h2 className="text-base font-extrabold text-white">
                   AI Adaptive Learning
                 </h2>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                <p className="text-xs text-zinc-400 mt-0.5">
                   Personalized learning that adapts to your performance and helps you improve.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-2xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-4">
+                <div className="p-5 rounded-2xl bg-[#181818] border border-[#2d2d2d] space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-xs font-bold text-black dark:text-white">Your Learning Intelligence</div>
-                      <div className="text-[11px] text-slate-500 dark:text-zinc-400">Insight based on your performance</div>
+                      <div className="text-xs font-bold text-white">Your Learning Intelligence</div>
+                      <div className="text-[11px] text-zinc-400">Insight based on your performance</div>
                     </div>
-                    <span className="text-xs font-extrabold text-black dark:text-white font-mono bg-white dark:bg-zinc-800 px-2.5 py-1 rounded-xl border border-slate-200 dark:border-zinc-700">
+                    <span className="text-xs font-extrabold text-emerald-400 font-mono bg-[#222222] px-2.5 py-1 rounded-xl border border-[#333333]">
                       100%
                     </span>
                   </div>
@@ -661,7 +667,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </div>
 
             {/* Submissions Telemetry Table */}
-            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <div className="rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm overflow-hidden">
               <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
                 <div>
                   <h2 className="text-sm font-bold text-black dark:text-white flex items-center gap-2">
@@ -727,7 +733,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         {/* TAB 2: PROBLEMS VIEW */}
         {activeTab === 'problems' && (
           <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center gap-3">
+            <div className="p-4 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm flex flex-col sm:flex-row items-center gap-3">
               <div className="relative flex-1 w-full">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
                 <input
@@ -768,7 +774,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   <div
                     key={p.id}
                     onClick={() => onSelectProblem(p.id)}
-                    className="p-5 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 hover:border-black dark:hover:border-white transition-all cursor-pointer flex items-center justify-between group shadow-sm"
+                    className="p-5 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] hover:border-black dark:hover:border-white transition-all cursor-pointer flex items-center justify-between group shadow-sm"
                   >
                     <div className="flex items-center gap-4">
                       <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-zinc-800 text-black dark:text-white flex items-center justify-center font-mono font-bold text-xs border border-slate-200 dark:border-zinc-700">
@@ -809,7 +815,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         {/* TAB 3: JOURNEY VIEW */}
         {activeTab === 'journey' && (
           <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-5">
+            <div className="p-6 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm space-y-5">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-4">
                 <div>
                   <h2 className="text-base font-bold text-black dark:text-white">
@@ -858,11 +864,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
                       <div 
                         className={`w-full rounded-t-lg transition-all ${
-                          i >= sparklineBars.length - 3 ? 'bg-black dark:bg-white' : 'bg-slate-300 dark:bg-zinc-700'
+                          i >= sparklineBars.length - 3 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/30' : 'bg-[#333333]'
                         }`}
                         style={{ height: `${height}%` }}
                       />
-                      <span className="text-[9px] font-mono text-slate-400">#{i + 1}</span>
+                      <span className="text-[9px] font-mono text-zinc-500">#{i + 1}</span>
                     </div>
                   ))}
                 </div>
@@ -875,88 +881,88 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         {activeTab === 'telemetry' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+              <div className="p-6 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
                   <Cpu size={16} /> AST Syntax Tree Diagnostics
                 </div>
-                <h3 className="text-base font-bold text-black dark:text-white">
+                <h3 className="text-base font-bold text-white">
                   Static Code Analysis & Pattern Detection
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-400 leading-relaxed">
                   Automated parser extracts control flow graphs, loop nesting depths, and memory allocations directly from C++ syntax trees before compilation.
                 </p>
 
-                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-2 font-mono text-xs">
-                  <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
-                    <span className="text-slate-500 dark:text-zinc-400">Parser Status:</span>
-                    <span className="text-black dark:text-white font-semibold">PASS (0 syntax errors)</span>
+                <div className="p-4 rounded-xl bg-[#141414] border border-[#2d2d2d] space-y-2 font-mono text-xs">
+                  <div className="flex justify-between py-1 border-b border-[#262626]">
+                    <span className="text-zinc-400">Parser Status:</span>
+                    <span className="text-emerald-400 font-semibold">PASS (0 syntax errors)</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
-                    <span className="text-slate-500 dark:text-zinc-400">Max Loop Nesting Depth:</span>
-                    <span className="text-black dark:text-white font-semibold">1 (Linear scan)</span>
+                  <div className="flex justify-between py-1 border-b border-[#262626]">
+                    <span className="text-zinc-400">Max Loop Nesting Depth:</span>
+                    <span className="text-white font-semibold">1 (Linear scan)</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
-                    <span className="text-slate-500 dark:text-zinc-400">Recursion Detected:</span>
-                    <span className="text-black dark:text-white font-semibold">False</span>
+                  <div className="flex justify-between py-1 border-b border-[#262626]">
+                    <span className="text-zinc-400">Recursion Detected:</span>
+                    <span className="text-white font-semibold">False</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-slate-500 dark:text-zinc-400">Detected Complexity:</span>
-                    <span className="text-black dark:text-white font-bold">O(N log N)</span>
+                    <span className="text-zinc-400">Detected Complexity:</span>
+                    <span className="text-emerald-400 font-bold">O(N log N)</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-black dark:text-white">
+              <div className="p-6 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
                   <ShieldCheck size={16} /> Docker Containment Telemetry
                 </div>
-                <h3 className="text-base font-bold text-black dark:text-white">
+                <h3 className="text-base font-bold text-white">
                   Kernel cgroup Isolation Quotas
                 </h3>
-                <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-xs text-zinc-400 leading-relaxed">
                   Real-time containment metrics reporting enforced hardware boundaries, syscall filtering (seccomp), and network blocking.
                 </p>
 
-                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 space-y-2 font-mono text-xs">
-                  <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
-                    <span className="text-slate-500 dark:text-zinc-400">Network Sockets:</span>
-                    <span className="text-black dark:text-white font-semibold">DISABLED (Strict Sandbox)</span>
+                <div className="p-4 rounded-xl bg-[#141414] border border-[#2d2d2d] space-y-2 font-mono text-xs">
+                  <div className="flex justify-between py-1 border-b border-[#262626]">
+                    <span className="text-zinc-400">Network Sockets:</span>
+                    <span className="text-white font-semibold">DISABLED (Strict Sandbox)</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
-                    <span className="text-slate-500 dark:text-zinc-400">CPU Time Quota:</span>
-                    <span className="text-black dark:text-white font-semibold">1000 ms Max Limit</span>
+                  <div className="flex justify-between py-1 border-b border-[#262626]">
+                    <span className="text-zinc-400">CPU Time Quota:</span>
+                    <span className="text-white font-semibold">1000 ms Max Limit</span>
                   </div>
-                  <div className="flex justify-between py-1 border-b border-slate-200/60 dark:border-zinc-800/60">
-                    <span className="text-slate-500 dark:text-zinc-400">Virtual Memory Cap:</span>
-                    <span className="text-black dark:text-white font-semibold">256 MB cgroup limit</span>
+                  <div className="flex justify-between py-1 border-b border-[#262626]">
+                    <span className="text-zinc-400">Virtual Memory Cap:</span>
+                    <span className="text-white font-semibold">256 MB cgroup limit</span>
                   </div>
                   <div className="flex justify-between py-1">
-                    <span className="text-slate-500 dark:text-zinc-400">Process Count Limit:</span>
-                    <span className="text-black dark:text-white font-semibold">pids.max = 16</span>
+                    <span className="text-zinc-400">Process Count Limit:</span>
+                    <span className="text-white font-semibold">pids.max = 16</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-5 border-b border-slate-100 dark:border-zinc-800 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-black dark:text-white flex items-center gap-2">
-                  <Clock size={16} />
+            <div className="rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-[#2d2d2d] flex items-center justify-between">
+                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                  <Clock size={16} className="text-emerald-400" />
                   All Historical Sandbox Runs
                 </h2>
-                <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
+                <span className="text-xs font-mono text-zinc-400">
                   {submissions.length} Total Submissions
                 </span>
               </div>
 
               {submissions.length === 0 ? (
-                <div className="py-12 text-center text-slate-500 dark:text-zinc-400 text-xs">
+                <div className="py-12 text-center text-zinc-500 text-xs">
                   No submissions to display.
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-slate-50/70 dark:bg-zinc-900/50 text-slate-500 dark:text-zinc-400 font-bold border-b border-slate-200/80 dark:border-zinc-800/80 uppercase tracking-wider text-[10px]">
+                    <thead className="bg-[#181818] text-zinc-400 font-bold border-b border-[#2d2d2d] uppercase tracking-wider text-[10px]">
                       <tr>
                         <th className="py-3 px-5">ID</th>
                         <th className="py-3 px-5">Verdict</th>
@@ -965,20 +971,20 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         <th className="py-3 px-5">Timestamp</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-zinc-800">
+                    <tbody className="divide-y divide-[#2d2d2d]">
                       {submissions.map((sub) => (
-                        <tr key={sub.id} className="hover:bg-slate-50/80 dark:hover:bg-zinc-800/40 transition-colors">
-                          <td className="py-3.5 px-5 text-slate-400">#{sub.id}</td>
+                        <tr key={sub.id} className="hover:bg-[#252525] transition-colors">
+                          <td className="py-3.5 px-5 text-zinc-400">#{sub.id}</td>
                           <td className="py-3.5 px-5">
                             <VerdictBadge verdict={sub.verdict} />
                           </td>
-                          <td className="py-3.5 px-5 text-black dark:text-white">
+                          <td className="py-3.5 px-5 text-white">
                             {sub.execution_time_ms !== null ? `${sub.execution_time_ms} ms` : '—'}
                           </td>
-                          <td className="py-3.5 px-5 text-black dark:text-white">
+                          <td className="py-3.5 px-5 text-white">
                             {sub.memory_used_kb !== null ? `${sub.memory_used_kb} KB` : '—'}
                           </td>
-                          <td className="py-3.5 px-5 text-slate-500 dark:text-zinc-400 font-sans text-xs">
+                          <td className="py-3.5 px-5 text-zinc-400 font-sans text-xs">
                             {new Date(sub.created_at).toLocaleString()}
                           </td>
                         </tr>
@@ -1003,7 +1009,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 </div>
                 <button
                   onClick={() => setActiveTab('studio')}
-                  className="px-3.5 py-1.5 rounded-xl bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm"
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm"
                 >
                   Move to Dashboard →
                 </button>
@@ -1013,15 +1019,15 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               
               {/* Left Column: Avatar & Overview */}
-              <div className="lg:col-span-4 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm flex flex-col items-center text-center space-y-5">
+              <div className="lg:col-span-4 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] p-6 shadow-sm flex flex-col items-center text-center space-y-5">
                 
                 {/* Avatar Display */}
                 <div className="relative">
-                  <div className="w-28 h-28 rounded-full bg-slate-100 dark:bg-zinc-800 border-2 border-slate-200 dark:border-zinc-700 flex items-center justify-center overflow-hidden shadow-sm">
+                  <div className="w-28 h-28 rounded-full bg-[#181818] border-2 border-[#333333] flex items-center justify-center overflow-hidden shadow-sm">
                     {avatarPreview ? (
                       <img src={avatarPreview} alt={profileData.name || 'User Avatar'} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-3xl font-extrabold text-black dark:text-white">
+                      <span className="text-3xl font-extrabold text-white">
                         {profileData.name ? profileData.name.charAt(0).toUpperCase() : 'U'}
                       </span>
                     )}
@@ -1029,7 +1035,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   
                   <label 
                     htmlFor="avatar-upload-btn"
-                    className="absolute bottom-0 right-0 p-2 rounded-full bg-black text-white dark:bg-white dark:text-black cursor-pointer shadow-md hover:scale-105 transition-transform"
+                    className="absolute bottom-0 right-0 p-2 rounded-full bg-emerald-600 text-white hover:bg-emerald-500 cursor-pointer shadow-md hover:scale-105 transition-all"
                     title="Upload profile picture"
                   >
                     <Camera size={15} />
@@ -1044,13 +1050,13 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-bold text-black dark:text-white">
+                  <h2 className="text-lg font-bold text-white">
                     {profileData.name || 'Developer'}
                   </h2>
-                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                  <p className="text-xs text-zinc-400 mt-0.5">
                     {user?.email || profileData.email || 'developer@algomind.dev'}
                   </p>
-                  <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-semibold bg-slate-100 dark:bg-zinc-800 text-black dark:text-white border border-slate-200 dark:border-zinc-700">
+                  <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-semibold bg-[#262626] text-emerald-400 border border-[#333333]">
                     Software Developer
                   </span>
                 </div>
@@ -1058,7 +1064,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <div className="w-full flex items-center justify-center gap-2 pt-1">
                   <label 
                     htmlFor="avatar-upload-btn" 
-                    className="px-3.5 py-1.5 rounded-xl bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold cursor-pointer transition-all shadow-sm flex items-center gap-1.5"
+                    className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold cursor-pointer transition-all shadow-sm flex items-center gap-1.5"
                   >
                     <Upload size={13} />
                     Upload Photo
@@ -1067,7 +1073,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     <button 
                       type="button" 
                       onClick={() => setAvatarPreview(null)}
-                      className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors border border-slate-200 dark:border-zinc-700"
+                      className="px-3 py-1.5 rounded-xl bg-[#282828] text-zinc-300 text-xs font-semibold hover:bg-[#333333] transition-colors border border-[#383838]"
                     >
                       Remove
                     </button>
@@ -1075,29 +1081,29 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 </div>
 
                 {/* Quick Stats from PDF Screen 12 */}
-                <div className="w-full pt-4 border-t border-slate-100 dark:border-zinc-800 space-y-3 text-left">
-                  <div className="text-xs font-bold text-black dark:text-white">Quick Stats</div>
+                <div className="w-full pt-4 border-t border-[#2d2d2d] space-y-3 text-left">
+                  <div className="text-xs font-bold text-white">Quick Stats</div>
                   
-                  <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
-                    <span className="text-xs text-slate-600 dark:text-zinc-400">Simulations Completed</span>
-                    <span className="text-sm font-bold font-mono text-black dark:text-white">+{acceptedCount}</span>
+                  <div className="p-3 rounded-xl bg-[#181818] border border-[#2d2d2d] flex items-center justify-between">
+                    <span className="text-xs text-zinc-400">Simulations Completed</span>
+                    <span className="text-sm font-bold font-mono text-emerald-400">+{acceptedCount}</span>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
-                    <span className="text-xs text-slate-600 dark:text-zinc-400">Total Learning Time</span>
-                    <span className="text-sm font-bold font-mono text-black dark:text-white">8h 16m</span>
+                  <div className="p-3 rounded-xl bg-[#181818] border border-[#2d2d2d] flex items-center justify-between">
+                    <span className="text-xs text-zinc-400">Total Learning Time</span>
+                    <span className="text-sm font-bold font-mono text-white">8h 16m</span>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
-                    <span className="text-xs text-slate-600 dark:text-zinc-400">Preparedness Score</span>
-                    <span className="text-sm font-bold font-mono text-black dark:text-white">{solveRate}%</span>
+                  <div className="p-3 rounded-xl bg-[#181818] border border-[#2d2d2d] flex items-center justify-between">
+                    <span className="text-xs text-zinc-400">Preparedness Score</span>
+                    <span className="text-sm font-bold font-mono text-emerald-400">{solveRate}%</span>
                   </div>
                 </div>
 
               </div>
 
               {/* Right Column: Personal Information Form */}
-              <div className="lg:col-span-8 rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-6">
+              <div className="lg:col-span-8 rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] p-6 shadow-sm space-y-6">
                 <div className="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-4">
                   <div>
                     <h2 className="text-base font-extrabold text-black dark:text-white">
@@ -1120,7 +1126,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <form onSubmit={handleSaveProfile} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                         Full Name
                       </label>
                       <input 
@@ -1128,74 +1134,74 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         required
                         value={profileData.name}
                         onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                        className="w-full px-3.5 py-2 rounded-lg bg-[#141414] border border-[#2e2e2e] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
                         placeholder="Your full name"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                         Email Address
                       </label>
                       <input 
                         type="email"
                         disabled
                         value={user?.email || profileData.email}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-700 text-xs text-slate-500 dark:text-zinc-500 cursor-not-allowed"
+                        className="w-full px-3.5 py-2 rounded-lg bg-[#141414]/50 border border-[#282828] text-xs text-zinc-500 cursor-not-allowed"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                         Mobile / Phone Number
                       </label>
                       <input 
                         type="tel"
                         value={profileData.phone}
                         onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                        className="w-full px-3.5 py-2 rounded-lg bg-[#141414] border border-[#2e2e2e] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
                         placeholder="+91 9876543210"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                      <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                         School / Organization
                       </label>
                       <input 
                         type="text"
                         value={profileData.organization}
                         onChange={(e) => setProfileData(prev => ({ ...prev, organization: e.target.value }))}
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                        className="w-full px-3.5 py-2 rounded-lg bg-[#141414] border border-[#2e2e2e] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
                         placeholder="e.g. Greenfield High School"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                       Address / Location
                     </label>
                     <input 
                       type="text"
                       value={profileData.location}
                       onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                      className="w-full px-3.5 py-2 rounded-lg bg-[#141414] border border-[#2e2e2e] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500"
                       placeholder="e.g. Coimbatore, India"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                       Bio / Description
                     </label>
                     <textarea 
                       rows={3}
                       value={profileData.bio}
                       onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                      className="w-full px-3.5 py-2 rounded-lg bg-[#141414] border border-[#2e2e2e] text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 leading-relaxed"
                       placeholder="Tell us about your algorithmic journey..."
                     />
                   </div>
@@ -1203,7 +1209,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   <div className="pt-3 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-black text-white hover:bg-zinc-800 active:bg-zinc-900 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                      className="w-full sm:w-auto px-5 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-all shadow-sm flex items-center justify-center gap-2"
                     >
                       <Save size={14} />
                       Save Details & Photo
@@ -1212,7 +1218,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     <button
                       type="button"
                       onClick={() => setActiveTab('studio')}
-                      className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors border border-slate-200 dark:border-zinc-700 flex items-center justify-center gap-1.5"
+                      className="w-full sm:w-auto px-4 py-2 rounded-lg bg-[#282828] hover:bg-[#333333] text-zinc-300 text-xs font-medium transition-colors border border-[#383838] flex items-center justify-center gap-1.5"
                     >
                       Move to Dashboard →
                     </button>
@@ -1229,14 +1235,14 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           <div className="space-y-6">
             
             {settingsSaved && (
-              <div className="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 flex items-center justify-between text-xs text-black dark:text-white shadow-sm">
-                <div className="flex items-center gap-2 font-semibold">
+              <div className="p-4 rounded-2xl bg-[#1e1e1e] border border-emerald-500/30 flex items-center justify-between text-xs text-white shadow-sm">
+                <div className="flex items-center gap-2 font-semibold text-emerald-400">
                   <CheckCircle2 size={16} />
                   Settings saved successfully!
                 </div>
                 <button
                   onClick={() => setActiveTab('studio')}
-                  className="px-3.5 py-1.5 rounded-xl bg-black text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm"
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm"
                 >
                   Move to Dashboard →
                 </button>
@@ -1246,10 +1252,10 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             <div className="max-w-4xl space-y-6">
               
               {/* Appearance & Theme */}
-              <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-4">
+              <div className="rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] p-6 shadow-sm space-y-4">
                 <div>
-                  <h2 className="text-base font-bold text-black dark:text-white">Appearance & Theme</h2>
-                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Customize interface theme for day and night practice</p>
+                  <h2 className="text-base font-bold text-white">Appearance & Theme</h2>
+                  <p className="text-xs text-zinc-400 mt-0.5">Customize interface theme for day and night practice</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -1258,14 +1264,14 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     onClick={() => { if (isDark) toggleTheme(); }}
                     className={`p-4 rounded-xl border flex items-center gap-3 transition-all ${
                       !isDark 
-                        ? 'border-black dark:border-white bg-slate-100 dark:bg-zinc-800 shadow-sm font-bold' 
-                        : 'border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                        ? 'border-emerald-500 bg-[#262626] text-white shadow-sm font-bold' 
+                        : 'border-[#2d2d2d] bg-[#181818] text-zinc-400 hover:bg-[#222222]'
                     }`}
                   >
-                    <Sun size={20} className="text-black dark:text-white" />
+                    <Sun size={20} className={!isDark ? 'text-emerald-400' : 'text-zinc-500'} />
                     <div className="text-left">
-                      <div className="text-xs font-bold text-black dark:text-white">Light Mode</div>
-                      <div className="text-[10px] text-slate-500 dark:text-zinc-400">High contrast day theme</div>
+                      <div className="text-xs font-bold text-white">Light Mode</div>
+                      <div className="text-[10px] text-zinc-400">High contrast day theme</div>
                     </div>
                   </button>
 
@@ -1274,35 +1280,35 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     onClick={() => { if (!isDark) toggleTheme(); }}
                     className={`p-4 rounded-xl border flex items-center gap-3 transition-all ${
                       isDark 
-                        ? 'border-white bg-zinc-800 shadow-sm font-bold' 
-                        : 'border-slate-200 dark:border-zinc-700 hover:bg-slate-50 dark:hover:bg-zinc-800/50'
+                        ? 'border-emerald-500 bg-[#262626] text-white shadow-sm font-bold' 
+                        : 'border-[#2d2d2d] bg-[#181818] text-zinc-400 hover:bg-[#222222]'
                     }`}
                   >
-                    <Moon size={20} className="text-black dark:text-white" />
+                    <Moon size={20} className={isDark ? 'text-emerald-400' : 'text-zinc-500'} />
                     <div className="text-left">
-                      <div className="text-xs font-bold text-black dark:text-white">Dark Mode</div>
-                      <div className="text-[10px] text-slate-500 dark:text-zinc-400">Deep slate night theme</div>
+                      <div className="text-xs font-bold text-white">Dark Mode</div>
+                      <div className="text-[10px] text-zinc-400">Deep graphite IDE theme</div>
                     </div>
                   </button>
                 </div>
               </div>
 
               {/* Code Editor Settings */}
-              <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-4">
+              <div className="rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] p-6 shadow-sm space-y-4">
                 <div>
-                  <h2 className="text-base font-bold text-black dark:text-white">Code Editor Preferences</h2>
-                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Configure Monaco editor typography and indentation</p>
+                  <h2 className="text-base font-bold text-white">Code Editor Preferences</h2>
+                  <p className="text-xs text-zinc-400 mt-0.5">Configure Monaco editor typography and indentation</p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                       Font Size
                     </label>
                     <select
                       value={editorSettings.fontSize}
                       onChange={(e) => setEditorSettings(prev => ({ ...prev, fontSize: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#141414] border border-[#2e2e2e] text-xs text-white focus:outline-none focus:border-emerald-500"
                     >
                       <option value="12">12px — Compact</option>
                       <option value="14">14px — Standard</option>
@@ -1311,13 +1317,13 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-black dark:text-white mb-1.5">
+                    <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                       Tab Indentation
                     </label>
                     <select
                       value={editorSettings.tabSize}
                       onChange={(e) => setEditorSettings(prev => ({ ...prev, tabSize: e.target.value }))}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-50/70 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-700 text-xs text-black dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
+                      className="w-full px-4 py-2.5 rounded-xl bg-[#141414] border border-[#2e2e2e] text-xs text-white focus:outline-none focus:border-emerald-500"
                     >
                       <option value="2">2 Spaces (Google C++ Style)</option>
                       <option value="4">4 Spaces (Standard)</option>
@@ -1327,18 +1333,18 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               </div>
 
               {/* Account Security Info */}
-              <div className="rounded-2xl bg-white dark:bg-[#181B22] border border-slate-200/90 dark:border-zinc-800 p-6 shadow-sm space-y-4">
+              <div className="rounded-2xl bg-[#1e1e1e] border border-[#2d2d2d] p-6 shadow-sm space-y-4">
                 <div>
-                  <h2 className="text-base font-bold text-black dark:text-white">Account & Authentication</h2>
-                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Your sign-in credentials and security</p>
+                  <h2 className="text-base font-bold text-white">Account & Authentication</h2>
+                  <p className="text-xs text-zinc-400 mt-0.5">Your sign-in credentials and security</p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-50/70 dark:bg-zinc-900/60 border border-slate-200/80 dark:border-zinc-800 flex items-center justify-between">
+                <div className="p-4 rounded-xl bg-[#181818] border border-[#2d2d2d] flex items-center justify-between">
                   <div>
-                    <div className="text-xs font-bold text-black dark:text-white">Registered Email</div>
-                    <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">{user?.email || 'user@algomind.dev'}</div>
+                    <div className="text-xs font-bold text-white">Registered Email</div>
+                    <div className="text-xs text-zinc-400 mt-0.5">{user?.email || 'user@algomind.dev'}</div>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-zinc-700 text-black dark:text-white">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-950/60 text-emerald-400 border border-emerald-800/60">
                     Verified
                   </span>
                 </div>
@@ -1349,7 +1355,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <button
                   type="button"
                   onClick={handleSaveSettings}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-black text-white hover:bg-zinc-800 active:bg-zinc-900 dark:bg-white dark:text-black dark:hover:bg-zinc-200 text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
                 >
                   <Save size={14} />
                   Save Settings
@@ -1358,7 +1364,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <button
                   type="button"
                   onClick={() => setActiveTab('studio')}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-colors border border-slate-200 dark:border-zinc-700 flex items-center justify-center gap-1.5"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#282828] text-zinc-300 text-xs font-semibold hover:bg-[#333333] transition-colors border border-[#383838] flex items-center justify-center gap-1.5"
                 >
                   Move to Dashboard →
                 </button>

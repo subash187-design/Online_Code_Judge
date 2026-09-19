@@ -179,7 +179,7 @@ function MainApp() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-brand-500/20 selection:text-brand-700 dark:selection:text-brand-300 transition-colors duration-200">
+    <div className="min-h-screen bg-[#121212] text-zinc-100 flex flex-col font-sans selection:bg-emerald-500/25 selection:text-emerald-300 transition-colors duration-150">
       {currentRoute !== 'problem-detail' && (
         <Navbar onNavigate={navigate} currentPage={currentRoute} />
       )}
