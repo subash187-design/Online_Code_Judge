@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Layers, 
-  Terminal, 
   ArrowRight,
   Filter
 } from 'lucide-react';
@@ -64,14 +63,9 @@ export default function ProblemListPage({ onSelectProblem }) {
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#e2e4e8] dark:border-[#262626]">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-md bg-white border border-[#e0e2e6] text-blue-600 dark:bg-[#262626] dark:border-[#333333] dark:text-blue-400 shadow-xs">
-                <Terminal size={18} />
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Algomind Problems
-              </h1>
-            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Algomind Problems
+            </h1>
             <p className="text-slate-600 dark:text-zinc-400 text-xs sm:text-sm mt-1.5">
               Practice progressive multi-stage algorithmic interview drills with AST complexity evaluation and Socratic hints.
             </p>
