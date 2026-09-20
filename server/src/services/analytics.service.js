@@ -1,4 +1,4 @@
-﻿const db = require('../config/database');
+const db = require('../config/database');
 
 const COMPLEXITY_RANKS = {
   'O(1)': 1,
@@ -190,6 +190,25 @@ class AnalyticsService {
       [userId]
     );
 
+    // Problem history with solved/attempted status
+    const historyRes = await db.query(
+      `SELECT 
+        ups.problem_id, 
+        ups.is_solved, 
+        ups.total_submissions, 
+        ups.best_execution_time_ms,
+        ups.best_memory_used_kb, 
+        ups.updated_at, 
+        p.title, 
+        p.difficulty, 
+        p.topic
+      FROM user_problem_summaries ups
+      JOIN problems p ON ups.problem_id = p.id
+      WHERE ups.user_id = $1
+      ORDER BY ups.updated_at DESC`,
+      [userId]
+    );
+
     return {
       overview: {
         problems_started: problemsStarted,
@@ -202,6 +221,17 @@ class AnalyticsService {
         topic: r.topic || 'General',
         started: parseInt(r.started, 10),
         solved: parseInt(r.solved, 10)
+      })),
+      problem_history: historyRes.rows.map(r => ({
+        problem_id: r.problem_id,
+        title: r.title,
+        difficulty: r.difficulty,
+        topic: r.topic,
+        is_solved: Boolean(r.is_solved),
+        total_submissions: parseInt(r.total_submissions || 1, 10),
+        best_execution_time_ms: r.best_execution_time_ms,
+        best_memory_used_kb: r.best_memory_used_kb,
+        updated_at: r.updated_at
       }))
     };
   }

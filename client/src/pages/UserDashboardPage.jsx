@@ -54,17 +54,18 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Profile management state
+  // Profile management state - no hardcoded defaults
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: user?.phone || '+91 9876543210',
-    organization: user?.organization || 'Greenfield High School',
-    location: user?.location || 'Coimbatore, India',
-    bio: user?.bio || 'Algorithm enthusiast learning progressive asymptotic complexities.'
+    phone: user?.phone || '',
+    organization: user?.organization || '',
+    location: user?.location || '',
+    bio: user?.bio || ''
   });
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar || null);
   const [profileSaved, setProfileSaved] = useState(false);
+  const [historyFilter, setHistoryFilter] = useState('ALL'); // 'ALL' | 'SOLVED' | 'ATTEMPTED'
 
   // Settings management state
   const [editorSettings, setEditorSettings] = useState(() => {
@@ -91,10 +92,10 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         ...prev,
         name: user.name || prev.name,
         email: user.email || prev.email,
-        phone: user.phone || prev.phone,
-        organization: user.organization || prev.organization,
-        location: user.location || prev.location,
-        bio: user.bio || prev.bio
+        phone: user.phone || prev.phone || '',
+        organization: user.organization || '',
+        location: user.location || '',
+        bio: user.bio || ''
       }));
       if (user.avatar) {
         setAvatarPreview(user.avatar);
@@ -111,7 +112,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
       ])
         .then(([subsData, dashData, probData]) => {
           setSubmissions(Array.isArray(subsData) ? subsData : []);
-          if (dashData && dashData.overview) {
+          if (dashData) {
             setDashboardMetrics(dashData);
           }
           setProblems(Array.isArray(probData) ? probData : []);
@@ -132,12 +133,79 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
     }
   }, [user]);
 
-  const acceptedCount = submissions.filter(s => s.verdict === 'ACCEPTED').length;
-  const totalSubmissions = submissions.length;
-  const solveRate = totalSubmissions > 0 ? Math.round((acceptedCount / totalSubmissions) * 100) : 86;
+  // Unified problem history mapping solved/attempted status
+  const userProblemsHistory = React.useMemo(() => {
+    const historyMap = new Map();
 
-  // Mock performance sparkline data points
-  const sparklineBars = [35, 60, 45, 80, 65, 95, 75, 100, 85, 90, 70, 85];
+    // 1. Ingest from dashboardMetrics.problem_history (multi-stage summaries)
+    if (dashboardMetrics?.problem_history && Array.isArray(dashboardMetrics.problem_history)) {
+      for (const item of dashboardMetrics.problem_history) {
+        const pid = Number(item.problem_id);
+        historyMap.set(pid, {
+          problem_id: pid,
+          title: item.title,
+          difficulty: item.difficulty || 'Medium',
+          topic: item.topic || 'Algorithms',
+          is_solved: Boolean(item.is_solved),
+          total_submissions: item.total_submissions || 1,
+          best_execution_time_ms: item.best_execution_time_ms,
+          best_memory_used_kb: item.best_memory_used_kb,
+          updated_at: item.updated_at
+        });
+      }
+    }
+
+    // 2. Ingest from direct submissions array
+    if (submissions && Array.isArray(submissions)) {
+      for (const sub of submissions) {
+        const pid = Number(sub.problem_id);
+        const existing = historyMap.get(pid);
+        const isAccepted = sub.verdict === 'ACCEPTED';
+
+        if (existing) {
+          existing.total_submissions += 1;
+          if (isAccepted) existing.is_solved = true;
+          if (new Date(sub.created_at) > new Date(existing.updated_at)) {
+            existing.updated_at = sub.created_at;
+          }
+          if (sub.execution_time_ms !== null && (existing.best_execution_time_ms === null || sub.execution_time_ms < existing.best_execution_time_ms)) {
+            existing.best_execution_time_ms = sub.execution_time_ms;
+          }
+        } else {
+          const prob = problems.find(p => Number(p.id) === pid);
+          historyMap.set(pid, {
+            problem_id: pid,
+            title: prob ? prob.title : `Problem #${pid}`,
+            difficulty: prob ? prob.difficulty : 'Medium',
+            topic: prob ? prob.topic : 'Algorithms',
+            is_solved: isAccepted,
+            total_submissions: 1,
+            best_execution_time_ms: sub.execution_time_ms,
+            best_memory_used_kb: sub.memory_used_kb,
+            updated_at: sub.created_at
+          });
+        }
+      }
+    }
+
+    return Array.from(historyMap.values()).sort(
+      (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+    );
+  }, [dashboardMetrics, submissions, problems]);
+
+  const solvedCount = userProblemsHistory.filter(p => p.is_solved).length;
+  const attemptedCount = userProblemsHistory.filter(p => !p.is_solved).length;
+  const totalInteracted = userProblemsHistory.length;
+
+  const filteredHistory = React.useMemo(() => {
+    if (historyFilter === 'SOLVED') {
+      return userProblemsHistory.filter(p => p.is_solved);
+    }
+    if (historyFilter === 'ATTEMPTED') {
+      return userProblemsHistory.filter(p => !p.is_solved);
+    }
+    return userProblemsHistory;
+  }, [userProblemsHistory, historyFilter]);
 
 
 
@@ -290,16 +358,16 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
       {/* 2. Main Canvas */}
       <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full overflow-y-auto space-y-6">
         
-        {/* Top Header Greeting from PDF */}
+        {/* Top Header Greeting */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#e2e4e8] dark:border-zinc-800">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              {activeTab === 'profile' && 'Profile & Account Details'}
+              {activeTab === 'profile' && 'Profile Details'}
               {activeTab === 'edit' && 'Profile Editing'}
               {activeTab === 'settings' && 'Platform Settings'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-normal">
-              {activeTab === 'profile' && 'View your personal profile, credentials, and learning progress.'}
+              {activeTab === 'profile' && 'View your problem solving progress and historical submission activity.'}
               {activeTab === 'edit' && 'Manage your personal details, profile picture, and bio information.'}
               {activeTab === 'settings' && 'Configure theme preferences, code editor, and notification settings.'}
             </p>
@@ -339,8 +407,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </button>
           </div>
         </div>
-
-
 
         {/* TAB: PROFILE DETAILS VIEW */}
         {activeTab === 'profile' && (
@@ -392,14 +458,24 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     </div>
                     <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 flex items-center gap-2 flex-wrap">
                       <span className="flex items-center gap-1"><Mail size={12} /> {user?.email || profileData.email || 'developer@algomind.dev'}</span>
-                      <span>&bull;</span>
-                      <span className="flex items-center gap-1"><Building size={12} /> {profileData.organization || 'Greenfield High School'}</span>
-                      <span>&bull;</span>
-                      <span className="flex items-center gap-1"><MapPin size={12} /> {profileData.location || 'Coimbatore, India'}</span>
+                      {profileData.organization ? (
+                        <>
+                          <span>&bull;</span>
+                          <span className="flex items-center gap-1"><Building size={12} /> {profileData.organization}</span>
+                        </>
+                      ) : null}
+                      {profileData.location ? (
+                        <>
+                          <span>&bull;</span>
+                          <span className="flex items-center gap-1"><MapPin size={12} /> {profileData.location}</span>
+                        </>
+                      ) : null}
                     </p>
-                    <p className="text-xs text-slate-600 dark:text-zinc-300 mt-2.5 max-w-xl italic">
-                      "{profileData.bio || 'Algorithm enthusiast learning progressive asymptotic complexities.'}"
-                    </p>
+                    {profileData.bio ? (
+                      <p className="text-xs text-slate-600 dark:text-zinc-300 mt-2.5 max-w-xl italic">
+                        "{profileData.bio}"
+                      </p>
+                    ) : null}
                   </div>
                 </div>
 
@@ -415,47 +491,257 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               </div>
             </div>
 
-            {/* Account Details */}
-            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 space-y-4">
-              <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-3">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <User size={16} className="text-blue-600 dark:text-blue-400" />
-                  Personal & Account Details
-                </h3>
-                <button
-                  onClick={() => setActiveTab('edit')}
-                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Edit details
-                </button>
+            {/* Problems Solved & Summary Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Solved</span>
+                    <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
+                      <CheckCircle2 size={16} />
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-2">
+                    {solvedCount}
+                  </div>
+                </div>
+                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
+                  {problems.length > 0 ? `out of ${problems.length} total challenges` : 'Completed algorithmic problems'}
+                </div>
               </div>
 
-              <div className="space-y-3 text-xs">
-                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Full Name</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.name || 'Developer'}</span>
+              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Attempted</span>
+                    <span className="p-2 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
+                      <Clock size={16} />
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black font-mono text-amber-600 dark:text-amber-400 mt-2">
+                    {attemptedCount}
+                  </div>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Email Address</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">{user?.email || profileData.email}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Phone Number</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.phone || '+91 9876543210'}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                  <span className="text-slate-500 dark:text-zinc-400 font-medium">School / Organization</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.organization || 'Greenfield High School'}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Location</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.location || 'Coimbatore, India'}</span>
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Account Status</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">Active Verified</span>
+                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
+                  Challenges in progress
                 </div>
               </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Total Runs</span>
+                    <span className="p-2 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                      <Code2 size={16} />
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black font-mono text-blue-600 dark:text-blue-400 mt-2">
+                    {submissions.length || dashboardMetrics?.overview?.total_submissions || 0}
+                  </div>
+                </div>
+                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
+                  Evaluated code submissions
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Solve Rate</span>
+                    <span className="p-2 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
+                      <Award size={16} />
+                    </span>
+                  </div>
+                  <div className="text-3xl font-black font-mono text-purple-600 dark:text-purple-400 mt-2">
+                    {totalInteracted > 0 ? `${Math.round((solvedCount / totalInteracted) * 100)}%` : '0%'}
+                  </div>
+                </div>
+                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
+                  Solved vs attempted ratio
+                </div>
+              </div>
+            </div>
+
+            {/* Problems History Section */}
+            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] overflow-hidden">
+              <div className="p-5 sm:p-6 border-b border-[#e2e4e8] dark:border-[#2d2d2d] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Code2 size={18} className="text-blue-600 dark:text-blue-400" />
+                    Problems History
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
+                    Your algorithmic problem attempts and verification status
+                  </p>
+                </div>
+
+                {/* Filter Tabs */}
+                <div className="flex items-center gap-1.5 bg-[#edeef1] dark:bg-[#262626] p-1 rounded-xl border border-[#e2e4e8] dark:border-[#333333] self-start sm:self-auto">
+                  <button
+                    onClick={() => setHistoryFilter('ALL')}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                      historyFilter === 'ALL'
+                        ? 'bg-white text-slate-900 shadow-sm dark:bg-[#1e1e1e] dark:text-white'
+                        : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    All ({userProblemsHistory.length})
+                  </button>
+                  <button
+                    onClick={() => setHistoryFilter('SOLVED')}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                      historyFilter === 'SOLVED'
+                        ? 'bg-white text-emerald-700 shadow-sm dark:bg-[#1e1e1e] dark:text-emerald-400'
+                        : 'text-slate-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400'
+                    }`}
+                  >
+                    Solved ({solvedCount})
+                  </button>
+                  <button
+                    onClick={() => setHistoryFilter('ATTEMPTED')}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                      historyFilter === 'ATTEMPTED'
+                        ? 'bg-white text-amber-700 shadow-sm dark:bg-[#1e1e1e] dark:text-amber-400'
+                        : 'text-slate-600 dark:text-zinc-400 hover:text-amber-600 dark:hover:text-amber-400'
+                    }`}
+                  >
+                    Attempted ({attemptedCount})
+                  </button>
+                </div>
+              </div>
+
+              {filteredHistory.length === 0 ? (
+                <div className="py-14 text-center space-y-3 px-4">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-zinc-800 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto shadow-xs">
+                    <Code2 size={24} />
+                  </div>
+                  <div className="text-sm font-bold text-slate-900 dark:text-white">
+                    {historyFilter === 'SOLVED'
+                      ? 'No solved problems yet'
+                      : historyFilter === 'ATTEMPTED'
+                      ? 'No attempted problems yet'
+                      : 'No problem history recorded yet'}
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mx-auto">
+                    {historyFilter === 'SOLVED'
+                      ? 'Complete test cases with an Accepted verdict to mark problems as solved.'
+                      : 'Explore our catalog to start practicing algorithmic challenges.'}
+                  </p>
+                  <button
+                    onClick={() => onNavigate('problems')}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-sm transition-all mt-2"
+                  >
+                    <span>Browse Algomind Problems</span>
+                    <ArrowRight size={13} />
+                  </button>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#f8f9fa] dark:bg-[#181818] text-slate-500 dark:text-zinc-400 font-bold border-b border-[#e2e4e8] dark:border-[#2d2d2d] uppercase tracking-wider text-[10px]">
+                      <tr>
+                        <th className="py-3 px-5">Problem</th>
+                        <th className="py-3 px-4">Difficulty</th>
+                        <th className="py-3 px-4">Topic</th>
+                        <th className="py-3 px-4">Status</th>
+                        <th className="py-3 px-4">Submissions</th>
+                        <th className="py-3 px-4">Last Activity</th>
+                        <th className="py-3 px-5 text-right">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#e2e4e8] dark:divide-[#2d2d2d]">
+                      {filteredHistory.map((item) => (
+                        <tr
+                          key={item.problem_id}
+                          className="hover:bg-[#f8f9fa] dark:hover:bg-[#222222] transition-colors group"
+                        >
+                          <td className="py-3.5 px-5">
+                            <div
+                              onClick={() => {
+                                if (onSelectProblem) onSelectProblem(item.problem_id);
+                                else onNavigate('problem-detail', { problemId: item.problem_id });
+                              }}
+                              className="font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors"
+                            >
+                              {item.title}
+                            </div>
+                            <div className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono mt-0.5">
+                              #{item.problem_id}
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            {(() => {
+                              const d = (item.difficulty || 'MEDIUM').toUpperCase();
+                              if (d === 'EASY') {
+                                return (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">
+                                    Easy
+                                  </span>
+                                );
+                              }
+                              if (d === 'HARD') {
+                                return (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-300 dark:bg-rose-950/60 dark:text-rose-400 dark:border-rose-800/60">
+                                    Hard
+                                  </span>
+                                );
+                              }
+                              return (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800/60">
+                                  Medium
+                                </span>
+                              );
+                            })()}
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span className="px-2 py-0.5 rounded-md bg-[#edeef1] text-slate-700 dark:bg-[#282828] dark:text-zinc-300 text-[11px] font-medium border border-[#d5d9de] dark:border-[#383838]">
+                              {item.topic || 'Algorithms'}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            {item.is_solved ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60 shadow-xs">
+                                <CheckCircle2 size={12} className="text-emerald-600 dark:text-emerald-400" />
+                                Solved
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-400 dark:border-amber-800/60 shadow-xs">
+                                <Clock size={12} className="text-amber-600 dark:text-amber-400" />
+                                Attempted
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-slate-600 dark:text-zinc-400">
+                            {item.total_submissions} run{item.total_submissions > 1 ? 's' : ''}
+                            {item.best_execution_time_ms ? (
+                              <span className="text-[10px] text-slate-400 block">{item.best_execution_time_ms} ms</span>
+                            ) : null}
+                          </td>
+                          <td className="py-3.5 px-4 text-slate-500 dark:text-zinc-400 text-xs">
+                            {item.updated_at ? new Date(item.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                          </td>
+                          <td className="py-3.5 px-5 text-right">
+                            <button
+                              onClick={() => {
+                                if (onSelectProblem) onSelectProblem(item.problem_id);
+                                else onNavigate('problem-detail', { problemId: item.problem_id });
+                              }}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1 shadow-xs ${
+                                item.is_solved
+                                  ? 'bg-[#edeef1] hover:bg-[#e2e4e8] text-slate-700 dark:bg-[#282828] dark:hover:bg-[#333333] dark:text-zinc-200 border border-[#d5d9de] dark:border-[#383838]'
+                                  : 'bg-blue-600 hover:bg-blue-500 text-white'
+                              }`}
+                            >
+                              <span>{item.is_solved ? 'Review' : 'Continue'}</span>
+                              <ArrowRight size={12} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -602,7 +888,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         value={profileData.phone}
                         onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
                         className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500"
-                        placeholder="+91 9876543210"
+                        placeholder="e.g. +91 9876543210"
                       />
                     </div>
 
@@ -615,7 +901,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                         value={profileData.organization}
                         onChange={(e) => setProfileData(prev => ({ ...prev, organization: e.target.value }))}
                         className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500"
-                        placeholder="e.g. Greenfield High School"
+                        placeholder="Enter school, university, or company"
                       />
                     </div>
                   </div>
@@ -629,7 +915,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                       value={profileData.location}
                       onChange={(e) => setProfileData(prev => ({ ...prev, location: e.target.value }))}
                       className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500"
-                      placeholder="e.g. Coimbatore, India"
+                      placeholder="Enter your city, state, or country"
                     />
                   </div>
 
@@ -642,7 +928,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                       value={profileData.bio}
                       onChange={(e) => setProfileData(prev => ({ ...prev, bio: e.target.value }))}
                       className="w-full px-3.5 py-2 rounded-lg bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500 leading-relaxed"
-                      placeholder="Tell us about your algorithmic journey..."
+                      placeholder="Write a brief bio about yourself..."
                     />
                   </div>
 
