@@ -69,7 +69,7 @@ export default function ProblemListPage({ onSelectProblem }) {
                 <Terminal size={18} />
               </span>
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Algomind Problem Catalog
+                Algomind Problems
               </h1>
             </div>
             <p className="text-slate-600 dark:text-zinc-400 text-xs sm:text-sm mt-1.5">
@@ -139,7 +139,7 @@ export default function ProblemListPage({ onSelectProblem }) {
           <div className="py-20 text-center text-slate-500 dark:text-zinc-400 text-sm">
             <div className="inline-flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-              Loading problem catalog...
+              Loading problems...
             </div>
           </div>
         )}
