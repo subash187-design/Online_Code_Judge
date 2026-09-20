@@ -10,6 +10,7 @@ import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import UserDashboardPage from './pages/UserDashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function getRouteFromPath(pathname, isAuthenticated) {
   const path = pathname.toLowerCase().replace(/\/$/, '');
@@ -192,10 +193,12 @@ function MainApp() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <MainApp />
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <MainApp />
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

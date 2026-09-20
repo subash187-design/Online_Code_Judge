@@ -3,20 +3,34 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem('token') || null);
+  const [token, setToken] = useState(() => {
+    try {
+      return localStorage.getItem('token') || null;
+    } catch {
+      return null;
+    }
+  });
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Validate current token if present
     if (token) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
       fetch('/api/v1/auth/me', {
         headers: {
           'Authorization': `Bearer ${token}`
-        }
+        },
+        signal: controller.signal
       })
         .then(res => {
           if (!res.ok) {
@@ -26,12 +40,15 @@ export const AuthProvider = ({ children }) => {
         })
         .then(data => {
           setUser(data.user);
-          localStorage.setItem('user', JSON.stringify(data.user));
+          try {
+            localStorage.setItem('user', JSON.stringify(data.user));
+          } catch {}
         })
         .catch(() => {
           logout();
         })
         .finally(() => {
+          clearTimeout(timeoutId);
           setLoading(false);
         });
     } else {

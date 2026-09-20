@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth.routes');
@@ -37,7 +39,17 @@ app.use('/api/v1/analysis', analysisRoutes);
 app.use('/api/v1/mentor', mentorRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
 
-// Global 404
+// Serve Frontend Static Build (Production & Fallback)
+const clientDist = path.join(__dirname, '../../client/dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health') return next();
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
+
+// Global 404 for API routes
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });

@@ -139,12 +139,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
   // Mock performance sparkline data points
   const sparklineBars = [35, 60, 45, 80, 65, 95, 75, 100, 85, 90, 70, 85];
 
-  const filteredProblems = problems.filter(p => {
-    const matchesSearch = p.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          (p.topic && p.topic.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesDiff = difficultyFilter === 'ALL' || p.difficulty === difficultyFilter;
-    return matchesSearch && matchesDiff;
-  });
+
 
   const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
