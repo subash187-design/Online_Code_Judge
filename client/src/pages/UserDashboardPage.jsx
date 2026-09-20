@@ -182,26 +182,30 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         <div className="space-y-5">
           
           {/* Brand Header */}
-          <div 
-            onClick={() => onNavigate('problems')}
-            className="flex items-center gap-2.5 px-2 py-1 cursor-pointer group"
-            title="Return to Problems"
-          >
+          <div className="flex items-center gap-2.5 px-2 py-1">
             <div className="h-7 w-auto flex items-center">
               <img 
                 src="/logo.png" 
                 alt="Algomind Logo" 
-                className="h-full w-auto object-contain brightness-110 dark:brightness-125 group-hover:scale-105 transition-transform" 
+                className="h-full w-auto object-contain brightness-110 dark:brightness-125" 
               />
             </div>
             <div className="flex flex-col">
               <span className="text-xs font-bold text-slate-900 dark:text-white tracking-tight">Algomind</span>
-              <span className="text-[10px] text-slate-500 dark:text-zinc-500 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">← Back to Problems</span>
+              <span className="text-[10px] text-slate-500 dark:text-zinc-500 font-medium">Algorithmic Platform</span>
             </div>
           </div>
 
           {/* Navigation Items */}
           <nav className="space-y-1 pt-1">
+            <button
+              onClick={() => onNavigate('problems')}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]"
+            >
+              <Code2 size={15} className="text-blue-600 dark:text-blue-400" />
+              Problems
+            </button>
+
             <button
               onClick={() => setActiveTab('profile')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
@@ -336,251 +340,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           </div>
         </div>
 
-        {/* 3. Primary KPI Metric Cards (Always visible on Studio Dashboard) */}
-        {activeTab === 'studio' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            
-            {/* Card 1: Preparedness Score */}
-            <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
-              <div>
-                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Score</div>
-                <div className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1.5 font-mono">{solveRate}%</div>
-              </div>
-              <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
-                Keep it up!, you are doing great.
-              </div>
-            </div>
 
-            {/* Card 2: Simulations Assigned */}
-            <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
-              <div>
-                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Simulations assigned</div>
-                <div className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1.5 font-mono">{problems.length || 3}</div>
-              </div>
-              <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
-                Multi-stage challenges
-              </div>
-            </div>
-
-            {/* Card 3: Completed Simulations */}
-            <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
-              <div>
-                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Completed simulations</div>
-                <div className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1.5 font-mono">+{acceptedCount}</div>
-              </div>
-              <div className="mt-3 text-[11px] text-slate-600 dark:text-zinc-400 font-medium">
-                Verified in Docker sandbox
-              </div>
-            </div>
-
-            {/* Card 4: Donut Radial Gauge */}
-            <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex items-center justify-between">
-              <div>
-                <div className="text-xs font-semibold text-slate-500 dark:text-zinc-400">Preparedness Overview</div>
-                <div className="text-[11px] text-slate-600 dark:text-zinc-400 mt-1">Consistent progress</div>
-              </div>
-              <div className="relative w-14 h-14 flex items-center justify-center">
-                <svg className="w-14 h-14 transform -rotate-90" viewBox="0 0 36 36">
-                  <path
-                    className="text-slate-200 dark:text-zinc-700"
-                    strokeWidth="3.5"
-                    stroke="currentColor"
-                    fill="none"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                  <path
-                    className="text-slate-900 dark:text-white"
-                    strokeDasharray="78, 100"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    stroke="currentColor"
-                    fill="none"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  />
-                </svg>
-                <span className="absolute text-[11px] font-extrabold text-slate-900 dark:text-white">78%</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 1: STUDIO VIEW */}
-        {activeTab === 'studio' && (
-          <div className="space-y-6">
-            
-            {/* Quick Profile Link Banner */}
-            <div className="p-4 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#f1f3f5] dark:bg-zinc-800 border border-[#d5d9de] dark:border-zinc-700 overflow-hidden flex items-center justify-center">
-                  {avatarPreview ? (
-                    <img src={avatarPreview} alt={profileData.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <User size={18} className="text-slate-700 dark:text-white" />
-                  )}
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">
-                    {profileData.name || 'Developer Profile'}
-                  </div>
-                  <div className="text-[11px] text-slate-500 dark:text-zinc-400">
-                    {profileData.organization || 'Greenfield High School'} &bull; {profileData.location || 'India'}
-                  </div>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setActiveTab('edit')}
-                className="px-3.5 py-1.5 rounded-xl bg-[#f8f9fa] hover:bg-[#edeef1] text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white text-xs font-semibold transition-all border border-[#d5d9de] dark:border-zinc-700 flex items-center gap-1.5"
-              >
-                Edit Profile & Photo
-                <ArrowUpRight size={14} />
-              </button>
-            </div>
-
-            {/* AI Adaptive Learning Panel */}
-            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 space-y-6">
-              <div>
-                <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
-                  AI Adaptive Learning
-                </h2>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
-                  Personalized learning that adapts to your performance and helps you improve.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="p-5 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">Your Learning Intelligence</div>
-                      <div className="text-[11px] text-slate-500 dark:text-zinc-400">Insight based on your performance</div>
-                    </div>
-                    <span className="text-xs font-extrabold text-emerald-700 dark:text-emerald-400 font-mono bg-emerald-50 dark:bg-[#222222] px-2.5 py-1 rounded-xl border border-emerald-300 dark:border-[#333333]">
-                      100%
-                    </span>
-                  </div>
-
-                  <div className="pt-2">
-                    <div className="text-sm font-bold text-slate-900 dark:text-white">Good Work!</div>
-                    <div className="text-xs text-slate-600 dark:text-zinc-400 mt-0.5">
-                      You're improving consistently. +12% from last week.
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t border-[#e2e4e8] dark:border-zinc-800">
-                    <div className="text-xs font-bold text-slate-900 dark:text-white mb-2">Strong Areas</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="px-2.5 py-1 rounded-xl bg-white dark:bg-zinc-800 border border-[#e2e4e8] dark:border-zinc-700 text-xs font-medium text-slate-800 dark:text-white">
-                        Flood Response / DP
-                      </span>
-                      <span className="px-2.5 py-1 rounded-xl bg-white dark:bg-zinc-800 border border-[#e2e4e8] dark:border-zinc-700 text-xs font-medium text-slate-800 dark:text-white">
-                        First Aid / Two-Pointers
-                      </span>
-                      <span className="px-2.5 py-1 rounded-xl bg-white dark:bg-zinc-800 border border-[#e2e4e8] dark:border-zinc-700 text-xs font-medium text-slate-800 dark:text-white">
-                        Earthquake Basics
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-zinc-900/60 dark:border-zinc-800 space-y-4">
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">Learning Focus Areas</div>
-                    <div className="text-[11px] text-slate-500 dark:text-zinc-400">Topics you should focus on</div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs">
-                      <span className="font-bold text-slate-900 dark:text-white">Fire Evacuation / Recursion Depth</span>
-                      <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-300">Weak 35% Score</span>
-                    </div>
-                    <div className="w-full bg-slate-200 dark:bg-zinc-700 h-2 rounded-full overflow-hidden">
-                      <div className="bg-slate-800 dark:bg-white h-full w-[35%]" />
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-zinc-400">
-                      Understand safe evacuation routes, exit points, and call stack boundaries.
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5 pt-2">
-                    <div className="flex justify-between text-xs">
-                      <span className="font-bold text-slate-900 dark:text-white">Emergency Planning / Memory Allocation</span>
-                      <span className="text-[11px] font-semibold text-slate-700 dark:text-zinc-300">Average 50% Score</span>
-                    </div>
-                    <div className="w-full bg-slate-200 dark:bg-zinc-700 h-2 rounded-full overflow-hidden">
-                      <div className="bg-slate-800 dark:bg-white h-full w-[50%]" />
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-zinc-400">
-                      Learn how to optimize space tradeoffs and memory footprint limits.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Submissions Telemetry Table */}
-            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] overflow-hidden">
-              <div className="p-5 border-b border-[#e2e4e8] dark:border-zinc-800 flex items-center justify-between">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Clock size={16} />
-                    Live Submission Telemetry Feed
-                  </h2>
-                  <span className="text-[11px] text-slate-500 dark:text-zinc-400">Docker container isolation with cgroup limits</span>
-                </div>
-                <span className="text-xs text-slate-600 dark:text-zinc-400 font-mono bg-[#f1f3f5] dark:bg-zinc-800 px-3 py-1 rounded-xl border border-[#e2e4e8] dark:border-transparent">
-                  {submissions.length} Recorded Runs
-                </span>
-              </div>
-
-              {loading ? (
-                <div className="py-12 text-center text-slate-500 dark:text-zinc-400 text-xs">
-                  Loading submission telemetry...
-                </div>
-              ) : submissions.length === 0 ? (
-                <div className="py-12 text-center text-slate-500 dark:text-zinc-400 text-xs">
-                  No submissions recorded yet. Open a problem to begin evaluation.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-[#f8f9fa] dark:bg-zinc-900/50 text-slate-600 dark:text-zinc-400 font-bold border-b border-[#e2e4e8] dark:border-zinc-800/80 uppercase tracking-wider text-[10px]">
-                      <tr>
-                        <th className="py-3 px-5">Verdict</th>
-                        <th className="py-3 px-5">Language</th>
-                        <th className="py-3 px-5">Runtime</th>
-                        <th className="py-3 px-5">Virtual Memory</th>
-                        <th className="py-3 px-5">Timestamp</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#e2e4e8] dark:divide-zinc-800 font-mono">
-                      {submissions.slice(0, 6).map((sub) => (
-                        <tr key={sub.id} className="hover:bg-[#f8f9fa] dark:hover:bg-zinc-800/40 transition-colors">
-                          <td className="py-3.5 px-5">
-                            <VerdictBadge verdict={sub.verdict} />
-                          </td>
-                          <td className="py-3.5 px-5 uppercase text-slate-800 dark:text-white font-semibold">
-                            {sub.language || 'cpp'}
-                          </td>
-                          <td className="py-3.5 px-5 text-slate-800 dark:text-white">
-                            {sub.execution_time_ms !== null ? `${sub.execution_time_ms} ms` : '—'}
-                          </td>
-                          <td className="py-3.5 px-5 text-slate-800 dark:text-white">
-                            {sub.memory_used_kb !== null ? `${sub.memory_used_kb} KB` : '—'}
-                          </td>
-                          <td className="py-3.5 px-5 text-slate-500 dark:text-zinc-400 font-sans text-xs">
-                            {new Date(sub.created_at).toLocaleString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-
-          </div>
-        )}
 
         {/* TAB: PROFILE DETAILS VIEW */}
         {activeTab === 'profile' && (
@@ -610,7 +370,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
 
             {/* Profile Overview Card */}
             <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 sm:p-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                 <div className="flex items-center gap-5">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#f1f3f5] dark:bg-zinc-800 text-slate-800 dark:text-white flex items-center justify-center font-bold text-2xl border-2 border-[#e2e4e8] dark:border-zinc-700 overflow-hidden shadow-sm shrink-0">
                     {avatarPreview ? (
@@ -653,119 +413,47 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   </button>
                 </div>
               </div>
-
-              {/* Quick Metrics Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Simulations Solved</span>
-                  <span className="text-2xl font-extrabold font-mono text-blue-600 dark:text-blue-400 mt-1 block">+{acceptedCount}</span>
-                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Docker verified</span>
-                </div>
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Preparedness Score</span>
-                  <span className="text-2xl font-extrabold font-mono text-blue-600 dark:text-blue-400 mt-1 block">{solveRate}%</span>
-                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Accuracy rating</span>
-                </div>
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Learning Time</span>
-                  <span className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1 block">8h 16m</span>
-                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Active session time</span>
-                </div>
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Complexity Shift</span>
-                  <span className="text-2xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-1 block">O(N)</span>
-                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Optimal solution target</span>
-                </div>
-              </div>
             </div>
 
-            {/* Detailed Information & Badges */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              {/* Account Details */}
-              <div className="lg:col-span-7 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 space-y-4">
-                <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-3">
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <User size={16} className="text-blue-600 dark:text-blue-400" />
-                    Personal & Account Details
-                  </h3>
-                  <button
-                    onClick={() => setActiveTab('edit')}
-                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    Edit details
-                  </button>
-                </div>
-
-                <div className="space-y-3 text-xs">
-                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Full Name</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.name || 'Developer'}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Email Address</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">{user?.email || profileData.email}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Phone Number</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.phone || '+91 9876543210'}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                    <span className="text-slate-500 dark:text-zinc-400 font-medium">School / Organization</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.organization || 'Greenfield High School'}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Location</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.location || 'Coimbatore, India'}</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2">
-                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Account Status</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">Active Verified</span>
-                  </div>
-                </div>
+            {/* Account Details */}
+            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 space-y-4">
+              <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-3">
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <User size={16} className="text-blue-600 dark:text-blue-400" />
+                  Personal & Account Details
+                </h3>
+                <button
+                  onClick={() => setActiveTab('edit')}
+                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  Edit details
+                </button>
               </div>
 
-              {/* Badges & Achievements */}
-              <div className="lg:col-span-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 space-y-4">
-                <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-3">
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <Award size={16} className="text-blue-600 dark:text-blue-400" />
-                    Achievements & Badges
-                  </h3>
-                  <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">4 Unlocked</span>
+              <div className="space-y-3 text-xs">
+                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Full Name</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.name || 'Developer'}</span>
                 </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-1.5">
-                      <Zap size={16} />
-                    </div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">Fast Solver</div>
-                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">&lt; 100ms runtime</div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
-                    <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-1.5">
-                      <ShieldCheck size={16} />
-                    </div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">Sandbox Verified</div>
-                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">Strict isolation</div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
-                    <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-1.5">
-                      <Layers size={16} />
-                    </div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">Multi-Stage</div>
-                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">Optimized steps</div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
-                    <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-1.5">
-                      <Flame size={16} />
-                    </div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">Active Streak</div>
-                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">5 days streak</div>
-                  </div>
+                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Email Address</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{user?.email || profileData.email}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Phone Number</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.phone || '+91 9876543210'}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                  <span className="text-slate-500 dark:text-zinc-400 font-medium">School / Organization</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.organization || 'Greenfield High School'}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Location</span>
+                  <span className="font-semibold text-slate-900 dark:text-white">{profileData.location || 'Coimbatore, India'}</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-slate-500 dark:text-zinc-400 font-medium">Account Status</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">Active Verified</span>
                 </div>
               </div>
             </div>
@@ -851,25 +539,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   )}
                 </div>
 
-                {/* Quick Stats */}
-                <div className="w-full pt-4 border-t border-[#e2e4e8] dark:border-[#2d2d2d] space-y-3 text-left">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">Quick Stats</div>
-                  
-                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] flex items-center justify-between">
-                    <span className="text-xs text-slate-600 dark:text-zinc-400">Simulations Completed</span>
-                    <span className="text-sm font-bold font-mono text-blue-600 dark:text-blue-400">+{acceptedCount}</span>
-                  </div>
 
-                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] flex items-center justify-between">
-                    <span className="text-xs text-slate-600 dark:text-zinc-400">Total Learning Time</span>
-                    <span className="text-sm font-bold font-mono text-slate-900 dark:text-white">8h 16m</span>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] flex items-center justify-between">
-                    <span className="text-xs text-slate-600 dark:text-zinc-400">Preparedness Score</span>
-                    <span className="text-sm font-bold font-mono text-blue-600 dark:text-blue-400">{solveRate}%</span>
-                  </div>
-                </div>
               </div>
 
               {/* Right Column: Personal Information Form */}
