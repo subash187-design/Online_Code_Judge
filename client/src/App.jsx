@@ -18,7 +18,7 @@ function getRouteFromPath(pathname, isAuthenticated) {
   if (problemId && (path === '/problems' || path === '')) {
     return isAuthenticated ? 'problem-detail' : 'signin';
   }
-  if (!path || path === '') return isAuthenticated ? 'dashboard' : 'landing';
+  if (!path || path === '') return isAuthenticated ? 'problems' : 'landing';
   if (path === '/landing') return 'landing';
   if (path === '/signin' || path === '/login') return 'signin';
   if (path === '/signup' || path === '/register') return 'signup';
@@ -28,7 +28,7 @@ function getRouteFromPath(pathname, isAuthenticated) {
   if (path === '/settings') return isAuthenticated ? 'settings' : 'signin';
   if (path === '/admin') return 'admin';
   if (path === '/problems') return isAuthenticated ? 'problems' : 'signin';
-  return isAuthenticated ? 'dashboard' : 'landing';
+  return isAuthenticated ? 'problems' : 'landing';
 }
 
 function getPathFromRoute(route, params = {}, isAuthenticated = false) {
@@ -134,14 +134,14 @@ function MainApp() {
           return user?.role === 'ADMIN' ? (
             <AdminDashboardPage onNavigate={navigate} />
           ) : (
-            <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />
+            <ProblemListPage onSelectProblem={handleSelectProblem} />
           );
         }
         return <LoginPage onNavigate={navigate} />;
 
       case 'signup':
         if (isAuthenticated) {
-          return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />;
+          return <ProblemListPage onSelectProblem={handleSelectProblem} />;
         }
         return <RegisterPage onNavigate={navigate} />;
 
@@ -174,7 +174,7 @@ function MainApp() {
         );
 
       default:
-        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} />;
+        return <ProblemListPage onSelectProblem={handleSelectProblem} />;
     }
   };
 

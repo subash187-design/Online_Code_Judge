@@ -36,22 +36,23 @@ import {
   Building,
   Phone,
   Mail,
-  Shield
+  Shield,
+  ArrowLeft,
+  Edit3,
+  Award
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import VerdictBadge from '../components/VerdictBadge';
 
-export default function UserDashboardPage({ onNavigate, onSelectProblem, initialTab = 'studio' }) {
+export default function UserDashboardPage({ onNavigate, onSelectProblem, initialTab = 'profile' }) {
   const { user, authFetch, logout, updateUser } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState(initialTab || 'studio'); // 'studio' | 'problems' | 'journey' | 'telemetry' | 'profile' | 'settings'
+  const [activeTab, setActiveTab] = useState(initialTab || 'profile'); // 'profile' | 'edit' | 'studio' | 'settings'
   const [submissions, setSubmissions] = useState([]);
   const [dashboardMetrics, setDashboardMetrics] = useState(null);
   const [problems, setProblems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [difficultyFilter, setDifficultyFilter] = useState('ALL');
 
   // Profile management state
   const [profileData, setProfileData] = useState({
@@ -200,8 +201,41 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </div>
           </div>
 
+          {/* Back to Problems Catalog Button */}
+          <button
+            onClick={() => onNavigate('problems')}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-[#edeef1] border border-[#d5d9de] dark:bg-[#262626] dark:text-zinc-200 dark:hover:text-white dark:border-[#383838] shadow-sm transition-all"
+          >
+            <ArrowLeft size={14} className="text-blue-600 dark:text-blue-400" />
+            <span>Back to Problems</span>
+          </button>
+
           {/* Navigation Items */}
           <nav className="space-y-1 pt-1">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                activeTab === 'profile'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
+              }`}
+            >
+              <User size={15} className={activeTab === 'profile' ? 'text-blue-600 dark:text-blue-400' : ''} />
+              Profile Details
+            </button>
+
+            <button
+              onClick={() => setActiveTab('edit')}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                activeTab === 'edit'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
+              }`}
+            >
+              <Edit3 size={15} className={activeTab === 'edit' ? 'text-blue-600 dark:text-blue-400' : ''} />
+              Profile Editing
+            </button>
+
             <button
               onClick={() => setActiveTab('studio')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
@@ -212,54 +246,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             >
               <LayoutDashboard size={15} className={activeTab === 'studio' ? 'text-blue-600 dark:text-blue-400' : ''} />
               Dashboard
-            </button>
-
-            <button
-              onClick={() => setActiveTab('problems')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'problems'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
-              }`}
-            >
-              <Code2 size={15} className={activeTab === 'problems' ? 'text-blue-600 dark:text-blue-400' : ''} />
-              My assignments
-            </button>
-
-            <button
-              onClick={() => setActiveTab('telemetry')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'telemetry'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
-              }`}
-            >
-              <Cpu size={15} className={activeTab === 'telemetry' ? 'text-blue-600 dark:text-blue-400' : ''} />
-              Assessments
-            </button>
-
-            <button
-              onClick={() => setActiveTab('journey')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'journey'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
-              }`}
-            >
-              <TrendingUp size={15} className={activeTab === 'journey' ? 'text-blue-600 dark:text-blue-400' : ''} />
-              AI Learning path
-            </button>
-
-            <button
-              onClick={() => setActiveTab('profile')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'profile'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
-              }`}
-            >
-              <User size={15} className={activeTab === 'profile' ? 'text-blue-600 dark:text-blue-400' : ''} />
-              Profile
             </button>
 
             <button
@@ -326,19 +312,41 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[#e2e4e8] dark:border-zinc-800">
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              {activeTab === 'profile' && `Profile & Account Details`}
-              {activeTab === 'settings' && `Platform Settings`}
-              {activeTab !== 'profile' && activeTab !== 'settings' && `Welcome back, ${profileData.name ? profileData.name.split(' ')[0] : 'Developer'}!`}
+              {activeTab === 'profile' && 'Profile & Account Details'}
+              {activeTab === 'edit' && 'Profile Editing'}
+              {activeTab === 'studio' && `Welcome back, ${profileData.name ? profileData.name.split(' ')[0] : 'Developer'}!`}
+              {activeTab === 'settings' && 'Platform Settings'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-normal">
-              {activeTab === 'profile' && 'Manage your personal details, profile picture, and learning achievements.'}
+              {activeTab === 'profile' && 'View your personal profile, credentials, and learning progress.'}
+              {activeTab === 'edit' && 'Manage your personal details, profile picture, and bio information.'}
+              {activeTab === 'studio' && "Stay prepared, Stay safe. Here's an overview of your algorithmic performance."}
               {activeTab === 'settings' && 'Configure theme preferences, code editor, and notification settings.'}
-              {activeTab !== 'profile' && activeTab !== 'settings' && "Stay prepared, Stay safe. Here's an overview of your algorithmic performance."}
             </p>
           </div>
 
           {/* Quick Tab Switcher */}
           <div className="flex items-center flex-wrap gap-1.5 bg-[#edeef1] dark:bg-zinc-900 p-1 rounded-xl border border-[#e2e4e8] dark:border-zinc-800">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'profile'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Profile Details
+            </button>
+            <button
+              onClick={() => setActiveTab('edit')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                activeTab === 'edit'
+                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
+                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Profile Editing
+            </button>
             <button
               onClick={() => setActiveTab('studio')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -348,46 +356,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               }`}
             >
               Dashboard
-            </button>
-            <button
-              onClick={() => setActiveTab('problems')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'problems'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Problems
-            </button>
-            <button
-              onClick={() => setActiveTab('journey')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'journey'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Journey
-            </button>
-            <button
-              onClick={() => setActiveTab('telemetry')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'telemetry'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Telemetry
-            </button>
-            <button
-              onClick={() => setActiveTab('profile')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'profile'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Profile
             </button>
             <button
               onClick={() => setActiveTab('settings')}
@@ -495,94 +463,12 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               </div>
 
               <button
-                onClick={() => setActiveTab('profile')}
+                onClick={() => setActiveTab('edit')}
                 className="px-3.5 py-1.5 rounded-xl bg-[#f8f9fa] hover:bg-[#edeef1] text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white text-xs font-semibold transition-all border border-[#d5d9de] dark:border-zinc-700 flex items-center gap-1.5"
               >
                 Edit Profile & Photo
                 <ArrowUpRight size={14} />
               </button>
-            </div>
-
-            {/* Assigned Simulation Table */}
-            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] overflow-hidden">
-              <div className="p-5 border-b border-[#e2e4e8] dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Assigned Simulation
-                  </h2>
-                  <p className="text-[11px] text-slate-500 dark:text-zinc-400">
-                    Simulations assigned for algorithmic practice
-                  </p>
-                </div>
-
-                <button 
-                  onClick={() => setActiveTab('problems')}
-                  className="text-xs font-semibold text-slate-800 dark:text-white hover:underline text-left sm:text-right"
-                >
-                  View all assignments
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-[#f8f9fa] text-slate-600 font-semibold border-b border-[#e2e4e8] dark:bg-[#181818] dark:text-zinc-400 dark:border-[#2d2d2d] text-[11px]">
-                    <tr>
-                      <th className="py-3 px-5">Simulation</th>
-                      <th className="py-3 px-5">Difficulty</th>
-                      <th className="py-3 px-5">Assigned on</th>
-                      <th className="py-3 px-5">Due date</th>
-                      <th className="py-3 px-5">Status</th>
-                      <th className="py-3 px-5 text-right">Action</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#e2e4e8] dark:divide-[#2d2d2d]">
-                    {problems.slice(0, 4).map((prob, idx) => (
-                      <tr key={prob.id} className="hover:bg-[#f8f9fa] dark:hover:bg-[#252525] transition-colors">
-                        <td className="py-3.5 px-5">
-                          <div className="font-bold text-slate-900 dark:text-white text-xs">{prob.title}</div>
-                          <div className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 max-w-sm truncate">
-                            {prob.description || 'Learn how to optimize memory and execution time across stages.'}
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-5">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                            prob.difficulty === 'Easy'
-                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
-                              : prob.difficulty === 'Medium'
-                              ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20'
-                              : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
-                          }`}>
-                            {prob.difficulty}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-5 text-slate-600 dark:text-zinc-400">
-                          {idx === 0 ? '30 Jun 2026' : idx === 1 ? '18 Jun 2026' : '15 Jun 2026'}
-                        </td>
-                        <td className="py-3.5 px-5 text-slate-600 dark:text-zinc-400">
-                          {idx === 0 ? '28 Jun 2026' : idx === 1 ? '25 Jun 2026' : '20 Jun 2026'}
-                        </td>
-                        <td className="py-3.5 px-5">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${
-                            idx === 2 
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60' 
-                              : 'bg-[#f1f3f5] text-slate-600 border border-[#d5d9de] dark:bg-[#262626] dark:text-zinc-400 dark:border-[#333333]'
-                          }`}>
-                            {idx === 2 ? 'Completed' : 'Not Started'}
-                          </span>
-                        </td>
-                        <td className="py-3.5 px-5 text-right">
-                          <button
-                            onClick={() => onSelectProblem(prob.id)}
-                            className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-all shadow-sm"
-                          >
-                            {idx === 2 ? 'View result' : 'Start now'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
             </div>
 
             {/* AI Adaptive Learning Panel */}
@@ -730,283 +616,206 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           </div>
         )}
 
-        {/* TAB 2: PROBLEMS VIEW */}
-        {activeTab === 'problems' && (
-          <div className="space-y-4">
-            <div className="p-4 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col sm:flex-row items-center gap-3">
-              <div className="relative flex-1 w-full">
-                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-                <input
-                  type="text"
-                  placeholder="Search challenges by title, category, or algorithmic topic..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
-                />
-              </div>
-
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <select
-                  value={difficultyFilter}
-                  onChange={(e) => setDifficultyFilter(e.target.value)}
-                  aria-label="Filter problems by difficulty"
-                  className="px-3.5 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-600 dark:bg-zinc-900 dark:border-zinc-700 dark:text-white cursor-pointer"
-                >
-                  <option value="ALL">All Difficulties</option>
-                  <option value="EASY">Easy</option>
-                  <option value="MEDIUM">Medium</option>
-                  <option value="HARD">Hard</option>
-                </select>
-
-                <span className="text-xs font-mono text-slate-500 dark:text-zinc-400 px-2">
-                  {filteredProblems.length} Found
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              {filteredProblems.length === 0 ? (
-                <div className="py-16 text-center text-slate-500 dark:text-zinc-400 text-xs bg-white dark:bg-[#181B22] rounded-2xl border border-[#e2e4e8] dark:border-zinc-800">
-                  No problems match your current filter.
-                </div>
-              ) : (
-                filteredProblems.map((p) => (
-                  <div
-                    key={p.id}
-                    onClick={() => onSelectProblem(p.id)}
-                    className="p-5 rounded-2xl bg-white border border-[#e2e4e8] hover:border-slate-400 dark:bg-[#1e1e1e] dark:border-[#2d2d2d] dark:hover:border-white transition-all cursor-pointer flex items-center justify-between group shadow-sm"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-xl bg-[#f1f3f5] dark:bg-zinc-800 text-slate-800 dark:text-white flex items-center justify-center font-mono font-bold text-xs border border-[#d5d9de] dark:border-zinc-700">
-                        #{p.id}
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-slate-900 dark:text-white transition-colors flex items-center gap-2">
-                          {p.title}
-                        </h3>
-                        <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-zinc-400 mt-1">
-                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
-                            p.difficulty === 'Easy'
-                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
-                              : p.difficulty === 'Medium'
-                              ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
-                              : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
-                          }`}>
-                            {p.difficulty}
-                          </span>
-                          <span className="flex items-center gap-1 font-mono text-[11px]">
-                            <Layers size={12} />
-                            Multi-Stage Progressive
-                          </span>
-                          <span className="text-[11px] font-mono">Limit: {p.time_limit_ms}ms</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2.5">
-                      <span className="hidden sm:inline-block text-xs font-semibold text-slate-900 dark:text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                        Solve Challenge
-                      </span>
-                      <div className="p-2 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-black transition-colors">
-                        <ArrowUpRight size={15} />
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 3: JOURNEY VIEW */}
-        {activeTab === 'journey' && (
-          <div className="space-y-6">
-            <div className="p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] space-y-5">
-              <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-zinc-800 pb-4">
-                <div>
-                  <h2 className="text-base font-bold text-slate-900 dark:text-white">
-                    Stage Progression & Complexity Drops
-                  </h2>
-                  <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
-                    Algorithmic Evolution Timeline across attempts
-                  </p>
-                </div>
-                <div className="text-xs font-mono text-slate-500 dark:text-zinc-400">
-                  Target: O(N²) → O(N log N) → O(N)
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-zinc-900/60 dark:border-zinc-800">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block">Total Runtime Drop</span>
-                  <span className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1 block">-84.2%</span>
-                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">From 420ms (Stage 1) down to 66ms (Stage 2)</span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-zinc-900/60 dark:border-zinc-800">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block">Complexity Shift</span>
-                  <span className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1 block">O(N²) → O(N log N)</span>
-                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Eliminated brute force iterations</span>
-                </div>
-
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-zinc-900/60 dark:border-zinc-800">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500 block">Memory Footprint Delta</span>
-                  <span className="text-2xl font-bold font-mono text-slate-900 dark:text-white mt-1 block">+128 KB</span>
-                  <span className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Tradeoff: Hash mapping for speedup</span>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-zinc-900/60 dark:border-zinc-800 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <TrendingUp size={14} />
-                    Latency Drop Trend Over Recent Attempts (ms)
-                  </span>
-                  <span className="font-mono text-[10px] text-slate-500 dark:text-zinc-400">12 Attempts Logged</span>
-                </div>
-
-                <div className="h-28 flex items-end gap-2 pt-3">
-                  {sparklineBars.map((height, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1 group">
-                      <div 
-                        className={`w-full rounded-t-lg transition-all ${
-                          i >= sparklineBars.length - 3 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/30' : 'bg-[#d5d9de] dark:bg-[#333333]'
-                        }`}
-                        style={{ height: `${height}%` }}
-                      />
-                      <span className="text-[9px] font-mono text-slate-500 dark:text-zinc-500">#{i + 1}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TAB 4: TELEMETRY VIEW */}
-        {activeTab === 'telemetry' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                  <Cpu size={16} /> AST Syntax Tree Diagnostics
-                </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  Static Code Analysis & Pattern Detection
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
-                  Automated parser extracts control flow graphs, loop nesting depths, and memory allocations directly from C++ syntax trees before compilation.
-                </p>
-
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d] space-y-2 font-mono text-xs">
-                  <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
-                    <span className="text-slate-500 dark:text-zinc-400">Parser Status:</span>
-                    <span className="text-blue-600 dark:text-blue-400 font-semibold">PASS (0 syntax errors)</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
-                    <span className="text-slate-500 dark:text-zinc-400">Max Loop Nesting Depth:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">1 (Linear scan)</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
-                    <span className="text-slate-500 dark:text-zinc-400">Recursion Detected:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">False</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="text-slate-500 dark:text-zinc-400">Detected Complexity:</span>
-                    <span className="text-blue-600 dark:text-blue-400 font-bold">O(N log N)</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] space-y-4">
-                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
-                  <ShieldCheck size={16} /> Docker Containment Telemetry
-                </div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                  Kernel cgroup Isolation Quotas
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
-                  Real-time containment metrics reporting enforced hardware boundaries, syscall filtering (seccomp), and network blocking.
-                </p>
-
-                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#141414] dark:border-[#2d2d2d] space-y-2 font-mono text-xs">
-                  <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
-                    <span className="text-slate-500 dark:text-zinc-400">Network Sockets:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">DISABLED (Strict Sandbox)</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
-                    <span className="text-slate-500 dark:text-zinc-400">CPU Time Quota:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">1000 ms Max Limit</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-[#e2e4e8] dark:border-[#262626]">
-                    <span className="text-slate-500 dark:text-zinc-400">Virtual Memory Cap:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">256 MB cgroup limit</span>
-                  </div>
-                  <div className="flex justify-between py-1">
-                    <span className="text-slate-500 dark:text-zinc-400">Process Count Limit:</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">pids.max = 16</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] overflow-hidden">
-              <div className="p-5 border-b border-[#e2e4e8] dark:border-[#2d2d2d] flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                  <Clock size={16} className="text-blue-600 dark:text-blue-400" />
-                  All Historical Sandbox Runs
-                </h2>
-                <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">
-                  {submissions.length} Total Submissions
-                </span>
-              </div>
-
-              {submissions.length === 0 ? (
-                <div className="py-12 text-center text-slate-500 dark:text-zinc-500 text-xs">
-                  No submissions to display.
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs font-mono">
-                    <thead className="bg-[#f8f9fa] text-slate-600 dark:bg-[#181818] dark:text-zinc-400 font-bold border-b border-[#e2e4e8] dark:border-[#2d2d2d] uppercase tracking-wider text-[10px]">
-                      <tr>
-                        <th className="py-3 px-5">ID</th>
-                        <th className="py-3 px-5">Verdict</th>
-                        <th className="py-3 px-5">Runtime</th>
-                        <th className="py-3 px-5">Virtual Memory</th>
-                        <th className="py-3 px-5">Timestamp</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#e2e4e8] dark:divide-[#2d2d2d]">
-                      {submissions.map((sub) => (
-                        <tr key={sub.id} className="hover:bg-[#f8f9fa] dark:hover:bg-[#252525] transition-colors">
-                          <td className="py-3.5 px-5 text-slate-500 dark:text-zinc-400">#{sub.id}</td>
-                          <td className="py-3.5 px-5">
-                            <VerdictBadge verdict={sub.verdict} />
-                          </td>
-                          <td className="py-3.5 px-5 text-slate-800 dark:text-white">
-                            {sub.execution_time_ms !== null ? `${sub.execution_time_ms} ms` : '—'}
-                          </td>
-                          <td className="py-3.5 px-5 text-slate-800 dark:text-white">
-                            {sub.memory_used_kb !== null ? `${sub.memory_used_kb} KB` : '—'}
-                          </td>
-                          <td className="py-3.5 px-5 text-slate-500 dark:text-zinc-400 font-sans text-xs">
-                            {new Date(sub.created_at).toLocaleString()}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 5: PROFILE VIEW (PDF Screen 12 Layout) */}
+        {/* TAB: PROFILE DETAILS VIEW */}
         {activeTab === 'profile' && (
           <div className="space-y-6">
-            
+            {profileSaved && (
+              <div className="p-4 rounded-2xl bg-blue-50 border border-blue-300 text-blue-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white flex items-center justify-between text-xs shadow-sm">
+                <div className="flex items-center gap-2 font-semibold">
+                  <CheckCircle2 size={16} className="text-blue-600 dark:text-blue-400" />
+                  Profile details and photo updated successfully!
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setActiveTab('edit')}
+                    className="px-3 py-1.5 rounded-xl bg-white text-slate-800 border border-[#d5d9de] dark:bg-zinc-700 dark:text-white text-xs font-semibold hover:bg-slate-50 transition-all"
+                  >
+                    Edit Again
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('studio')}
+                    className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
+                  >
+                    Dashboard →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Profile Overview Card */}
+            <div className="rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-6 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                <div className="flex items-center gap-5">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#f1f3f5] dark:bg-zinc-800 text-slate-800 dark:text-white flex items-center justify-center font-bold text-2xl border-2 border-[#e2e4e8] dark:border-zinc-700 overflow-hidden shadow-sm shrink-0">
+                    {avatarPreview ? (
+                      <img src={avatarPreview} alt={profileData.name || 'User'} className="w-full h-full object-cover" />
+                    ) : profileData.name ? (
+                      profileData.name.charAt(0).toUpperCase()
+                    ) : (
+                      'U'
+                    )}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                        {profileData.name || 'Developer'}
+                      </h2>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 dark:bg-[#262626] dark:text-blue-400 dark:border-[#333333]">
+                        {user?.role === 'ADMIN' ? 'Platform Administrator' : 'Software Developer'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1 flex items-center gap-2 flex-wrap">
+                      <span className="flex items-center gap-1"><Mail size={12} /> {user?.email || profileData.email || 'developer@algomind.dev'}</span>
+                      <span>&bull;</span>
+                      <span className="flex items-center gap-1"><Building size={12} /> {profileData.organization || 'Greenfield High School'}</span>
+                      <span>&bull;</span>
+                      <span className="flex items-center gap-1"><MapPin size={12} /> {profileData.location || 'Coimbatore, India'}</span>
+                    </p>
+                    <p className="text-xs text-slate-600 dark:text-zinc-300 mt-2.5 max-w-xl italic">
+                      "{profileData.bio || 'Algorithm enthusiast learning progressive asymptotic complexities.'}"
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                  <button
+                    onClick={() => setActiveTab('edit')}
+                    className="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-sm transition-all flex items-center justify-center gap-2"
+                  >
+                    <Edit3 size={14} />
+                    Edit Profile Details
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('studio')}
+                    className="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-[#edeef1] hover:bg-[#e2e4e8] text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white text-xs font-semibold transition-all border border-[#d5d9de] dark:border-zinc-700 flex items-center justify-center gap-1.5"
+                  >
+                    <LayoutDashboard size={14} />
+                    Dashboard
+                  </button>
+                </div>
+              </div>
+
+              {/* Quick Metrics Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6">
+                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Simulations Solved</span>
+                  <span className="text-2xl font-extrabold font-mono text-blue-600 dark:text-blue-400 mt-1 block">+{acceptedCount}</span>
+                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Docker verified</span>
+                </div>
+                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Preparedness Score</span>
+                  <span className="text-2xl font-extrabold font-mono text-blue-600 dark:text-blue-400 mt-1 block">{solveRate}%</span>
+                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Accuracy rating</span>
+                </div>
+                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Learning Time</span>
+                  <span className="text-2xl font-extrabold font-mono text-slate-900 dark:text-white mt-1 block">8h 16m</span>
+                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Active session time</span>
+                </div>
+                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 block">Complexity Shift</span>
+                  <span className="text-2xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-1 block">O(N)</span>
+                  <span className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 block">Optimal solution target</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Detailed Information & Badges */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Account Details */}
+              <div className="lg:col-span-7 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-3">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <User size={16} className="text-blue-600 dark:text-blue-400" />
+                    Personal & Account Details
+                  </h3>
+                  <button
+                    onClick={() => setActiveTab('edit')}
+                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    Edit details
+                  </button>
+                </div>
+
+                <div className="space-y-3 text-xs">
+                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Full Name</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.name || 'Developer'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Email Address</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{user?.email || profileData.email}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Phone Number</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.phone || '+91 9876543210'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                    <span className="text-slate-500 dark:text-zinc-400 font-medium">School / Organization</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.organization || 'Greenfield High School'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Location</span>
+                    <span className="font-semibold text-slate-900 dark:text-white">{profileData.location || 'Coimbatore, India'}</span>
+                  </div>
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-slate-500 dark:text-zinc-400 font-medium">Account Status</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-800/60">Active Verified</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Badges & Achievements */}
+              <div className="lg:col-span-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 space-y-4">
+                <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-[#2d2d2d] pb-3">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                    <Award size={16} className="text-blue-600 dark:text-blue-400" />
+                    Achievements & Badges
+                  </h3>
+                  <span className="text-xs font-mono text-slate-500 dark:text-zinc-400">4 Unlocked</span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center mx-auto mb-1.5">
+                      <Zap size={16} />
+                    </div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Fast Solver</div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">&lt; 100ms runtime</div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
+                    <div className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-1.5">
+                      <ShieldCheck size={16} />
+                    </div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Sandbox Verified</div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">Strict isolation</div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
+                    <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto mb-1.5">
+                      <Layers size={16} />
+                    </div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Multi-Stage</div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">Optimized steps</div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] text-center">
+                    <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto mb-1.5">
+                      <Flame size={16} />
+                    </div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Active Streak</div>
+                    <div className="text-[10px] text-slate-500 dark:text-zinc-400 mt-0.5">5 days streak</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: PROFILE EDITING VIEW */}
+        {activeTab === 'edit' && (
+          <div className="space-y-6">
             {profileSaved && (
               <div className="p-4 rounded-2xl bg-blue-50 border border-blue-300 text-blue-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white flex items-center justify-between text-xs shadow-sm">
                 <div className="flex items-center gap-2 font-semibold">
@@ -1014,20 +823,17 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   Profile details and photo updated successfully!
                 </div>
                 <button
-                  onClick={() => setActiveTab('studio')}
+                  onClick={() => setActiveTab('profile')}
                   className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
                 >
-                  Move to Dashboard →
+                  View Profile Details →
                 </button>
               </div>
             )}
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              
               {/* Left Column: Avatar & Overview */}
               <div className="lg:col-span-4 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] p-6 flex flex-col items-center text-center space-y-5">
-                
-                {/* Avatar Display */}
                 <div className="relative">
                   <div className="w-28 h-28 rounded-full bg-[#f8f9fa] border-2 border-[#e2e4e8] dark:bg-[#181818] dark:border-[#333333] flex items-center justify-center overflow-hidden shadow-sm">
                     {avatarPreview ? (
@@ -1046,7 +852,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   >
                     <Camera size={15} />
                     <input 
-                       id="avatar-upload-btn"
+                      id="avatar-upload-btn"
                       type="file" 
                       accept="image/*" 
                       onChange={handleAvatarChange}
@@ -1063,7 +869,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     {user?.email || profileData.email || 'developer@algomind.dev'}
                   </p>
                   <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-semibold bg-[#f1f3f5] text-blue-700 border border-blue-200 dark:bg-[#262626] dark:text-blue-400 dark:border-[#333333]">
-                    Software Developer
+                    {user?.role === 'ADMIN' ? 'Platform Administrator' : 'Software Developer'}
                   </span>
                 </div>
 
@@ -1086,7 +892,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   )}
                 </div>
 
-                {/* Quick Stats from PDF Screen 12 */}
+                {/* Quick Stats */}
                 <div className="w-full pt-4 border-t border-[#e2e4e8] dark:border-[#2d2d2d] space-y-3 text-left">
                   <div className="text-xs font-bold text-slate-900 dark:text-white">Quick Stats</div>
                   
@@ -1105,7 +911,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     <span className="text-sm font-bold font-mono text-blue-600 dark:text-blue-400">{solveRate}%</span>
                   </div>
                 </div>
-
               </div>
 
               {/* Right Column: Personal Information Form */}
@@ -1113,19 +918,19 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                 <div className="flex items-center justify-between border-b border-[#e2e4e8] dark:border-zinc-800 pb-4">
                   <div>
                     <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
-                      Personal Information
+                      Edit Personal Information
                     </h2>
                     <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">
-                      Enter and update your personal details and developer background
+                      Update your developer profile details, bio, and contact information
                     </p>
                   </div>
                   
                   <button
                     type="button"
-                    onClick={() => setActiveTab('studio')}
+                    onClick={() => setActiveTab('profile')}
                     className="text-xs font-semibold text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                   >
-                    Move to Dashboard →
+                    View Details →
                   </button>
                 </div>
 
@@ -1223,15 +1028,14 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
 
                     <button
                       type="button"
-                      onClick={() => setActiveTab('studio')}
+                      onClick={() => setActiveTab('profile')}
                       className="w-full sm:w-auto px-4 py-2 rounded-lg bg-[#edeef1] hover:bg-[#e2e4e8] text-slate-700 text-xs font-medium transition-colors border border-[#d5d9de] dark:bg-[#282828] dark:hover:bg-[#333333] dark:text-zinc-300 dark:border-[#383838] flex items-center justify-center gap-1.5"
                     >
-                      Move to Dashboard →
+                      Cancel / View Profile
                     </button>
                   </div>
                 </form>
               </div>
-
             </div>
           </div>
         )}

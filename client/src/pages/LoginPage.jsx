@@ -16,7 +16,7 @@ export default function LoginPage({ onNavigate }) {
 
     try {
       await login(email.trim(), password);
-      onNavigate('dashboard');
+      onNavigate('problems');
     } catch (err) {
       if (err.requiresVerification) {
         onNavigate('verify-email', { email: err.email || email.trim() });

@@ -29,7 +29,7 @@ export default function Navbar({ onNavigate, currentPage }) {
 
   const handleLogout = () => {
     logout();
-    onNavigate('dashboard');
+    onNavigate('landing');
     setMobileMenuOpen(false);
   };
 
@@ -39,7 +39,7 @@ export default function Navbar({ onNavigate, currentPage }) {
         
         {/* Left: Brand Logo */}
         <div
-          onClick={() => handleNav(isAuthenticated ? 'dashboard' : 'landing')}
+          onClick={() => handleNav(isAuthenticated ? 'problems' : 'landing')}
           className="flex items-center gap-2 cursor-pointer group"
           title="Algomind"
         >
@@ -56,18 +56,6 @@ export default function Navbar({ onNavigate, currentPage }) {
         {isAuthenticated ? (
           <nav className="hidden md:flex items-center gap-1 bg-[#edeef1] dark:bg-[#262626] p-1 rounded-lg border border-[#e0e2e6] dark:border-[#333333]">
             <button
-              onClick={() => handleNav('dashboard')}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
-                currentPage === 'dashboard'
-                  ? 'text-slate-900 bg-white shadow-sm font-semibold border-t-2 border-blue-600 dark:text-white dark:bg-[#1e1e1e]'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2d2d2d]'
-              }`}
-            >
-              <LayoutDashboard size={13} className={currentPage === 'dashboard' ? 'text-blue-600' : ''} />
-              Studio Dashboard
-            </button>
-
-            <button
               onClick={() => handleNav('problems')}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 ${
                 currentPage === 'problems' || currentPage === 'problem-detail'
@@ -75,7 +63,7 @@ export default function Navbar({ onNavigate, currentPage }) {
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2d2d2d]'
               }`}
             >
-              <Code2 size={13} className={currentPage === 'problems' ? 'text-blue-600' : ''} />
+              <Code2 size={13} className={currentPage === 'problems' || currentPage === 'problem-detail' ? 'text-blue-600' : ''} />
               Problems
             </button>
 
@@ -224,16 +212,16 @@ export default function Navbar({ onNavigate, currentPage }) {
           {isAuthenticated && (
             <>
               <button
-                onClick={() => handleNav('dashboard')}
-                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-              >
-                <LayoutDashboard size={16} /> Studio Dashboard
-              </button>
-              <button
                 onClick={() => handleNav('problems')}
                 className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
               >
                 <Code2 size={16} /> Problems
+              </button>
+              <button
+                onClick={() => handleNav('profile')}
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+              >
+                <User size={16} /> Profile & Settings
               </button>
             </>
           )}
