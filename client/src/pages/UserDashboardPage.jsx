@@ -48,7 +48,7 @@ import VerdictBadge from '../components/VerdictBadge';
 export default function UserDashboardPage({ onNavigate, onSelectProblem, initialTab = 'profile' }) {
   const { user, authFetch, logout, updateUser } = useAuth();
   const { isDark, toggleTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState(initialTab || 'profile'); // 'profile' | 'edit' | 'studio' | 'settings'
+  const [activeTab, setActiveTab] = useState(initialTab === 'studio' ? 'profile' : (initialTab || 'profile')); // 'profile' | 'edit' | 'settings'
   const [submissions, setSubmissions] = useState([]);
   const [dashboardMetrics, setDashboardMetrics] = useState(null);
   const [problems, setProblems] = useState([]);
@@ -81,7 +81,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
 
   useEffect(() => {
     if (initialTab) {
-      setActiveTab(initialTab);
+      setActiveTab(initialTab === 'studio' ? 'profile' : initialTab);
     }
   }, [initialTab]);
 
@@ -182,28 +182,23 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         <div className="space-y-5">
           
           {/* Brand Header */}
-          <div className="flex items-center gap-2.5 px-2 py-1">
+          <div 
+            onClick={() => onNavigate('problems')}
+            className="flex items-center gap-2.5 px-2 py-1 cursor-pointer group"
+            title="Return to Problems"
+          >
             <div className="h-7 w-auto flex items-center">
               <img 
                 src="/logo.png" 
                 alt="Algomind Logo" 
-                className="h-full w-auto object-contain brightness-110 dark:brightness-125" 
+                className="h-full w-auto object-contain brightness-110 dark:brightness-125 group-hover:scale-105 transition-transform" 
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-bold text-slate-900 dark:text-white tracking-tight">Algomind Studio</span>
-              <span className="text-[10px] text-slate-500 dark:text-zinc-500 font-medium">Algorithmic Learning</span>
+              <span className="text-xs font-bold text-slate-900 dark:text-white tracking-tight">Algomind</span>
+              <span className="text-[10px] text-slate-500 dark:text-zinc-500 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">← Back to Problems</span>
             </div>
           </div>
-
-          {/* Back to Problems Catalog Button */}
-          <button
-            onClick={() => onNavigate('problems')}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white hover:bg-[#edeef1] border border-[#d5d9de] dark:bg-[#262626] dark:text-zinc-200 dark:hover:text-white dark:border-[#383838] shadow-sm transition-all"
-          >
-            <ArrowLeft size={14} className="text-blue-600 dark:text-blue-400" />
-            <span>Back to Problems</span>
-          </button>
 
           {/* Navigation Items */}
           <nav className="space-y-1 pt-1">
@@ -229,18 +224,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             >
               <Edit3 size={15} className={activeTab === 'edit' ? 'text-blue-600 dark:text-blue-400' : ''} />
               Profile Editing
-            </button>
-
-            <button
-              onClick={() => setActiveTab('studio')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'studio'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
-              }`}
-            >
-              <LayoutDashboard size={15} className={activeTab === 'studio' ? 'text-blue-600 dark:text-blue-400' : ''} />
-              Dashboard
             </button>
 
             <button
@@ -309,13 +292,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               {activeTab === 'profile' && 'Profile & Account Details'}
               {activeTab === 'edit' && 'Profile Editing'}
-              {activeTab === 'studio' && `Welcome back, ${profileData.name ? profileData.name.split(' ')[0] : 'Developer'}!`}
               {activeTab === 'settings' && 'Platform Settings'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 mt-1 font-normal">
               {activeTab === 'profile' && 'View your personal profile, credentials, and learning progress.'}
               {activeTab === 'edit' && 'Manage your personal details, profile picture, and bio information.'}
-              {activeTab === 'studio' && "Stay prepared, Stay safe. Here's an overview of your algorithmic performance."}
               {activeTab === 'settings' && 'Configure theme preferences, code editor, and notification settings.'}
             </p>
           </div>
@@ -341,16 +322,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               }`}
             >
               Profile Editing
-            </button>
-            <button
-              onClick={() => setActiveTab('studio')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'studio'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Dashboard
             </button>
             <button
               onClick={() => setActiveTab('settings')}
@@ -628,10 +599,10 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     Edit Again
                   </button>
                   <button
-                    onClick={() => setActiveTab('studio')}
+                    onClick={() => setActiveTab('profile')}
                     className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
                   >
-                    Dashboard →
+                    View Details →
                   </button>
                 </div>
               </div>
@@ -679,13 +650,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   >
                     <Edit3 size={14} />
                     Edit Profile Details
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('studio')}
-                    className="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-[#edeef1] hover:bg-[#e2e4e8] text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white text-xs font-semibold transition-all border border-[#d5d9de] dark:border-zinc-700 flex items-center justify-center gap-1.5"
-                  >
-                    <LayoutDashboard size={14} />
-                    Dashboard
                   </button>
                 </div>
               </div>
@@ -1046,10 +1010,10 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   Settings saved successfully!
                 </div>
                 <button
-                  onClick={() => setActiveTab('studio')}
+                  onClick={() => setActiveTab('profile')}
                   className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm"
                 >
-                  Move to Dashboard →
+                  View Profile Details →
                 </button>
               </div>
             )}
@@ -1156,22 +1120,14 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+              <div className="flex items-center gap-3 pt-2">
                 <button
                   type="button"
                   onClick={handleSaveSettings}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-2"
                 >
                   <Save size={14} />
                   Save Settings
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setActiveTab('studio')}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-[#edeef1] hover:bg-[#e2e4e8] text-slate-700 text-xs font-semibold transition-colors border border-[#d5d9de] dark:bg-[#282828] dark:hover:bg-[#333333] dark:text-zinc-300 dark:border-[#383838] flex items-center justify-center gap-1.5"
-                >
-                  Move to Dashboard →
                 </button>
               </div>
 

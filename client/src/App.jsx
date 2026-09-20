@@ -119,7 +119,7 @@ function MainApp() {
 
     switch (currentRoute) {
       case 'dashboard':
-        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} initialTab="studio" />;
+        return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} initialTab="profile" />;
 
       case 'profile':
         return <UserDashboardPage onNavigate={navigate} onSelectProblem={handleSelectProblem} initialTab="profile" />;

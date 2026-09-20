@@ -53,7 +53,7 @@ export default function Navbar({ onNavigate, currentPage }) {
         </div>
 
         {/* Center: Navigation */}
-        {isAuthenticated ? (
+        {isAuthenticated && currentPage !== 'profile' && currentPage !== 'settings' && currentPage !== 'dashboard' ? (
           <nav className="hidden md:flex items-center gap-1 bg-[#edeef1] dark:bg-[#262626] p-1 rounded-lg border border-[#e0e2e6] dark:border-[#333333]">
             <button
               onClick={() => handleNav('problems')}
@@ -81,7 +81,9 @@ export default function Navbar({ onNavigate, currentPage }) {
               </button>
             )}
           </nav>
-        ) : (
+        ) : null}
+
+        {!isAuthenticated && (
           <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-slate-600 dark:text-zinc-400">
             <button 
               onClick={() => handleNav('landing')} 
@@ -219,12 +221,14 @@ export default function Navbar({ onNavigate, currentPage }) {
         <div className="md:hidden border-b border-[#e2e4e8] dark:border-zinc-800 bg-[#f8f9fa] dark:bg-[#1a1a1a] px-4 py-4 space-y-2 shadow-lg">
           {isAuthenticated && (
             <>
-              <button
-                onClick={() => handleNav('problems')}
-                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-              >
-                <Code2 size={16} /> Problems
-              </button>
+              {currentPage !== 'profile' && currentPage !== 'settings' && currentPage !== 'dashboard' && (
+                <button
+                  onClick={() => handleNav('problems')}
+                  className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+                >
+                  <Code2 size={16} /> Problems
+                </button>
+              )}
               <button
                 onClick={() => handleNav('profile')}
                 className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
