@@ -89,6 +89,14 @@ export default function Navbar({ onNavigate, currentPage }) {
             >
               Home
             </button>
+            <button 
+              onClick={() => handleNav('problems')} 
+              className={`hover:text-slate-900 dark:hover:text-white transition-colors ${
+                currentPage === 'problems' ? 'font-bold text-blue-600 dark:text-blue-400' : ''
+              }`}
+            >
+              Problems
+            </button>
             <a 
               href="#features" 
               onClick={() => handleNav('landing')} 

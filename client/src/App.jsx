@@ -16,7 +16,7 @@ function getRouteFromPath(pathname, isAuthenticated) {
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const problemId = searchParams?.get('id');
   if (problemId && (path === '/problems' || path === '')) {
-    return isAuthenticated ? 'problem-detail' : 'signin';
+    return 'problem-detail';
   }
   if (!path || path === '') return isAuthenticated ? 'problems' : 'landing';
   if (path === '/landing') return 'landing';
@@ -27,7 +27,7 @@ function getRouteFromPath(pathname, isAuthenticated) {
   if (path === '/profile') return isAuthenticated ? 'profile' : 'signin';
   if (path === '/settings') return isAuthenticated ? 'settings' : 'signin';
   if (path === '/admin') return 'admin';
-  if (path === '/problems') return isAuthenticated ? 'problems' : 'signin';
+  if (path === '/problems') return 'problems';
   return isAuthenticated ? 'problems' : 'landing';
 }
 
