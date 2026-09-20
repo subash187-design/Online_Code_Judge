@@ -38,6 +38,7 @@ import {
   Mail,
   Shield,
   ArrowLeft,
+  ArrowRight,
   Edit3,
   Award
 } from 'lucide-react';
@@ -165,7 +166,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
         if (existing) {
           existing.total_submissions += 1;
           if (isAccepted) existing.is_solved = true;
-          if (new Date(sub.created_at) > new Date(existing.updated_at)) {
+          if (new Date(sub.created_at || 0) > new Date(existing.updated_at || 0)) {
             existing.updated_at = sub.created_at;
           }
           if (sub.execution_time_ms !== null && (existing.best_execution_time_ms === null || sub.execution_time_ms < existing.best_execution_time_ms)) {
@@ -189,7 +190,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
     }
 
     return Array.from(historyMap.values()).sort(
-      (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+      (a, b) => (new Date(b.updated_at || 0) - new Date(a.updated_at || 0)) || 0
     );
   }, [dashboardMetrics, submissions, problems]);
 
@@ -375,6 +376,13 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
 
           {/* Quick Tab Switcher */}
           <div className="flex items-center flex-wrap gap-1.5 bg-[#edeef1] dark:bg-zinc-900 p-1 rounded-xl border border-[#e2e4e8] dark:border-zinc-800">
+            <button
+              onClick={() => onNavigate('problems')}
+              className="lg:hidden px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/60"
+            >
+              <Code2 size={13} />
+              <span>Problems</span>
+            </button>
             <button
               onClick={() => setActiveTab('profile')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
@@ -718,7 +726,11 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                             ) : null}
                           </td>
                           <td className="py-3.5 px-4 text-slate-500 dark:text-zinc-400 text-xs">
-                            {item.updated_at ? new Date(item.updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                            {(() => {
+                              if (!item.updated_at) return '—';
+                              const d = new Date(item.updated_at);
+                              return isNaN(d.getTime()) ? '—' : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                            })()}
                           </td>
                           <td className="py-3.5 px-5 text-right">
                             <button

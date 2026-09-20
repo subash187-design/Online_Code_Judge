@@ -223,14 +223,12 @@ export default function Navbar({ onNavigate, currentPage }) {
         <div className="md:hidden border-b border-[#e2e4e8] dark:border-zinc-800 bg-[#f8f9fa] dark:bg-[#1a1a1a] px-4 py-4 space-y-2 shadow-lg">
           {isAuthenticated && (
             <>
-              {currentPage !== 'problems' && currentPage !== 'problem-detail' && currentPage !== 'profile' && currentPage !== 'settings' && currentPage !== 'dashboard' && (
-                <button
-                  onClick={() => handleNav('problems')}
-                  className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-                >
-                  <Code2 size={16} /> Problems
-                </button>
-              )}
+              <button
+                onClick={() => handleNav('problems')}
+                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
+              >
+                <Code2 size={16} /> Problems
+              </button>
               <button
                 onClick={() => handleNav('profile')}
                 className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
