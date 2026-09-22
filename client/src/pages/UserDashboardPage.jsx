@@ -67,6 +67,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar || null);
   const [profileSaved, setProfileSaved] = useState(false);
   const [historyFilter, setHistoryFilter] = useState('ALL'); // 'ALL' | 'SOLVED' | 'ATTEMPTED'
+  const [hoveredDay, setHoveredDay] = useState(null);
 
   // Settings management state
   const [editorSettings, setEditorSettings] = useState(() => {
@@ -207,6 +208,135 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
     }
     return userProblemsHistory;
   }, [userProblemsHistory, historyFilter]);
+
+  // 6 Months Submission Activity Heatmap & Streak Computation
+  const { streakStats, monthCalendarData } = React.useMemo(() => {
+    const submissionsByDate = {};
+    const activeDateSet = new Set();
+    
+    if (Array.isArray(submissions)) {
+      for (const s of submissions) {
+        if (!s.created_at) continue;
+        const d = new Date(s.created_at);
+        if (isNaN(d.getTime())) continue;
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        submissionsByDate[key] = (submissionsByDate[key] || 0) + 1;
+        activeDateSet.add(key);
+      }
+    }
+
+    const now = new Date();
+    const formatKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const todayKey = formatKey(now);
+    
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayKey = formatKey(yesterday);
+
+    let currentStreak = 0;
+    let checkDate = new Date(now);
+    if (activeDateSet.has(todayKey)) {
+      while (activeDateSet.has(formatKey(checkDate))) {
+        currentStreak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      }
+    } else if (activeDateSet.has(yesterdayKey)) {
+      checkDate = new Date(yesterday);
+      while (activeDateSet.has(formatKey(checkDate))) {
+        currentStreak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      }
+    }
+
+    const sortedDates = Array.from(activeDateSet).sort();
+    let maxStreak = 0;
+    let tempStreak = 0;
+    let prevTime = null;
+    for (const dStr of sortedDates) {
+      const [y, m, d] = dStr.split('-').map(Number);
+      const time = new Date(y, m - 1, d).getTime();
+      if (prevTime === null) {
+        tempStreak = 1;
+      } else {
+        const diffDays = Math.round((time - prevTime) / (1000 * 60 * 60 * 24));
+        if (diffDays === 1) {
+          tempStreak++;
+        } else {
+          tempStreak = 1;
+        }
+      }
+      prevTime = time;
+      if (tempStreak > maxStreak) maxStreak = tempStreak;
+    }
+
+    const monthCalendar = [];
+    let periodSubmissionsCount = 0;
+
+    for (let i = 5; i >= 0; i--) {
+      const mDate = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const year = mDate.getFullYear();
+      const month = mDate.getMonth();
+      const monthName = mDate.toLocaleString('en-US', { month: 'short' });
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const weeks = [];
+      let currentWeek = new Array(7).fill(null);
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const d = new Date(year, month, day);
+        const dayOfWeek = d.getDay(); // 0: Sun, 1: Mon, ... 6: Sat
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const count = submissionsByDate[dateKey] || 0;
+        periodSubmissionsCount += count;
+
+        currentWeek[dayOfWeek] = {
+          day,
+          year,
+          monthName,
+          dateKey,
+          count
+        };
+
+        if (dayOfWeek === 6 || day === daysInMonth) {
+          weeks.push(currentWeek);
+          currentWeek = new Array(7).fill(null);
+        }
+      }
+
+      monthCalendar.push({
+        year,
+        month,
+        monthName,
+        weeks
+      });
+    }
+
+    return {
+      streakStats: {
+        currentStreak,
+        maxStreak,
+        totalActiveDays: activeDateSet.size,
+        periodSubmissionsCount
+      },
+      monthCalendarData: monthCalendar
+    };
+  }, [submissions]);
+
+  const getTileColor = (count) => {
+    if (count === 0) {
+      return 'bg-[#2b2b2b] dark:bg-[#262626] border border-transparent';
+    }
+    if (count === 1) {
+      return 'bg-[#15803d] dark:bg-[#14532d]';
+    }
+    if (count <= 3) {
+      return 'bg-[#16a34a] dark:bg-[#16a34a]';
+    }
+    if (count <= 5) {
+      return 'bg-[#22c55e] dark:bg-[#22c55e]';
+    }
+    return 'bg-[#86efac] dark:bg-[#86efac]';
+  };
 
 
 
@@ -499,73 +629,138 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               </div>
             </div>
 
-            {/* Problems Solved & Summary Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Solved</span>
-                    <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
-                      <CheckCircle2 size={16} />
-                    </span>
+            {/* Problems Solved, Problems Attempted & Current Streak with Last 6 Months Heatmap */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+              {/* Left Column: Problems Solved & Problems Attempted */}
+              <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Solved</span>
+                      <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
+                        <CheckCircle2 size={16} />
+                      </span>
+                    </div>
+                    <div className="text-3xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-2">
+                      {solvedCount}
+                    </div>
                   </div>
-                  <div className="text-3xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-2">
-                    {solvedCount}
+                  <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
+                    {problems.length > 0 ? `out of ${problems.length} total challenges` : 'Completed algorithmic problems'}
                   </div>
                 </div>
-                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
-                  {problems.length > 0 ? `out of ${problems.length} total challenges` : 'Completed algorithmic problems'}
+
+                <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Attempted</span>
+                      <span className="p-2 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
+                        <Clock size={16} />
+                      </span>
+                    </div>
+                    <div className="text-3xl font-black font-mono text-amber-600 dark:text-amber-400 mt-2">
+                      {attemptedCount}
+                    </div>
+                  </div>
+                  <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
+                    Challenges in progress
+                  </div>
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Attempted</span>
-                    <span className="p-2 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
-                      <Clock size={16} />
-                    </span>
+              {/* Right Column: Current Streak & 6-Month Submission Activity Heatmap (Replacing Total Runs & Solve Rate) */}
+              <div className="lg:col-span-8 p-5 sm:p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl bg-orange-50 text-orange-500 dark:bg-orange-950/60 dark:text-orange-400 shadow-xs">
+                      <Flame size={20} className="fill-orange-500 text-orange-500" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+                          Current Streak
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
+                          Last 6 Months
+                        </span>
+                      </div>
+                      <div className="flex items-baseline gap-2 mt-0.5">
+                        <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
+                          {streakStats.currentStreak} {streakStats.currentStreak === 1 ? 'Day' : 'Days'}
+                        </span>
+                        <span className="text-xs text-slate-500 dark:text-zinc-400">
+                          (Max: {streakStats.maxStreak} {streakStats.maxStreak === 1 ? 'day' : 'days'})
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-3xl font-black font-mono text-amber-600 dark:text-amber-400 mt-2">
-                    {attemptedCount}
-                  </div>
-                </div>
-                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
-                  Challenges in progress
-                </div>
-              </div>
 
-              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Total Runs</span>
-                    <span className="p-2 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
-                      <Code2 size={16} />
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black font-mono text-blue-600 dark:text-blue-400 mt-2">
-                    {submissions.length || dashboardMetrics?.overview?.total_submissions || 0}
+                  <div className="text-left sm:text-right">
+                    {hoveredDay ? (
+                      <div className="text-xs font-semibold text-slate-900 dark:text-zinc-200">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">{hoveredDay.count}</span> submission{hoveredDay.count === 1 ? '' : 's'} on {hoveredDay.monthName} {hoveredDay.day}, {hoveredDay.year}
+                      </div>
+                    ) : (
+                      <div className="text-xs text-slate-500 dark:text-zinc-400">
+                        <span className="font-semibold text-slate-800 dark:text-zinc-200">{streakStats.periodSubmissionsCount}</span> submissions in last 6 months
+                      </div>
+                    )}
+                    <div className="text-[10px] text-slate-400 dark:text-zinc-500 mt-0.5">
+                      {streakStats.totalActiveDays} active coding days
+                    </div>
                   </div>
                 </div>
-                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
-                  Evaluated code submissions
-                </div>
-              </div>
 
-              <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Solve Rate</span>
-                    <span className="p-2 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
-                      <Award size={16} />
-                    </span>
-                  </div>
-                  <div className="text-3xl font-black font-mono text-purple-600 dark:text-purple-400 mt-2">
-                    {totalInteracted > 0 ? `${Math.round((solvedCount / totalInteracted) * 100)}%` : '0%'}
+                {/* Heatmap Grid Matching User Screenshot */}
+                <div className="py-4 overflow-x-auto flex justify-center sm:justify-start">
+                  <div className="inline-flex items-start gap-2 sm:gap-3 p-3.5 rounded-xl bg-[#f8f9fa] dark:bg-[#181818] border border-[#e2e4e8] dark:border-[#2a2a2a] min-w-max shadow-inner">
+                    {monthCalendarData.map((m) => (
+                      <div key={`${m.year}-${m.month}`} className="flex flex-col items-center">
+                        <div className="flex gap-[2.5px]">
+                          {m.weeks.map((week, wIdx) => (
+                            <div key={wIdx} className="flex flex-col gap-[2.5px]">
+                              {week.map((cell, dayIdx) => {
+                                if (!cell) {
+                                  return (
+                                    <div key={dayIdx} className="w-[11px] h-[11px] sm:w-3 sm:h-3 invisible" />
+                                  );
+                                }
+                                return (
+                                  <div
+                                    key={dayIdx}
+                                    onMouseEnter={() => setHoveredDay(cell)}
+                                    onMouseLeave={() => setHoveredDay(null)}
+                                    className={`w-[11px] h-[11px] sm:w-3 sm:h-3 rounded-[2.5px] transition-transform duration-100 cursor-pointer hover:scale-125 hover:z-10 ${getTileColor(cell.count)}`}
+                                    title={`${cell.count} submission${cell.count === 1 ? '' : 's'} on ${cell.monthName} ${cell.day}, ${cell.year}`}
+                                  />
+                                );
+                              })}
+                            </div>
+                          ))}
+                        </div>
+                        <span className="text-[10px] sm:text-xs text-slate-600 dark:text-zinc-400 font-semibold mt-2.5 tracking-tight">
+                          {m.monthName}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="mt-3 text-[11px] text-slate-500 dark:text-zinc-400">
-                  Solved vs attempted ratio
+
+                {/* Footer Legend */}
+                <div className="flex items-center justify-between pt-2 border-t border-[#e2e4e8] dark:border-[#2d2d2d] text-[11px] text-slate-500 dark:text-zinc-400">
+                  <div className="flex items-center gap-1.5 text-[10px] text-slate-400 dark:text-zinc-500">
+                    <span>Daily algorithmic practice frequency</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px]">Less</span>
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-[#2b2b2b] dark:bg-[#262626]" title="0 submissions" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-[#14532d]" title="1 submission" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-[#16a34a]" title="2-3 submissions" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-[#22c55e]" title="4-5 submissions" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-[#86efac]" title="6+ submissions" />
+                    <span className="text-[10px]">More</span>
+                  </div>
                 </div>
               </div>
             </div>
