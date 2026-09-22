@@ -635,12 +635,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
                 <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Solved</span>
-                      <span className="p-2 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400">
-                        <CheckCircle2 size={16} />
-                      </span>
-                    </div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Solved</span>
                     <div className="text-3xl font-black font-mono text-emerald-600 dark:text-emerald-400 mt-2">
                       {solvedCount}
                     </div>
@@ -652,12 +647,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
 
                 <div className="p-5 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Attempted</span>
-                      <span className="p-2 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
-                        <Clock size={16} />
-                      </span>
-                    </div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">Problems Attempted</span>
                     <div className="text-3xl font-black font-mono text-amber-600 dark:text-amber-400 mt-2">
                       {attemptedCount}
                     </div>
@@ -672,27 +662,22 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               <div className="lg:col-span-8 p-5 sm:p-6 rounded-2xl bg-white border border-[#e2e4e8] shadow-sm dark:bg-[#1e1e1e] dark:border-[#2d2d2d] flex flex-col justify-between">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#e2e4e8] dark:border-[#2d2d2d]">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-orange-50 text-orange-500 dark:bg-orange-950/60 dark:text-orange-400 shadow-xs">
-                      <Flame size={20} className="fill-orange-500 text-orange-500" />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
+                        Current Streak
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
+                        Last 6 Months
+                      </span>
                     </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">
-                          Current Streak
-                        </span>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700 dark:bg-orange-950/80 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60">
-                          Last 6 Months
-                        </span>
-                      </div>
-                      <div className="flex items-baseline gap-2 mt-0.5">
-                        <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
-                          {streakStats.currentStreak} {streakStats.currentStreak === 1 ? 'Day' : 'Days'}
-                        </span>
-                        <span className="text-xs text-slate-500 dark:text-zinc-400">
-                          (Max: {streakStats.maxStreak} {streakStats.maxStreak === 1 ? 'day' : 'days'})
-                        </span>
-                      </div>
+                    <div className="flex items-baseline gap-2 mt-0.5">
+                      <span className="text-2xl sm:text-3xl font-black font-mono text-slate-900 dark:text-white">
+                        {streakStats.currentStreak} {streakStats.currentStreak === 1 ? 'Day' : 'Days'}
+                      </span>
+                      <span className="text-xs text-slate-500 dark:text-zinc-400">
+                        (Max: {streakStats.maxStreak} {streakStats.maxStreak === 1 ? 'day' : 'days'})
+                      </span>
                     </div>
                   </div>
 
