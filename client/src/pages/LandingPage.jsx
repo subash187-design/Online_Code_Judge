@@ -4,16 +4,6 @@ import {
 } from 'lucide-react';
 
 export default function LandingPage({ onNavigate }) {
-  // Flowchart steps for "What is Algomind?"
-  const flowchartSteps = [
-    "Problem",
-    "Brute Force",
-    "Analyze Complexity",
-    "Improve Your Approach",
-    "Better Solution",
-    "Optimize",
-    "Optimal Solution"
-  ];
 
   // 4 Steps for "Learn the Way You Solve Problems"
   const problemSolvingSteps = [
@@ -72,61 +62,8 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* 2. WHAT IS ALGOMIND? */}
-      <section className="py-14 md:py-20 bg-white dark:bg-[#161616] border-b border-[#e2e4e8] dark:border-[#222222]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              What is Algomind?
-            </h2>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-zinc-400 leading-relaxed font-normal">
-              Most coding platforms tell you whether your solution is correct.
-            </p>
-            <p className="text-lg sm:text-xl font-bold text-blue-600 dark:text-blue-400">
-              Algomind goes one step further.
-            </p>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-              Instead of stopping when your code passes the test cases, Algomind helps you understand whether your solution can be improved and guides you toward a more efficient approach.
-            </p>
-          </div>
 
-          {/* Visual Progression Diagram */}
-          <div className="max-w-4xl mx-auto p-6 md:p-8 rounded-2xl bg-[#f8f9fa] dark:bg-[#1a1a1a] border border-[#e2e4e8] dark:border-[#2d2d2d] shadow-xs">
-            <div className="text-center text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 mb-6">
-              The Optimization Pipeline
-            </div>
-            
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-              {flowchartSteps.map((step, idx) => (
-                <React.Fragment key={idx}>
-                  <div className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border shadow-xs transition-all ${
-                    idx === 0 
-                      ? 'bg-slate-200/80 text-slate-800 border-slate-300 dark:bg-[#262626] dark:text-zinc-200 dark:border-[#3a3a3a]' 
-                      : idx === 1 
-                        ? 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
-                        : idx === 4
-                          ? 'bg-blue-50 text-blue-800 border-blue-300 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800'
-                          : idx === flowchartSteps.length - 1
-                            ? 'bg-emerald-600 text-white border-emerald-600 font-bold shadow-sm'
-                            : 'bg-white text-slate-700 border-[#d5d9de] dark:bg-[#222222] dark:text-zinc-300 dark:border-[#333333]'
-                  }`}>
-                    {step}
-                  </div>
-                  {idx < flowchartSteps.length - 1 && (
-                    <span className="text-slate-400 dark:text-zinc-600 text-sm font-bold">
-                      →
-                    </span>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 3. LEARN THE WAY YOU SOLVE PROBLEMS */}
+      {/* 2. LEARN THE WAY YOU SOLVE PROBLEMS */}
       <section className="py-14 md:py-20 bg-[#f4f6f8] dark:bg-[#111111] border-b border-[#e2e4e8] dark:border-[#222222]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
