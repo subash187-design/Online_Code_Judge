@@ -75,8 +75,8 @@ function generateStarterBoilerplate(prob, lang = 'cpp') {
 int main() {
     long long a, b;
     if (scanf("%lld %lld", &a, &b) == 2) {
-        // Compute and print the sum of two numbers
-        printf("%lld\\n", a + b);
+        // Write your solution for: ${prob.title}
+        
     }
     return 0;
 }
@@ -91,8 +91,8 @@ public class Solution {
         if (sc.hasNextLong()) {
             long a = sc.nextLong();
             long b = sc.nextLong();
-            // Compute and print the sum of two numbers
-            System.out.println(a + b);
+            // Write your solution for: ${prob.title}
+            
         }
     }
 }
@@ -106,8 +106,8 @@ def main():
     if len(input_data) >= 2:
         a = int(input_data[0])
         b = int(input_data[1])
-        # Compute and print the sum of two numbers
-        print(a + b)
+        # Write your solution for: ${prob.title}
+        pass
 
 if __name__ == '__main__':
     main()
@@ -287,7 +287,7 @@ int main() {
   return DEFAULT_BOILERPLATES[lang] || DEFAULT_BOILERPLATES.cpp;
 }
 
-export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem }) {
+export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem, onNavigate }) {
   const { user, authFetch } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const effectiveUserId = user?.id || 1;
@@ -774,9 +774,24 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
             {isDark ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} />}
           </button>
 
-          <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#d0d3d8] dark:ring-[#444]">
-            {user?.name ? user.name[0].toUpperCase() : 'U'}
-          </div>
+          <button
+            onClick={() => onNavigate ? onNavigate('profile') : (window.location.href = '/profile')}
+            title="View Profile"
+            className="flex items-center gap-1.5 p-1 pr-2 rounded-full hover:bg-slate-200/80 dark:hover:bg-[#282828] transition-all group cursor-pointer border border-transparent hover:border-slate-300 dark:hover:border-[#444]"
+          >
+            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#d0d3d8] dark:ring-[#444] group-hover:scale-105 transition-transform overflow-hidden shadow-xs">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.name || 'User'} className="w-full h-full object-cover" />
+              ) : user?.name ? (
+                user.name.charAt(0).toUpperCase()
+              ) : (
+                'U'
+              )}
+            </div>
+            <span className="hidden sm:inline text-xs font-medium text-slate-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              {user?.name ? user.name.split(' ')[0] : 'Profile'}
+            </span>
+          </button>
         </div>
       </header>
 

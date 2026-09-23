@@ -179,6 +179,7 @@ function MainApp() {
             problemId={selectedProblemId}
             onBack={handleBackToList}
             onNavigateProblem={handleSelectProblem}
+            onNavigate={navigate}
           />
         ) : (
           <ProblemListPage onSelectProblem={handleSelectProblem} />
