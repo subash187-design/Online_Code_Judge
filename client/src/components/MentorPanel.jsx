@@ -1,7 +1,11 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Lightbulb, CheckCircle2, Lock, Sparkles, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Lightbulb, CheckCircle2, Lock, Sparkles, AlertCircle, HelpCircle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-export default function MentorPanel({ submissionId, stageId }) {
+export default function MentorPanel({ submissionId, stageId, userId }) {
+  const { user } = useAuth();
+  const effectiveUserId = userId || user?.id || 1;
+
   const [feedback, setFeedback] = useState(null);
   const [hints, setHints] = useState([]);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
@@ -11,26 +15,53 @@ export default function MentorPanel({ submissionId, stageId }) {
   useEffect(() => {
     if (submissionId) {
       fetchFeedback(submissionId);
+    } else {
+      setFeedback(null);
     }
-  }, [submissionId]);
+  }, [submissionId, effectiveUserId]);
+
+  useEffect(() => {
+    if (stageId) {
+      fetchHintsHistory(stageId);
+    }
+  }, [stageId, effectiveUserId]);
+
+  const fetchHintsHistory = async (stId) => {
+    try {
+      const res = await fetch(`/api/v1/mentor/history/${stId}?user_id=${effectiveUserId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.hints && Array.isArray(data.hints)) {
+          setHints(data.hints);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load hints history:', err);
+    }
+  };
 
   const fetchFeedback = async (subId) => {
     setLoadingFeedback(true);
     setError(null);
     try {
-      const res = await fetch(`/api/v1/mentor/feedback/${subId}?user_id=1`);
+      const res = await fetch(`/api/v1/mentor/feedback/${subId}?user_id=${effectiveUserId}`);
       if (res.ok) {
         const data = await res.json();
         setFeedback(data);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching mentor feedback:', err);
     } finally {
       setLoadingFeedback(false);
     }
   };
 
   const handleUnlockHint = async (level) => {
+    if (!submissionId) {
+      setError('Please submit or run your code on this stage before unlocking AI hints.');
+      return;
+    }
+
     setLoadingHint(true);
     setError(null);
     try {
@@ -38,7 +69,7 @@ export default function MentorPanel({ submissionId, stageId }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: 1,
+          user_id: effectiveUserId,
           submission_id: submissionId,
           requested_level: level
         })
@@ -51,36 +82,46 @@ export default function MentorPanel({ submissionId, stageId }) {
         setHints((prev) => [...prev.filter((h) => h.hint_level !== level), data]);
       }
     } catch (err) {
-      setError(err.message);
+      setError(err.message || 'Failed to unlock hint');
     } finally {
       setLoadingHint(false);
     }
   };
 
-  if (!submissionId) {
-    return (
-      <div className="p-6 text-center text-slate-500 dark:text-zinc-400 text-xs">
-        Submit or evaluate your code on this stage to activate the Socratic AI Mentor.
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4 p-1 text-xs">
       {error && (
         <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 rounded-xl flex items-center gap-2">
-          <AlertCircle size={15} />
+          <AlertCircle size={15} className="shrink-0" />
           <span>{error}</span>
+        </div>
+      )}
+
+      {/* When no submission has been made yet and no hints unlocked */}
+      {!submissionId && hints.length === 0 && (
+        <div className="bg-[#f8f9fa] dark:bg-zinc-900 border border-[#e2e4e8] dark:border-zinc-800 rounded-2xl p-6 text-center space-y-3 shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 flex items-center justify-center mx-auto">
+            <Sparkles size={22} />
+          </div>
+          <div>
+            <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+              Socratic AI Mentor & Hints
+            </h3>
+            <p className="text-slate-500 dark:text-zinc-400 text-xs mt-1.5 leading-relaxed max-w-sm mx-auto">
+              Submit your code on this stage to activate Socratic AST feedback, time complexity diagnosis, and progressive 3-tier hints.
+            </p>
+          </div>
         </div>
       )}
 
       {/* Socratic Feedback Summary */}
       {loadingFeedback ? (
-        <div className="p-4 text-center text-slate-500 dark:text-zinc-400">
-          Analyzing code structure with AI Mentor...
+        <div className="p-6 text-center text-slate-500 dark:text-zinc-400 font-mono text-xs flex items-center justify-center gap-2">
+          <Sparkles size={14} className="animate-spin text-purple-500" />
+          <span>Analyzing AST code structure with AI Mentor...</span>
         </div>
       ) : feedback ? (
-        <div className="bg-white dark:bg-zinc-900 border border-slate-200/80 dark:border-zinc-800 rounded-2xl p-4 space-y-3 shadow-soft-sm">
+        <div className="bg-white dark:bg-zinc-900 border border-[#e2e4e8] dark:border-zinc-800 rounded-2xl p-4 space-y-3 shadow-xs">
           <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider text-[11px]">
             <Sparkles size={14} /> Socratic Code Intelligence
           </div>
@@ -111,45 +152,48 @@ export default function MentorPanel({ submissionId, stageId }) {
       ) : null}
 
       {/* Progressive Multi-Tier Hints */}
-      <div className="space-y-2 pt-2">
-        <h4 className="font-bold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-          <Lightbulb size={13} className="text-amber-500" /> Progressive Hint System
-        </h4>
+      {(submissionId || hints.length > 0) && (
+        <div className="space-y-2 pt-1">
+          <h4 className="font-bold text-slate-900 dark:text-white uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+            <Lightbulb size={13} className="text-amber-500" /> Progressive Hint System
+          </h4>
 
-        {[1, 2, 3].map((lvl) => {
-          const unlockedHint = hints.find((h) => h.hint_level === lvl);
-          return (
-            <div key={lvl} className="border border-slate-200/80 dark:border-zinc-800 rounded-xl overflow-hidden bg-white dark:bg-zinc-900 shadow-soft-sm">
-              <div className="p-3 bg-slate-50 dark:bg-zinc-800/40 flex items-center justify-between">
-                <span className="font-semibold text-slate-900 dark:text-white">
-                  Hint {lvl}: {lvl === 1 ? 'Conceptual Direction' : lvl === 2 ? 'Technique-Level Guidance' : 'Algorithmic Blueprint'}
-                </span>
-
-                {unlockedHint ? (
-                  <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                    <CheckCircle2 size={12} /> UNLOCKED
+          {[1, 2, 3].map((lvl) => {
+            const unlockedHint = hints.find((h) => h.hint_level === lvl);
+            return (
+              <div key={lvl} className="border border-[#e2e4e8] dark:border-zinc-800 rounded-xl overflow-hidden bg-white dark:bg-zinc-900 shadow-xs">
+                <div className="p-3 bg-slate-50 dark:bg-zinc-800/40 flex items-center justify-between">
+                  <span className="font-semibold text-slate-900 dark:text-white">
+                    Hint {lvl}: {lvl === 1 ? 'Conceptual Direction' : lvl === 2 ? 'Technique-Level Guidance' : 'Algorithmic Blueprint'}
                   </span>
-                ) : (
-                  <button
-                    disabled={loadingHint}
-                    onClick={() => handleUnlockHint(lvl)}
-                    className="px-2.5 py-1 rounded-lg bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-[11px] font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
-                  >
-                    <Lock size={11} /> Unlock
-                  </button>
+
+                  {unlockedHint ? (
+                    <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                      <CheckCircle2 size={12} /> UNLOCKED
+                    </span>
+                  ) : (
+                    <button
+                      disabled={loadingHint || !submissionId}
+                      onClick={() => handleUnlockHint(lvl)}
+                      className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-[11px] font-semibold flex items-center gap-1 transition-all disabled:opacity-50"
+                      title={!submissionId ? "Submit code to unlock" : "Unlock hint"}
+                    >
+                      <Lock size={11} /> Unlock
+                    </button>
+                  )}
+                </div>
+
+                {unlockedHint && (
+                  <div className="p-3 text-slate-700 dark:text-zinc-300 leading-relaxed border-t border-[#e2e4e8] dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                    <div className="font-semibold text-blue-600 dark:text-blue-400 mb-1">{unlockedHint.title}</div>
+                    <div>{unlockedHint.content}</div>
+                  </div>
                 )}
               </div>
-
-              {unlockedHint && (
-                <div className="p-3 text-slate-700 dark:text-zinc-300 leading-relaxed border-t border-slate-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-                  <div className="font-semibold text-brand-600 dark:text-brand-400 mb-1">{unlockedHint.title}</div>
-                  <div>{unlockedHint.content}</div>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

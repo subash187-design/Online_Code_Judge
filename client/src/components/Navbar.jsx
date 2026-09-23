@@ -58,19 +58,8 @@ export default function Navbar({ onNavigate, currentPage }) {
         </div>
 
         {/* Center: Navigation */}
-        {isAuthenticated ? (
+        {isAuthenticated && user?.role === 'ADMIN' ? (
           <nav className="hidden md:flex items-center gap-1">
-            {currentPage !== 'problems' && currentPage !== 'problem-detail' && currentPage !== 'profile' && currentPage !== 'settings' && currentPage !== 'dashboard' && (
-              <div className="bg-[#edeef1] dark:bg-[#262626] p-1 rounded-lg border border-[#e0e2e6] dark:border-[#333333]">
-                <button
-                  onClick={() => handleNav('problems')}
-                  className="px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#2d2d2d]"
-                >
-                  <Code2 size={13} />
-                  Problems
-                </button>
-              </div>
-            )}
 
             {user?.role === 'ADMIN' && (
               <div className="bg-[#edeef1] dark:bg-[#262626] p-1 rounded-lg border border-[#e0e2e6] dark:border-[#333333]">
@@ -227,12 +216,6 @@ export default function Navbar({ onNavigate, currentPage }) {
         <div className="md:hidden border-b border-[#e2e4e8] dark:border-zinc-800 bg-[#f8f9fa] dark:bg-[#1a1a1a] px-4 py-4 space-y-2 shadow-lg">
           {isAuthenticated && (
             <>
-              <button
-                onClick={() => handleNav('problems')}
-                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-              >
-                <Code2 size={16} /> Problems
-              </button>
               <button
                 onClick={() => handleNav('profile')}
                 className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"

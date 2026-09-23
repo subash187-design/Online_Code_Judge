@@ -10,7 +10,7 @@ import SubmissionDiffModal from '../components/analytics/SubmissionDiffModal';
 import { 
   Play, Send, Clock, Database, ChevronLeft, ChevronRight, GitCompare, Sparkles, Layers,
   AlertTriangle, ChevronDown, ChevronUp, GripVertical, GripHorizontal, Maximize2, Minimize2,
-  FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, Lock
+  FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, Lock, TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -804,6 +804,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 <MentorPanel
                   submissionId={latestVerdict?.submission_id || history[0]?.id}
                   stageId={activeStageId}
+                  userId={effectiveUserId}
                 />
               </div>
             )}
@@ -946,21 +947,20 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                   <span>Test Result</span>
                 </button>
 
-                {journey && (
-                  <button
-                    onClick={() => {
-                      setBottomTab('journey');
-                      if (isDrawerCollapsed) setIsDrawerCollapsed(false);
-                    }}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                      bottomTab === 'journey' 
-                        ? 'text-slate-900 bg-white font-semibold border-t-2 border-blue-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
-                    }`}
-                  >
-                    <span>Optimization Journey</span>
-                  </button>
-                )}
+                <button
+                  onClick={() => {
+                    setBottomTab('journey');
+                    if (isDrawerCollapsed) setIsDrawerCollapsed(false);
+                  }}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                    bottomTab === 'journey' 
+                      ? 'text-slate-900 bg-white font-semibold border-t-2 border-blue-500 shadow-xs dark:text-white dark:bg-[#1e1e1e]' 
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-zinc-200 dark:hover:bg-[#303030]'
+                  }`}
+                >
+                  <TrendingUp size={13} className={bottomTab === 'journey' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-zinc-500'} />
+                  <span>Optimization Journey</span>
+                </button>
               </div>
 
               {/* Collapse/Expand Toggle */}
@@ -1114,7 +1114,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 )}
 
                 {/* Tab: Optimization Journey */}
-                {bottomTab === 'journey' && journey && (
+                {bottomTab === 'journey' && (
                   <div className="space-y-3">
                     <OptimizationJourney journey={journey} />
                   </div>

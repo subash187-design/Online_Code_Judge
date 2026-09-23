@@ -162,7 +162,6 @@ export default function ProblemListPage({ onSelectProblem }) {
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="space-y-1.5 min-w-0">
                       <div className="flex items-center gap-2.5 flex-wrap">
-                        <span className="text-xs font-mono text-slate-400 dark:text-zinc-500">#{p.id}</span>
                         <h3 className="text-sm sm:text-base font-semibold text-slate-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400 transition-colors truncate">
                           {p.title}
                         </h3>

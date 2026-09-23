@@ -512,13 +512,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           {/* Quick Tab Switcher */}
           <div className="flex items-center flex-wrap gap-1.5 bg-[#edeef1] dark:bg-zinc-900 p-1 rounded-xl border border-[#e2e4e8] dark:border-zinc-800">
             <button
-              onClick={() => onNavigate('problems')}
-              className="lg:hidden px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900/60"
-            >
-              <Code2 size={13} />
-              <span>Problems</span>
-            </button>
-            <button
               onClick={() => setActiveTab('profile')}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 activeTab === 'profile'
@@ -857,9 +850,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                               className="font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition-colors"
                             >
                               {item.title}
-                            </div>
-                            <div className="text-[11px] text-slate-400 dark:text-zinc-500 font-mono mt-0.5">
-                              #{item.problem_id}
                             </div>
                           </td>
                           <td className="py-3.5 px-4">
