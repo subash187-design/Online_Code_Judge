@@ -17,7 +17,7 @@ function getRouteFromPath(pathname, isAuthenticated) {
   const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
   const problemId = searchParams?.get('id');
   if (problemId && (path === '/problems' || path === '')) {
-    return 'problem-detail';
+    return isAuthenticated ? 'problem-detail' : 'signin';
   }
   if (!path || path === '') return isAuthenticated ? 'problems' : 'landing';
   if (path === '/landing') return 'landing';
@@ -27,23 +27,23 @@ function getRouteFromPath(pathname, isAuthenticated) {
   if (path === '/dashboard') return isAuthenticated ? 'dashboard' : 'signin';
   if (path === '/profile') return isAuthenticated ? 'profile' : 'signin';
   if (path === '/settings') return isAuthenticated ? 'settings' : 'signin';
-  if (path === '/admin') return 'admin';
-  if (path === '/problems') return 'problems';
+  if (path === '/admin') return isAuthenticated ? 'admin' : 'signin';
+  if (path === '/problems') return isAuthenticated ? 'problems' : 'signin';
   return isAuthenticated ? 'problems' : 'landing';
 }
 
 function getPathFromRoute(route, params = {}, isAuthenticated = false) {
   switch (route) {
     case 'landing': return '/';
-    case 'dashboard': return '/dashboard';
-    case 'profile': return '/profile';
-    case 'settings': return '/settings';
+    case 'dashboard': return isAuthenticated ? '/dashboard' : '/signin';
+    case 'profile': return isAuthenticated ? '/profile' : '/signin';
+    case 'settings': return isAuthenticated ? '/settings' : '/signin';
     case 'signin': return '/signin';
     case 'signup': return '/signup';
     case 'verify-email': return '/verify-email';
-    case 'admin': return '/admin';
-    case 'problems': return '/problems';
-    case 'problem-detail': return `/problems?id=${params.problemId || ''}`;
+    case 'admin': return isAuthenticated ? '/admin' : '/signin';
+    case 'problems': return isAuthenticated ? '/problems' : '/signin';
+    case 'problem-detail': return isAuthenticated ? `/problems?id=${params.problemId || ''}` : '/signin';
     default: return '/';
   }
 }
@@ -87,10 +87,14 @@ function MainApp() {
   }, [isAuthenticated]);
 
   const navigate = (route, params = {}) => {
+    let resolvedRoute = route;
+    if (!isAuthenticated && (route === 'problems' || route === 'problem-detail')) {
+      resolvedRoute = 'signin';
+    }
     setRouteParams(params);
-    setCurrentRoute(route);
+    setCurrentRoute(resolvedRoute);
     
-    const targetUrl = getPathFromRoute(route, params, isAuthenticated);
+    const targetUrl = getPathFromRoute(resolvedRoute, params, isAuthenticated);
     window.history.pushState({}, '', targetUrl);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -161,9 +165,15 @@ function MainApp() {
         return <AdminDashboardPage onNavigate={navigate} />;
 
       case 'problems':
+        if (!isAuthenticated) {
+          return <LoginPage onNavigate={navigate} />;
+        }
         return <ProblemListPage onSelectProblem={handleSelectProblem} />;
 
       case 'problem-detail':
+        if (!isAuthenticated) {
+          return <LoginPage onNavigate={navigate} />;
+        }
         return selectedProblemId ? (
           <ProblemDetailPage
             problemId={selectedProblemId}
@@ -175,7 +185,11 @@ function MainApp() {
         );
 
       default:
-        return <ProblemListPage onSelectProblem={handleSelectProblem} />;
+        return isAuthenticated ? (
+          <ProblemListPage onSelectProblem={handleSelectProblem} />
+        ) : (
+          <LandingPage onNavigate={navigate} />
+        );
     }
   };
 
