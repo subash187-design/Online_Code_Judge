@@ -10,7 +10,7 @@ import SubmissionDiffModal from '../components/analytics/SubmissionDiffModal';
 import { 
   Play, Send, Clock, Database, ChevronLeft, ChevronRight, GitCompare, Sparkles, Layers,
   AlertTriangle, ChevronDown, ChevronUp, GripVertical, GripHorizontal, Maximize2, Minimize2,
-  Pause, RotateCcw, FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, Lock
+  FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, Lock
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -175,38 +175,16 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
   const [journey, setJourney] = useState(null);
   const [comparison, setComparison] = useState(null);
 
-  // Dynamic Workspace Resizing States
+  // Workspace Resizing States
   const [leftWidth, setLeftWidth] = useState(46); // 46% width for problem pane
-  const [drawerHeight, setDrawerHeight] = useState(250); // 250px default bottom drawer
+  const [drawerHeight, setDrawerHeight] = useState(160); // 160px default bottom drawer for spacious typing editor
   const [isMaximized, setIsMaximized] = useState(false);
   const [isDrawerCollapsed, setIsDrawerCollapsed] = useState(false);
   const [isDraggingH, setIsDraggingH] = useState(false);
   const [isDraggingV, setIsDraggingV] = useState(false);
-
-  // Stopwatch Timer
-  const [timerSeconds, setTimerSeconds] = useState(646);
-  const [isTimerRunning, setIsTimerRunning] = useState(true);
   
   const containerRef = useRef(null);
   const rightPaneRef = useRef(null);
-
-  // Stopwatch Timer Effect
-  useEffect(() => {
-    let interval = null;
-    if (isTimerRunning) {
-      interval = setInterval(() => {
-        setTimerSeconds(prev => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning]);
-
-  const formatTimer = (totalSeconds) => {
-    const hrs = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
-    const mins = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
-    const secs = (totalSeconds % 60).toString().padStart(2, '0');
-    return `${hrs}:${mins}:${secs}`;
-  };
 
   // Horizontal Dragging: Problem Pane <-> Editor Pane
   useEffect(() => {
@@ -214,7 +192,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
       if (!isDraggingH || !containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const newPercent = ((e.clientX - rect.left) / rect.width) * 100;
-      if (newPercent >= 20 && newPercent <= 80) {
+      if (newPercent >= 15 && newPercent <= 85) {
         setLeftWidth(newPercent);
       }
     };
@@ -244,14 +222,17 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
   // Vertical Dragging: Code Editor <-> Bottom Testcase Drawer
   useEffect(() => {
     const handleMouseMove = (e) => {
-      if (!isDraggingV || !rightPaneRef.current) return;
-      const rect = rightPaneRef.current.getBoundingClientRect();
+      if (!isDraggingV) return;
+      const container = rightPaneRef.current;
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
       const newHeight = rect.bottom - e.clientY;
-      if (newHeight >= 36 && newHeight <= rect.height - 100) {
-        setDrawerHeight(newHeight);
-        if (isDrawerCollapsed && newHeight > 45) {
-          setIsDrawerCollapsed(false);
-        }
+      const minHeight = 36;
+      const maxHeight = Math.max(minHeight, rect.height - 70);
+      const clamped = Math.min(Math.max(newHeight, minHeight), maxHeight);
+      setDrawerHeight(clamped);
+      if (clamped > 45 && isDrawerCollapsed) {
+        setIsDrawerCollapsed(false);
       }
     };
 
@@ -508,6 +489,14 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
   return (
     <div className="flex flex-col h-screen bg-[#f2f4f7] text-slate-800 dark:bg-[#181818] dark:text-zinc-100 overflow-hidden font-sans">
       
+      {/* Global Dragging Overlay to prevent mouse event hijacking */}
+      {(isDraggingV || isDraggingH) && (
+        <div 
+          className="fixed inset-0 z-50 select-none bg-transparent" 
+          style={{ cursor: isDraggingV ? 'row-resize' : 'col-resize' }} 
+        />
+      )}
+
       {/* Diff Modal */}
       {comparison && (
         <SubmissionDiffModal
@@ -605,29 +594,10 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           <button
             onClick={toggleTheme}
             title={isDark ? "Switch to Light Theme" : "Switch to Dark Theme"}
-            className="p-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-amber-400 dark:hover:bg-[#282828] transition-colors"
+            className="p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 dark:text-zinc-400 dark:hover:text-amber-400 dark:hover:bg-[#282828] transition-colors"
           >
             {isDark ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} />}
           </button>
-
-          <div className="flex items-center gap-1.5 bg-[#edeef1] dark:bg-[#262626] px-2.5 py-1 rounded-md border border-[#e0e2e6] dark:border-[#333333] font-mono text-[11px] text-slate-700 dark:text-zinc-300">
-            <Clock size={11} className="text-slate-500 dark:text-zinc-400" />
-            <span>{formatTimer(timerSeconds)}</span>
-            <button
-              onClick={() => setIsTimerRunning(!isTimerRunning)}
-              title={isTimerRunning ? "Pause timer" : "Start timer"}
-              className="hover:text-slate-900 dark:hover:text-white transition-colors ml-0.5"
-            >
-              {isTimerRunning ? <Pause size={10} /> : <Play size={10} />}
-            </button>
-            <button
-              onClick={() => setTimerSeconds(0)}
-              title="Reset timer"
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              <RotateCcw size={10} />
-            </button>
-          </div>
 
           <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#d0d3d8] dark:ring-[#444]">
             {user?.name ? user.name[0].toUpperCase() : 'U'}
@@ -883,7 +853,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           {/* Bottom Status Bar */}
           <div className="h-9 px-4 border-t border-[#e2e4e8] dark:border-[#2d2d2d] bg-[#f8f9fa] dark:bg-[#1a1a1a] flex items-center justify-end text-xs text-slate-500 dark:text-zinc-400 shrink-0 select-none">
             <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+              <span className="w-2 h-2 rounded-full bg-blue-500"></span>
               <span>Online Judge Active</span>
             </div>
           </div>
@@ -892,14 +862,20 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
         {/* Draggable Horizontal Splitter (Desktop) */}
         {!isMaximized && (
           <div
-            onMouseDown={() => setIsDraggingH(true)}
-            className="hidden md:flex w-1 hover:w-1.5 bg-[#333333] hover:bg-brand-500 cursor-col-resize items-center justify-center transition-all rounded-full my-auto h-20 select-none shrink-0"
-            title="Drag to resize panels"
-          />
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setIsDraggingH(true);
+            }}
+            className="hidden md:flex w-2 hover:w-2.5 bg-[#e0e3e7] dark:bg-[#2c2c2c] hover:bg-blue-500 dark:hover:bg-blue-600 cursor-col-resize items-center justify-center transition-all rounded-full my-auto h-28 select-none shrink-0 group z-10"
+            title="Drag left/right to resize panels"
+          >
+            <div className="w-0.5 h-8 rounded-full bg-slate-400 dark:bg-zinc-600 group-hover:bg-white transition-colors" />
+          </div>
         )}
 
         {/* Right Code Editor & Execution Drawer Card */}
         <div 
+          ref={rightPaneRef}
           style={{ width: isMaximized ? '100%' : `${100 - leftWidth}%` }}
           className="flex-1 h-full bg-white dark:bg-[#1e1e1e] border border-[#e2e4e8] dark:border-[#333333] rounded-xl overflow-hidden flex flex-col min-w-0 shadow-sm"
         >
@@ -919,17 +895,22 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           </div>
 
           {/* Draggable Vertical Splitter */}
-          {!isDrawerCollapsed && (
+          {!isDrawerCollapsed && !isMaximized && (
             <div
-              onMouseDown={() => setIsDraggingV(true)}
-              className="h-1 hover:h-1.5 bg-[#e2e4e8] dark:bg-[#333333] hover:bg-blue-500 cursor-row-resize flex items-center justify-center transition-all select-none shrink-0"
-              title="Drag to resize drawer"
-            />
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setIsDraggingV(true);
+              }}
+              className="h-2 hover:h-2.5 bg-[#e2e4e8] dark:bg-[#2c2c2c] hover:bg-blue-500 dark:hover:bg-blue-600 cursor-row-resize flex items-center justify-center transition-all select-none shrink-0 group z-10"
+              title="Drag up/down to increase typing editor length"
+            >
+              <div className="w-10 h-0.5 rounded-full bg-slate-400 dark:bg-zinc-600 group-hover:bg-white transition-colors" />
+            </div>
           )}
 
           {/* Bottom Testcase / Test Result Drawer */}
           <div
-            style={{ height: isDrawerCollapsed ? '36px' : `${drawerHeight}px` }}
+            style={{ height: (isDrawerCollapsed || isMaximized) ? '36px' : `${drawerHeight}px` }}
             className="w-full bg-white dark:bg-[#1e1e1e] flex flex-col overflow-hidden shrink-0"
           >
             {/* Drawer Tabs Header */}
