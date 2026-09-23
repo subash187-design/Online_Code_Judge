@@ -27,7 +27,7 @@ export default function Navbar({ onNavigate, currentPage }) {
   };
 
   return (
-    <header className="border-b border-[#e2e4e8] dark:border-[#2d2d2d] bg-[#f8f9fa] dark:bg-[#1a1a1a] sticky top-0 z-40 transition-colors duration-150 shadow-sm">
+    <header className="border-b border-[#e2e4e8] dark:border-[#2d2d2d] bg-[#f8f9fa] dark:bg-[#1a1a1a] shrink-0 sticky top-0 z-40 transition-colors duration-150 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         
         {/* Left: Brand Logo */}
