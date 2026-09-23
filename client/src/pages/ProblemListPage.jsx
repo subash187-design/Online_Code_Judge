@@ -70,12 +70,6 @@ export default function ProblemListPage({ onSelectProblem }) {
               Practice progressive multi-stage algorithmic interview drills with AST complexity evaluation and Socratic hints.
             </p>
           </div>
-
-          <div className="flex items-center gap-2">
-            <div className="px-3 py-1.5 rounded-lg bg-white border border-[#e0e2e6] text-xs font-mono text-slate-700 dark:bg-[#1e1e1e] dark:border-[#2e2e2e] dark:text-zinc-300 shadow-xs">
-              <span className="text-blue-600 dark:text-blue-400 font-bold">{problems.length}</span> Challenges Loaded
-            </div>
-          </div>
         </div>
 
         {/* Quick Topic Chips */}
