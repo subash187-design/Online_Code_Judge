@@ -1,8 +1,6 @@
 import React from 'react';
 import { 
-  Cpu, 
-  ArrowRight, 
-  CheckCircle2
+  ArrowRight 
 } from 'lucide-react';
 
 export default function LandingPage({ onNavigate }) {
@@ -15,6 +13,30 @@ export default function LandingPage({ onNavigate }) {
     "Better Solution",
     "Optimize",
     "Optimal Solution"
+  ];
+
+  // 4 Steps for "Learn the Way You Solve Problems"
+  const problemSolvingSteps = [
+    {
+      num: "01",
+      title: "Start Simple",
+      desc: "Begin with the most straightforward solution. Focus on understanding the problem before worrying about optimization."
+    },
+    {
+      num: "02",
+      title: "Understand Your Complexity",
+      desc: "Algomind analyzes your submitted code and estimates its time and space complexity."
+    },
+    {
+      num: "03",
+      title: "Improve Step by Step",
+      desc: "Once your solution works, move to the next stage and improve your approach instead of immediately looking at the answer."
+    },
+    {
+      num: "04",
+      title: "Reach Optimal",
+      desc: "Complete the optimization journey and understand why the final approach is more efficient."
+    }
   ];
 
   return (
@@ -104,51 +126,39 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* 3. COMPLEXITY ANALYSIS */}
+      {/* 3. LEARN THE WAY YOU SOLVE PROBLEMS */}
       <section className="py-14 md:py-20 bg-[#f4f6f8] dark:bg-[#111111] border-b border-[#e2e4e8] dark:border-[#222222]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          <div className="max-w-3xl mx-auto text-center space-y-3 mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-semibold border border-blue-200 dark:border-blue-900/60">
-              <Cpu size={13} />
-              <span>Static Syntax Parser</span>
-            </div>
-
+          <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Complexity Analysis
+              Learn the Way You Solve Problems
             </h2>
-            
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-zinc-200">
-              Know what your code is really doing.
-            </h3>
-            
             <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">
-              Algomind analyzes your code to estimate:
+              A structured progression designed around genuine understanding.
             </p>
           </div>
 
-          {/* Complexity Elements Grid */}
-          <div className="max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
-            {[
-              "Time Complexity",
-              "Space Complexity",
-              "Loop Complexity",
-              "Nested Operations",
-              "Algorithmic Patterns"
-            ].map((item, idx) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {problemSolvingSteps.map((step, idx) => (
               <div 
                 key={idx}
-                className="p-3.5 rounded-xl bg-white dark:bg-[#1a1a1a] border border-[#e2e4e8] dark:border-[#2d2d2d] text-center shadow-xs flex flex-col items-center justify-center space-y-1.5"
+                className="p-6 rounded-2xl bg-white dark:bg-[#181818] border border-[#e2e4e8] dark:border-[#262626] shadow-xs flex flex-col justify-between space-y-4 hover:border-slate-300 dark:hover:border-[#383838] transition-all"
               >
-                <CheckCircle2 size={16} className="text-blue-500" />
-                <span className="text-xs font-bold text-slate-800 dark:text-zinc-200">{item}</span>
+                <div className="space-y-3">
+                  <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-blue-200 dark:border-blue-900/60 inline-block">
+                    Step {step.num}
+                  </span>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 leading-relaxed font-normal">
+                    {step.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
-
-          <p className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            Compare your current complexity with the expected complexity of the stage and identify where optimization is needed.
-          </p>
 
         </div>
       </section>
