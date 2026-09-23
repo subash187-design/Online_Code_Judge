@@ -47,36 +47,6 @@ export default function LandingPage({ onNavigate }) {
             <span className="font-semibold text-slate-900 dark:text-white">Brute Force → Better → Optimal</span>. 
             Write your solution, test it, understand its complexity, and use AI-powered guidance to improve your approach.
           </p>
-
-          {/* CTA Buttons */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3.5 max-w-md mx-auto">
-            <button
-              onClick={() => onNavigate('signup')}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer group"
-            >
-              Start Coding
-              <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button
-              onClick={() => onNavigate('signup')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-800 font-semibold text-sm transition-all border border-[#d5d9de] shadow-xs flex items-center justify-center gap-2 dark:bg-[#1e1e1e] dark:hover:bg-[#262626] dark:text-zinc-200 dark:border-[#333333] cursor-pointer"
-            >
-              Explore Problems
-            </button>
-          </div>
-
-          {/* Supported Languages */}
-          <div className="pt-2 flex items-center justify-center gap-2 text-xs font-mono text-slate-500 dark:text-zinc-400">
-            <span>Supported:</span>
-            <span className="font-semibold text-slate-700 dark:text-zinc-300">C</span>
-            <span>•</span>
-            <span className="font-semibold text-slate-700 dark:text-zinc-300">C++</span>
-            <span>•</span>
-            <span className="font-semibold text-slate-700 dark:text-zinc-300">Java</span>
-            <span>•</span>
-            <span className="font-semibold text-slate-700 dark:text-zinc-300">Python</span>
-          </div>
-
         </div>
       </section>
 
