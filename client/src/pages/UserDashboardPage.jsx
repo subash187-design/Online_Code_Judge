@@ -384,9 +384,14 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
           <div className="flex items-center gap-2.5 px-2 py-1">
             <div className="h-7 w-auto flex items-center">
               <img 
-                src="/logo.png" 
+                src="/logo-icon-light.png" 
                 alt="Algomind Logo" 
-                className="h-full w-auto object-contain brightness-110 dark:brightness-125" 
+                className="h-full w-auto object-contain dark:hidden" 
+              />
+              <img 
+                src="/logo-icon-dark.png" 
+                alt="Algomind Logo" 
+                className="h-full w-auto object-contain hidden dark:block" 
               />
             </div>
             <div className="flex flex-col">

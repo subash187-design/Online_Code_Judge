@@ -321,7 +321,8 @@ export default function LandingPage({ onNavigate }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="h-6 w-auto flex items-center">
-              <img src="/logo.png" alt="Algomind Logo" className="h-full w-auto object-contain brightness-105 dark:brightness-110" />
+              <img src="/logo-horizontal-light.png" alt="Algomind Logo" className="h-full w-auto object-contain dark:hidden" />
+              <img src="/logo-horizontal-dark.png" alt="Algomind Logo" className="h-full w-auto object-contain hidden dark:block" />
             </div>
             <span className="font-semibold text-slate-900 dark:text-white">Online Code Judge</span>
             <span>&copy; {new Date().getFullYear()} Algomind Inc.</span>

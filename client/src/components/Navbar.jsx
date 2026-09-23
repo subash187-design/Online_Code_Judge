@@ -43,11 +43,16 @@ export default function Navbar({ onNavigate, currentPage }) {
           className="flex items-center gap-2 cursor-pointer group"
           title="Algomind"
         >
-          <div className="h-7 w-auto flex items-center">
+          <div className="h-8 w-auto flex items-center">
             <img 
-              src="/logo.png" 
+              src="/logo-horizontal-light.png" 
               alt="Algomind Logo" 
-              className="h-full w-auto object-contain brightness-105 dark:brightness-110 drop-shadow-sm group-hover:scale-105 transition-transform" 
+              className="h-full w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform dark:hidden" 
+            />
+            <img 
+              src="/logo-horizontal-dark.png" 
+              alt="Algomind Logo" 
+              className="h-full w-auto object-contain drop-shadow-sm group-hover:scale-105 transition-transform hidden dark:block" 
             />
           </div>
         </div>

@@ -36,7 +36,8 @@ export default function LoginPage({ onNavigate }) {
         <div className="text-left mb-6 space-y-1">
           <div className="flex items-center gap-2 mb-3">
             <div className="h-6 w-auto flex items-center">
-              <img src="/logo.png" alt="Algomind Logo" className="h-full w-auto object-contain brightness-110" />
+              <img src="/logo-icon-light.png" alt="Algomind Logo" className="h-full w-auto object-contain dark:hidden" />
+              <img src="/logo-icon-dark.png" alt="Algomind Logo" className="h-full w-auto object-contain hidden dark:block" />
             </div>
             <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white">Algomind</span>
           </div>
