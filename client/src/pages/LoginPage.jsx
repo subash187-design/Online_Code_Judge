@@ -98,7 +98,7 @@ export default function LoginPage({ onNavigate }) {
             disabled={loading}
             className="w-full mt-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50"
           >
-            {loading ? 'Signing in...' : 'Sign in >'}
+            {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 
