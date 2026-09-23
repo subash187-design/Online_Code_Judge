@@ -10,7 +10,7 @@ import SubmissionDiffModal from '../components/analytics/SubmissionDiffModal';
 import { 
   Play, Send, Clock, Database, ChevronLeft, ChevronRight, GitCompare, Sparkles, Layers,
   AlertTriangle, ChevronDown, ChevronUp, GripVertical, GripHorizontal, Maximize2, Minimize2,
-  FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, Lock, TrendingUp
+  FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, Lock, TrendingUp, User
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -774,24 +774,34 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
             {isDark ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} />}
           </button>
 
-          <button
+          <div 
             onClick={() => onNavigate ? onNavigate('profile') : (window.location.href = '/profile')}
+            className="flex items-center gap-2 pl-1.5 pr-2.5 py-0.5 rounded-lg bg-white dark:bg-[#262626] border border-[#e0e2e6] dark:border-[#333333] cursor-pointer hover:border-slate-300 dark:hover:border-[#444] transition-colors shadow-xs"
             title="View Profile"
-            className="flex items-center gap-1.5 p-1 pr-2 rounded-full hover:bg-slate-200/80 dark:hover:bg-[#282828] transition-all group cursor-pointer border border-transparent hover:border-slate-300 dark:hover:border-[#444]"
           >
-            <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px] ring-1 ring-[#d0d3d8] dark:ring-[#444] group-hover:scale-105 transition-transform overflow-hidden shadow-xs">
+            <div className="w-6 h-6 rounded bg-[#edeef1] dark:bg-[#333333] text-slate-800 dark:text-white flex items-center justify-center font-bold text-xs overflow-hidden shrink-0">
               {user?.avatar ? (
                 <img src={user.avatar} alt={user.name || 'User'} className="w-full h-full object-cover" />
               ) : user?.name ? (
                 user.name.charAt(0).toUpperCase()
               ) : (
-                'U'
+                <User size={12} />
               )}
             </div>
-            <span className="hidden sm:inline text-xs font-medium text-slate-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-              {user?.name ? user.name.split(' ')[0] : 'Profile'}
-            </span>
-          </button>
+            <div className="hidden sm:flex flex-col text-left leading-tight">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-semibold text-slate-800 dark:text-zinc-200 truncate max-w-[110px]">
+                  {user?.name || user?.username}
+                </span>
+                {user?.role === 'ADMIN' && (
+                  <span className="text-[9px] bg-purple-100 text-purple-800 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 px-1 rounded uppercase font-bold leading-none">
+                    Admin
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] text-slate-500 dark:text-zinc-500 truncate max-w-[110px] leading-tight">{user?.email}</span>
+            </div>
+          </div>
         </div>
       </header>
 
