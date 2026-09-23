@@ -120,17 +120,13 @@ export default function CodeEditor({
         </div>
       </div>
 
-      {/* Sub Toolbar: Language Selector & Auto Badge */}
+      {/* Sub Toolbar: Language Selector */}
       <div className="h-8 bg-white dark:bg-[#1e1e1e] px-3 border-b border-[#e2e4e8] dark:border-[#2d2d2d] flex items-center justify-between text-xs text-slate-600 dark:text-zinc-400 shrink-0 select-none">
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1 text-[11px] font-medium text-slate-800 dark:text-zinc-200 bg-[#f0f2f5] hover:bg-slate-200 dark:bg-[#2d2d2d] dark:hover:bg-[#383838] px-2 py-0.5 rounded cursor-pointer transition-colors border border-[#e0e2e6] dark:border-transparent">
             <span>C++</span>
             <span className="text-[10px] text-slate-500 dark:text-zinc-400">▾</span>
           </div>
-
-          <span className="flex items-center gap-1 text-[10px] text-slate-600 dark:text-zinc-400 bg-[#f0f2f5] dark:bg-[#262626] px-2 py-0.5 rounded border border-[#e0e2e6] dark:border-[#333333]">
-            <span className="text-[10px]">🔒</span> Auto
-          </span>
         </div>
 
         <div className="flex items-center gap-1">

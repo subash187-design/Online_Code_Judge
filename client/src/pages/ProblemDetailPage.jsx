@@ -10,7 +10,7 @@ import SubmissionDiffModal from '../components/analytics/SubmissionDiffModal';
 import { 
   Play, Send, Clock, Database, ChevronLeft, ChevronRight, GitCompare, Sparkles, Layers,
   AlertTriangle, ChevronDown, ChevronUp, GripVertical, GripHorizontal, Maximize2, Minimize2,
-  Pause, RotateCcw, FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, ThumbsUp, MessageSquare, Lock
+  Pause, RotateCcw, FileText, Lightbulb, Tag, CheckSquare, Terminal, Sun, Moon, Lock
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -459,6 +459,52 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
   const activeStage = stagesData?.stages?.find(s => s.id === activeStageId);
   const isStageLocked = activeStage?.status === 'LOCKED';
 
+  const renderFormattedDescription = (text) => {
+    if (!text) return null;
+
+    // Split into sections by markdown heading markers (### Input Format, ### Output Format, ### Constraints, etc.)
+    const sections = text.split(/(?=(?:^|\n)###?\s+)/);
+
+    return (
+      <div className="space-y-4">
+        {sections.map((section, idx) => {
+          const trimmed = section.trim();
+          if (!trimmed) return null;
+
+          // Check if this section starts with ### or ## or #
+          const match = trimmed.match(/^#{1,3}\s*([^\n]+)\n?([\s\S]*)$/);
+          if (match) {
+            const headingTitle = match[1].trim();
+            const bodyContent = match[2].trim();
+            return (
+              <div key={idx} className="space-y-1.5 pt-1">
+                <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
+                  {headingTitle}
+                </h4>
+                <div className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                  {bodyContent}
+                </div>
+              </div>
+            );
+          }
+
+          // Fallback: If section doesn't match heading regex, strip any remaining '### ' before known section titles
+          const cleanedText = trimmed
+            .replace(/###\s*(Input Format)/gi, '$1')
+            .replace(/###\s*(Output Format)/gi, '$1')
+            .replace(/###\s*(Constraints)/gi, '$1')
+            .replace(/^###\s+/gm, '');
+
+          return (
+            <div key={idx} className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">
+              {cleanedText}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#f2f4f7] text-slate-800 dark:bg-[#181818] dark:text-zinc-100 overflow-hidden font-sans">
       
@@ -734,8 +780,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 />
 
                 {/* Problem Description Text */}
-                <div className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap space-y-3">
-                  {problem.description}
+                <div className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed space-y-3">
+                  {renderFormattedDescription(problem.description)}
                 </div>
 
                 {/* Sample Test Cases */}
@@ -834,18 +880,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
           </div>
 
-          {/* Bottom Reaction & Status Bar (LeetCode Style from Screenshot) */}
-          <div className="h-9 px-4 border-t border-[#e2e4e8] dark:border-[#2d2d2d] bg-[#f8f9fa] dark:bg-[#1a1a1a] flex items-center justify-between text-xs text-slate-500 dark:text-zinc-400 shrink-0 select-none">
-            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-1 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors">
-                <ThumbsUp size={13} />
-                <span>1.9K</span>
-              </button>
-              <button className="flex items-center gap-1 hover:text-slate-800 dark:hover:text-zinc-200 transition-colors">
-                <MessageSquare size={13} />
-                <span>36</span>
-              </button>
-            </div>
+          {/* Bottom Status Bar */}
+          <div className="h-9 px-4 border-t border-[#e2e4e8] dark:border-[#2d2d2d] bg-[#f8f9fa] dark:bg-[#1a1a1a] flex items-center justify-end text-xs text-slate-500 dark:text-zinc-400 shrink-0 select-none">
             <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-zinc-400">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
               <span>Online Judge Active</span>
