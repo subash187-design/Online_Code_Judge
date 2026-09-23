@@ -8,7 +8,9 @@ export default function CodeEditor({
   onChange, 
   onReset,
   isMaximized = false,
-  onToggleMaximize
+  onToggleMaximize,
+  language = 'cpp',
+  onLanguageChange
 }) {
   const { isDark } = useTheme();
   const editorRef = useRef(null);
@@ -46,7 +48,6 @@ export default function CodeEditor({
       }
     });
 
-    // Layout automatically
     setTimeout(() => {
       editor.layout();
     }, 100);
@@ -59,6 +60,12 @@ export default function CodeEditor({
   const decreaseFontSize = () => {
     setFontSize(prev => Math.max(prev - 1, 11));
   };
+
+  // Map language identifier to Monaco editor language mode
+  const monacoLanguage = language === 'c' ? 'c' 
+    : language === 'java' ? 'java' 
+    : language === 'python' ? 'python' 
+    : 'cpp';
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden bg-white dark:bg-[#1e1e1e]">
@@ -120,13 +127,20 @@ export default function CodeEditor({
         </div>
       </div>
 
-      {/* Sub Toolbar: Language Selector */}
+      {/* Sub Toolbar: Language Selector & Font Sizing */}
       <div className="h-8 bg-white dark:bg-[#1e1e1e] px-3 border-b border-[#e2e4e8] dark:border-[#2d2d2d] flex items-center justify-between text-xs text-slate-600 dark:text-zinc-400 shrink-0 select-none">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 text-[11px] font-medium text-slate-800 dark:text-zinc-200 bg-[#f0f2f5] hover:bg-slate-200 dark:bg-[#2d2d2d] dark:hover:bg-[#383838] px-2 py-0.5 rounded cursor-pointer transition-colors border border-[#e0e2e6] dark:border-transparent">
-            <span>C++</span>
-            <span className="text-[10px] text-slate-500 dark:text-zinc-400">▾</span>
-          </div>
+          <select
+            value={language}
+            onChange={(e) => onLanguageChange && onLanguageChange(e.target.value)}
+            className="px-2 py-0.5 rounded text-xs font-semibold bg-[#f0f2f5] hover:bg-slate-200 dark:bg-[#2d2d2d] dark:hover:bg-[#383838] text-slate-800 dark:text-zinc-200 border border-[#e0e2e6] dark:border-transparent focus:outline-none focus:border-blue-500 cursor-pointer transition-colors"
+            title="Select Programming Language"
+          >
+            <option value="cpp">C++ (g++ 17)</option>
+            <option value="c">C (gcc)</option>
+            <option value="java">Java (OpenJDK 17)</option>
+            <option value="python">Python 3</option>
+          </select>
         </div>
 
         <div className="flex items-center gap-1">
@@ -175,8 +189,8 @@ export default function CodeEditor({
         ) : (
           <Editor
             height="100%"
-            defaultLanguage="cpp"
-            language="cpp"
+            defaultLanguage={monacoLanguage}
+            language={monacoLanguage}
             theme={isDark ? "vs-dark" : "vs"}
             value={code}
             onChange={(value) => onChange(value || '')}
@@ -198,24 +212,27 @@ export default function CodeEditor({
               lineNumbers: 'on',
               contextmenu: true,
               quickSuggestions: true,
-              snippetSuggestions: 'inline',
-              suggestOnTriggerCharacters: true,
+              folding: true,
+              fontFamily: "'Fira Code', 'Cascadia Code', Consolas, 'Courier New', monospace",
+              fontLigatures: true,
               formatOnPaste: true,
-              dragAndDrop: true,
-              fontFamily: "'Fira Code', Consolas, 'Courier New', monospace"
+              formatOnType: true,
+              padding: { top: 12, bottom: 12 }
             }}
           />
         )}
       </div>
 
-      {/* Bottom Status Bar: Saved | Ln X, Col Y */}
-      <div className="h-6 bg-[#f8f9fa] dark:bg-[#262626] px-3 border-t border-[#e2e4e8] dark:border-[#333333] flex items-center justify-between text-[11px] text-slate-500 dark:text-zinc-400 select-none shrink-0">
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-          <span>Saved</span>
+      {/* Editor Status Bar */}
+      <div className="h-6 bg-[#f8f9fa] dark:bg-[#202020] px-3 border-t border-[#e2e4e8] dark:border-[#2d2d2d] flex items-center justify-between text-[11px] text-slate-600 dark:text-zinc-400 shrink-0 font-mono select-none">
+        <div className="flex items-center gap-3">
+          <span>Ln {cursorPos.line}, Col {cursorPos.col}</span>
+          <span className="hidden sm:inline">UTF-8</span>
+          <span className="uppercase text-[10px] text-blue-600 dark:text-blue-400 font-bold">{language}</span>
         </div>
-        <div className="font-mono text-[10px] text-slate-500 dark:text-zinc-400">
-          Ln {cursorPos.line}, Col {cursorPos.col}
+
+        <div className="flex items-center gap-2">
+          <span>Spaces: {tabSize}</span>
         </div>
       </div>
     </div>

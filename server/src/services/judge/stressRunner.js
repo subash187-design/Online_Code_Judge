@@ -1,13 +1,13 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
 const { compareOutput } = require('../../utils/comparator');
 
 class StressTestRunner {
   /**
-   * Executes differential fuzzing between user binary and reference binary
+   * Executes differential fuzzing between user solution and reference binary
    */
-  static runDifferentialStress(jobDir, problemId, submissionId, stressConfig, userTimeLimitMs = 1000) {
+  static runDifferentialStress(jobDir, problemId, submissionId, stressConfig, userTimeLimitMs = 1000, candidateCmd = '/sandbox/Solution.out') {
     if (!stressConfig || !stressConfig.generator_name) {
       return { passed: true, verdict: 'ACCEPTED' };
     }
@@ -32,8 +32,8 @@ class StressTestRunner {
 
       fs.writeFileSync(path.join(jobDir, 'stress_input.txt'), testInput);
 
-      // 1. Run Candidate Binary under isolated container
-      const userRes = this._runIsolated(jobDir, 'Solution.out', 'stress_input.txt', 'user_out.txt', userTimeLimitMs);
+      // 1. Run Candidate under isolated container
+      const userRes = this._runIsolated(jobDir, candidateCmd, 'stress_input.txt', 'user_out.txt', userTimeLimitMs);
       if (userRes.verdict !== 'SUCCESS') {
         return {
           passed: false,
@@ -46,7 +46,7 @@ class StressTestRunner {
       }
 
       // 2. Run Reference Binary with double time allowance
-      const refRes = this._runIsolated(jobDir, 'Reference.out', 'stress_input.txt', 'ref_out.txt', userTimeLimitMs * 2);
+      const refRes = this._runIsolated(jobDir, '/sandbox/Reference.out', 'stress_input.txt', 'ref_out.txt', userTimeLimitMs * 2);
       if (refRes.verdict !== 'SUCCESS') {
         console.error(`[StressRunner] Reference binary failed on seed ${currentSeed}:`, refRes);
         return {
@@ -80,14 +80,18 @@ class StressTestRunner {
     return { passed: true, verdict: 'ACCEPTED' };
   }
 
-  static _runIsolated(jobDir, binaryName, inputFile, outputFile, timeLimitMs) {
+  static _runIsolated(jobDir, execTarget, inputFile, outputFile, timeLimitMs) {
     const timeLimitSec = (timeLimitMs / 1000).toFixed(2);
     
-    // File size ceiling: 40MB, Memory ceiling: 512MB
+    // Support command strings or binary paths
+    const targetCommand = execTarget.startsWith('/') || execTarget.startsWith('java') || execTarget.startsWith('python3')
+      ? execTarget
+      : `/sandbox/${execTarget}`;
+
+    // File size ceiling: 40MB (memory ceiling strictly enforced by Docker cgroups)
     const bashScript = `
       ulimit -f 40960;
-      ulimit -v 524288;
-      timeout -s SIGKILL ${timeLimitSec}s /sandbox/${binaryName} < /sandbox/${inputFile} > /sandbox/${outputFile} 2> /sandbox/err.txt
+      timeout -s SIGKILL ${timeLimitSec}s ${targetCommand} < /sandbox/${inputFile} > /sandbox/${outputFile} 2> /sandbox/err.txt
     `;
 
     const dockerArgs = [

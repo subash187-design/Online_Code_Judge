@@ -1,6 +1,6 @@
-﻿FROM alpine:3.19
+FROM alpine:3.19
 
-RUN apk add --no-cache g++ bash coreutils procps util-linux
+RUN apk add --no-cache gcc g++ python3 openjdk17-jdk bash coreutils procps util-linux
 
 # Create non-privileged judge runner user
 RUN addgroup -g 1001 judge_group && \

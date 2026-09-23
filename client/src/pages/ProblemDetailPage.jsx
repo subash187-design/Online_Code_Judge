@@ -15,7 +15,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
-const DEFAULT_CPP_BOILERPLATE = `#include <iostream>
+const DEFAULT_BOILERPLATES = {
+  cpp: `#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -29,12 +30,90 @@ int main() {
 
     return 0;
 }
-`;
+`,
+  c: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
 
-function generateStarterBoilerplate(prob) {
-  if (!prob) return DEFAULT_CPP_BOILERPLATE;
-  
+int main() {
+    // Write your solution here
+
+    return 0;
+}
+`,
+  java: `import java.util.*;
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Write your solution here
+
+    }
+}
+`,
+  python: `import sys
+
+def main():
+    # Write your solution here
+    pass
+
+if __name__ == '__main__':
+    main()
+`
+};
+
+function generateStarterBoilerplate(prob, lang = 'cpp') {
+  if (!prob) return DEFAULT_BOILERPLATES[lang] || DEFAULT_BOILERPLATES.cpp;
+
+  // Specific Problem 1 (Sum of Two Numbers / Two Sum Basic)
   if (prob.id === 1) {
+    if (lang === 'c') {
+      return `#include <stdio.h>
+
+int main() {
+    long long a, b;
+    if (scanf("%lld %lld", &a, &b) == 2) {
+        // Compute and print the sum of two numbers
+        printf("%lld\\n", a + b);
+    }
+    return 0;
+}
+`;
+    }
+    if (lang === 'java') {
+      return `import java.util.*;
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextLong()) {
+            long a = sc.nextLong();
+            long b = sc.nextLong();
+            // Compute and print the sum of two numbers
+            System.out.println(a + b);
+        }
+    }
+}
+`;
+    }
+    if (lang === 'python') {
+      return `import sys
+
+def main():
+    input_data = sys.stdin.read().split()
+    if len(input_data) >= 2:
+        a = int(input_data[0])
+        b = int(input_data[1])
+        # Compute and print the sum of two numbers
+        print(a + b)
+
+if __name__ == '__main__':
+    main()
+`;
+    }
+    // C++
     return `#include <iostream>
 using namespace std;
 
@@ -53,10 +132,51 @@ int main() {
 `;
   }
 
+  // String Problems
   if (prob.id === 2 || prob.topic === 'Strings') {
+    if (lang === 'c') {
+      return `#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char s[100005];
+    if (scanf("%s", s) == 1) {
+        // Write your solution for: ${prob.title}
+        
+    }
+    return 0;
+}
+`;
+    }
+    if (lang === 'java') {
+      return `import java.util.*;
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNext()) {
+            String s = sc.next();
+            // Write your solution for: ${prob.title}
+            
+        }
+    }
+}
+`;
+    }
+    if (lang === 'python') {
+      return `import sys
+
+def main():
+    s = sys.stdin.read().strip()
+    # Write your solution for: ${prob.title}
+    pass
+
+if __name__ == '__main__':
+    main()
+`;
+    }
     return `#include <iostream>
 #include <string>
-#include <vector>
 #include <algorithm>
 using namespace std;
 
@@ -75,7 +195,68 @@ int main() {
 `;
   }
 
-  if (prob.id === 3 || prob.title?.toLowerCase().includes('two sum')) {
+  // Array / Two Sum / Numerical Problems
+  if (prob.id === 3 || prob.title?.toLowerCase().includes('two sum') || prob.topic === 'Arrays & Hashing') {
+    if (lang === 'c') {
+      return `#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n;
+    long long target;
+    if (scanf("%d %lld", &n, &target) == 2) {
+        long long *nums = (long long*)malloc(n * sizeof(long long));
+        for (int i = 0; i < n; i++) {
+            scanf("%lld", &nums[i]);
+        }
+
+        // Write your solution for: ${prob.title}
+
+        free(nums);
+    }
+    return 0;
+}
+`;
+    }
+    if (lang === 'java') {
+      return `import java.util.*;
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        if (sc.hasNextInt()) {
+            int n = sc.nextInt();
+            long target = sc.nextLong();
+            long[] nums = new long[n];
+            for (int i = 0; i < n; i++) {
+                nums[i] = sc.nextLong();
+            }
+
+            // Write your solution for: ${prob.title}
+
+        }
+    }
+}
+`;
+    }
+    if (lang === 'python') {
+      return `import sys
+
+def main():
+    data = sys.stdin.read().split()
+    if not data:
+        return
+    n = int(data[0])
+    target = int(data[1])
+    nums = [int(x) for x in data[2:2+n]]
+
+    # Write your solution for: ${prob.title}
+    pass
+
+if __name__ == '__main__':
+    main()
+`;
+    }
     return `#include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -88,7 +269,6 @@ int main() {
 
     int n;
     long long target;
-    // Input format: First line contains N and target
     if (cin >> n >> target) {
         vector<long long> nums(n);
         for (int i = 0; i < n; i++) {
@@ -104,48 +284,7 @@ int main() {
 `;
   }
 
-  if (prob.topic === 'Arrays & Hashing' || prob.topic === 'Two Pointers & Sliding Window' || prob.topic === 'Binary Search') {
-    return `#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
-using namespace std;
-
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    int n;
-    if (cin >> n) {
-        vector<long long> nums(n);
-        for (int i = 0; i < n; i++) {
-            cin >> nums[i];
-        }
-        
-        // Write your solution for: ${prob.title}
-        
-    }
-
-    return 0;
-}
-`;
-  }
-
-  return `#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-using namespace std;
-
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    // Write your solution for: ${prob.title}
-
-    return 0;
-}
-`;
+  return DEFAULT_BOILERPLATES[lang] || DEFAULT_BOILERPLATES.cpp;
 }
 
 export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem }) {
@@ -158,9 +297,43 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
   const [activeStageId, setActiveStageId] = useState(null);
   const [stageFeedback, setStageFeedback] = useState(null);
 
+  const [selectedLanguage, setSelectedLanguage] = useState('cpp');
+  const [codeCache, setCodeCache] = useState({});
   const [loading, setLoading] = useState(true);
-  const [code, setCode] = useState(DEFAULT_CPP_BOILERPLATE);
+  const [code, setCode] = useState(DEFAULT_BOILERPLATES.cpp);
   const [customInput, setCustomInput] = useState('');
+
+  const handleLanguageChange = (newLang) => {
+    // 1. Cache current code under current language
+    setCodeCache(prev => ({
+      ...prev,
+      [selectedLanguage]: code
+    }));
+
+    // 2. Update active language
+    setSelectedLanguage(newLang);
+
+    // 3. Load code from cache or generate language starter template
+    if (codeCache[newLang]) {
+      setCode(codeCache[newLang]);
+    } else {
+      const starter = generateStarterBoilerplate(problem, newLang);
+      setCode(starter);
+      setCodeCache(prev => ({
+        ...prev,
+        [newLang]: starter
+      }));
+    }
+  };
+
+  const handleResetCode = () => {
+    const starter = generateStarterBoilerplate(problem, selectedLanguage);
+    setCode(starter);
+    setCodeCache(prev => ({
+      ...prev,
+      [selectedLanguage]: starter
+    }));
+  };
   
   // Left Panel Tab: 'description' | 'stages' | 'solutions' | 'submissions'
   const [leftTab, setLeftTab] = useState('description');
@@ -279,7 +452,9 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
       setProblem(probRes);
       setStagesData(stagesRes);
-      setCode(generateStarterBoilerplate(probRes));
+      const initialCode = generateStarterBoilerplate(probRes, selectedLanguage);
+      setCode(initialCode);
+      setCodeCache({ [selectedLanguage]: initialCode });
 
       if (probRes?.sample_test_cases && probRes.sample_test_cases.length > 0) {
         setCustomInput(probRes.sample_test_cases[0].input || '');
@@ -332,7 +507,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          language: 'cpp',
+          language: selectedLanguage,
           code,
           custom_input: customInput,
           time_limit_ms: problem?.time_limit_ms || 1000,
@@ -367,7 +542,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: effectiveUserId,
-          language: 'cpp',
+          language: selectedLanguage,
           code
         })
       });
@@ -884,12 +1059,16 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           <div className="flex-1 overflow-hidden relative">
             <CodeEditor
               code={code}
-              onChange={setCode}
-              onReset={() => {
-                if (problem) {
-                  setCode(generateStarterBoilerplate(problem));
-                }
+              language={selectedLanguage}
+              onLanguageChange={handleLanguageChange}
+              onChange={(newCode) => {
+                setCode(newCode);
+                setCodeCache(prev => ({
+                  ...prev,
+                  [selectedLanguage]: newCode
+                }));
               }}
+              onReset={handleResetCode}
               isMaximized={isMaximized}
               onToggleMaximize={() => setIsMaximized(!isMaximized)}
             />

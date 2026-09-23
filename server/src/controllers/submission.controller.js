@@ -13,9 +13,7 @@ exports.submitCode = async (req, res) => {
       return res.status(400).json({ error: 'problem_id and code are required' });
     }
 
-    if (language !== 'cpp') {
-      return res.status(400).json({ error: 'Only C++ (cpp) is supported in Phase 1' });
-    }
+    const normalizedLang = JudgeService.normalizeLanguage(language);
 
     // Verify problem exists
     const problem = await ProblemService.getProblemById(problem_id);
@@ -30,7 +28,8 @@ exports.submitCode = async (req, res) => {
     }
 
     // Execute through sandbox
-    const result = JudgeService.executeCppSubmission(
+    const result = JudgeService.executeSubmission(
+      normalizedLang,
       code,
       testCases,
       problem.time_limit_ms,
@@ -47,7 +46,7 @@ exports.submitCode = async (req, res) => {
     const saved = await db.query(insertQuery, [
       effectiveUserId,
       problem_id,
-      language,
+      normalizedLang,
       code,
       result.verdict,
       result.execution_time_ms,
@@ -72,11 +71,8 @@ exports.runCustom = async (req, res) => {
       return res.status(400).json({ error: 'code is required' });
     }
 
-    if (language !== 'cpp') {
-      return res.status(400).json({ error: 'Only C++ (cpp) is supported in Phase 1' });
-    }
-
-    const result = JudgeService.runCustomInput(code, custom_input, time_limit_ms, memory_limit_kb);
+    const normalizedLang = JudgeService.normalizeLanguage(language);
+    const result = JudgeService.runCustomInput(normalizedLang, code, custom_input, time_limit_ms, memory_limit_kb);
     Logger.info('SubmissionController', `Custom run completed with verdict: ${result.verdict}`);
     return res.json(result);
   } catch (err) {
@@ -105,7 +101,7 @@ exports.getSubmissionHistory = async (req, res) => {
     const result = await db.query(query, params);
     return res.json(result.rows);
   } catch (err) {
-    Logger.error('SubmissionController', 'Error fetching submissions', err);
-    return res.status(500).json({ error: 'Failed to fetch submissions' });
+    Logger.error('SubmissionController', 'Get history error', err);
+    return res.status(500).json({ error: 'Failed to retrieve submission history' });
   }
 };

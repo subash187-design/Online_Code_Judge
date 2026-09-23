@@ -1,17 +1,19 @@
 /**
- * CppStructuralScanner
- * Performs syntax-level pattern and control-flow analysis on C++ source code.
+ * MultiLanguageStructuralScanner
+ * Performs syntax-level pattern and control-flow analysis on C, C++, Java, and Python source code.
  * Deterministic, in-memory structural analysis without external shell calls.
  */
 
-class CppStructuralScanner {
+class MultiLanguageStructuralScanner {
   /**
-   * Scans clean C++ code and extracts structural AST metadata
-   * @param {string} sourceCode - Raw C++ source code
+   * Scans clean code and extracts structural AST metadata
+   * @param {string} sourceCode - Raw source code
+   * @param {string} language - 'c' | 'cpp' | 'java' | 'python'
    * @returns {Object} patterns & loop tree
    */
-  static scan(sourceCode) {
-    const cleanCode = this._stripCommentsAndStrings(sourceCode);
+  static scan(sourceCode, language = 'cpp') {
+    const lang = (language || 'cpp').toLowerCase();
+    const cleanCode = this._stripCommentsAndStrings(sourceCode, lang);
 
     const patterns = {
       rootLoops: [],
@@ -19,9 +21,9 @@ class CppStructuralScanner {
       totalLoopCount: 0,
       hasStdSort: false,
       hasBinarySearch: false,
-      hasTreeMap: false,        // std::map, std::set -> O(log N)
-      hasHashMap: false,        // std::unordered_map, std::unordered_set -> O(1)
-      hasHeapAllocation: false,  // new int[], malloc, vector
+      hasTreeMap: false,        // std::map, TreeMap -> O(log N)
+      hasHashMap: false,        // std::unordered_map, HashMap, dict, set -> O(1)
+      hasHeapAllocation: false,  // new int[], malloc, vector, dynamic lists
       hasTwoPointers: false,
       hasBranchingRecursion: false,
       hasHalvingRecursion: false,
@@ -31,16 +33,38 @@ class CppStructuralScanner {
       loopBoundVariables: []
     };
 
+    if (lang === 'python') {
+      this._scanPython(cleanCode, patterns);
+    } else {
+      // C, C++, Java
+      this._scanCStyle(cleanCode, patterns, lang);
+    }
+
+    return patterns;
+  }
+
+  /**
+   * Scans C, C++, and Java syntax
+   */
+  static _scanCStyle(cleanCode, patterns, lang) {
     // 1. Containers and Data Structures
-    if (/\bunordered_(map|set)\b/.test(cleanCode)) {
+    if (/\bunordered_(map|set)\b|\bHashMap\b|\bHashSet\b/.test(cleanCode)) {
       patterns.hasHashMap = true;
     }
-    if (/\b(map|set)\b/.test(cleanCode) && !/\bunordered_(map|set)\b/.test(cleanCode)) {
+    if ((/\b(map|set)\b/.test(cleanCode) && !/\bunordered_(map|set)\b/.test(cleanCode)) || /\bTreeMap\b|\bTreeSet\b/.test(cleanCode)) {
       patterns.hasTreeMap = true;
     }
-    if (/vector\s*<\s*vector\s*</.test(cleanCode) || /\[\s*[a-zA-Z0-9_]+\s*\]\s*\[\s*[a-zA-Z0-9_]+\s*\]/.test(cleanCode)) {
+    if (
+      /vector\s*<\s*vector\s*</.test(cleanCode) ||
+      /\[\s*[a-zA-Z0-9_]+\s*\]\s*\[\s*[a-zA-Z0-9_]+\s*\]/.test(cleanCode) ||
+      /new\s+[a-zA-Z0-9_]+\s*\[[^\]]+\]\s*\[[^\]]+\]/.test(cleanCode)
+    ) {
       patterns.vectorDimensions = 2;
-    } else if (/vector\s*</.test(cleanCode) || /\b(unordered_map|unordered_set|map|set|list|queue|stack)\b/.test(cleanCode)) {
+    } else if (
+      /vector\s*</.test(cleanCode) ||
+      /\b(unordered_map|unordered_set|map|set|list|queue|stack|ArrayList|LinkedList)\b/.test(cleanCode) ||
+      /new\s+[a-zA-Z0-9_]+\s*\[[^\]]+\]/.test(cleanCode)
+    ) {
       patterns.vectorDimensions = 1;
     }
     if (/\bnew\s+[a-zA-Z0-9_]+\s*\[|\bmalloc\s*\(|\bcalloc\s*\(/.test(cleanCode)) {
@@ -48,18 +72,18 @@ class CppStructuralScanner {
     }
 
     // 2. Standard Library Algorithms
-    if (/\b(std::)?(sort|stable_sort|partial_sort)\b/.test(cleanCode)) {
+    if (/\b(std::)?(sort|stable_sort|partial_sort)\b|\bArrays\.sort\b|\bCollections\.sort\b/.test(cleanCode)) {
       patterns.hasStdSort = true;
     }
-    if (/\b(std::)?(binary_search|lower_bound|upper_bound)\b/.test(cleanCode)) {
+    if (/\b(std::)?(binary_search|lower_bound|upper_bound)\b|\bbinarySearch\b/.test(cleanCode)) {
       patterns.hasBinarySearch = true;
     }
 
     // 3. Recursion & Memoization Detection
-    this._analyzeRecursion(cleanCode, patterns);
+    this._analyzeRecursionCStyle(cleanCode, patterns);
 
     // 4. Accurate Loop Control Flow Tree
-    this._analyzeLoops(cleanCode, patterns);
+    this._analyzeLoopsCStyle(cleanCode, patterns);
 
     // 5. Two Pointers Pattern
     if (
@@ -69,14 +93,111 @@ class CppStructuralScanner {
     ) {
       patterns.hasTwoPointers = true;
     }
-
-    return patterns;
   }
 
   /**
-   * Parses loop headers and statement bodies to construct a precise loop nesting tree
+   * Scans Python syntax
    */
-  static _analyzeLoops(cleanCode, patterns) {
+  static _scanPython(cleanCode, patterns) {
+    // 1. Containers and Data Structures
+    if (/\b(dict|set)\b|\bdefaultdict\b|\bCounter\b|{[^}:]*:[^}]*}|\{[^}]+\}/.test(cleanCode)) {
+      patterns.hasHashMap = true;
+    }
+    if (/\[\s*\[.*for.*in.*\]\s*for.*in.*\]/.test(cleanCode)) {
+      patterns.vectorDimensions = 2;
+    } else if (/\[.*for.*in.*\]|\blist\b|\[\s*\]/.test(cleanCode)) {
+      patterns.vectorDimensions = 1;
+    }
+
+    // 2. Standard Algorithms
+    if (/\.sort\(|\bsorted\(/.test(cleanCode)) {
+      patterns.hasStdSort = true;
+    }
+    if (/\bbisect(_left|_right)?\b/.test(cleanCode)) {
+      patterns.hasBinarySearch = true;
+    }
+
+    // 3. Recursion in Python (def fnName)
+    const fnMatches = [...cleanCode.matchAll(/def\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\):/g)];
+    for (const fn of fnMatches) {
+      const fnName = fn[1];
+      if (['main', '__init__'].includes(fnName)) continue;
+      const fnRegex = new RegExp(`\\b${fnName}\\s*\\(`, 'g');
+      const calls = [...cleanCode.matchAll(fnRegex)];
+      if (calls.length >= 3) {
+        patterns.hasBranchingRecursion = true;
+        if (/@cache|@lru_cache|memo|dp/.test(cleanCode)) {
+          patterns.hasMemoization = true;
+        }
+      } else if (calls.length === 2) {
+        patterns.hasLinearRecursion = true;
+      }
+    }
+
+    // 4. Loop nesting by line indentation
+    const lines = cleanCode.split('\n');
+    let maxDepth = 0;
+    let loopStack = [];
+    const simulatedRoots = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) continue;
+
+      const indent = line.search(/\S/);
+      // Check if indent returned to an earlier level
+      while (loopStack.length > 0 && indent <= loopStack[loopStack.length - 1].indent) {
+        loopStack.pop();
+      }
+
+      const loopMatch = trimmed.match(/^(for\s+[a-zA-Z0-9_,\s]+\s+in|while\s+)/);
+      if (loopMatch) {
+        const loopType = loopMatch[1].startsWith('for') ? 'for' : 'while';
+        let boundVar = 'N';
+        let complexity = 'O(N)';
+
+        if (/range\s*\([^)]*,\s*[^)]*,\s*[^)]*(\/\/|\/)\s*2/.test(trimmed)) {
+          complexity = 'O(log N)';
+        }
+
+        const loopNode = {
+          loopType,
+          depth: loopStack.length + 1,
+          complexity,
+          boundVar,
+          children: []
+        };
+
+        if (loopStack.length === 0) {
+          simulatedRoots.push(loopNode);
+        } else {
+          loopStack[loopStack.length - 1].node.children.push(loopNode);
+        }
+
+        loopStack.push({ indent, node: loopNode });
+        patterns.totalLoopCount++;
+        maxDepth = Math.max(maxDepth, loopStack.length);
+      }
+    }
+
+    patterns.rootLoops = simulatedRoots;
+    patterns.maxLoopNestingDepth = maxDepth;
+
+    // Two pointers in Python
+    if (
+      maxDepth === 1 &&
+      /\b(left|\bl\b|start|low|ptr1)\s*\+=/.test(cleanCode) &&
+      /\b(right|\br\b|end|high|ptr2)\s*-=/.test(cleanCode)
+    ) {
+      patterns.hasTwoPointers = true;
+    }
+  }
+
+  /**
+   * Parses loop headers and statement bodies for C-style languages
+   */
+  static _analyzeLoopsCStyle(cleanCode, patterns) {
     const loopHeaderRegex = /\b(for|while)\s*\(/g;
     let match;
     const allLoops = [];
@@ -104,7 +225,6 @@ class CppStructuralScanner {
 
       let bodyEnd = bodyStart;
       if (cleanCode[bodyStart] === '{') {
-        // Compound statement body
         let braceDepth = 1;
         bodyEnd = bodyStart + 1;
         while (bodyEnd < cleanCode.length && braceDepth > 0) {
@@ -113,67 +233,33 @@ class CppStructuralScanner {
           bodyEnd++;
         }
       } else {
-        // Single statement body (ends at ';')
-        let subBraceDepth = 0;
-        let subParenDepth = 0;
-        bodyEnd = bodyStart;
-        while (bodyEnd < cleanCode.length) {
-          const ch = cleanCode[bodyEnd];
-          if (ch === '{') subBraceDepth++;
-          else if (ch === '}') subBraceDepth--;
-          else if (ch === '(') subParenDepth++;
-          else if (ch === ')') subParenDepth--;
-          else if (ch === ';' && subBraceDepth === 0 && subParenDepth === 0) {
-            bodyEnd++;
-            break;
-          }
+        // Single statement loop
+        while (bodyEnd < cleanCode.length && cleanCode[bodyEnd] !== ';') {
           bodyEnd++;
         }
+        bodyEnd++;
       }
 
-      // Determine step complexity and bound variable
-      let isLogarithmic = false;
+      // Determine step complexity
+      let complexity = 'O(N)';
       let boundVar = 'N';
 
-      if (loopType === 'for') {
-        const parts = headerContent.split(';');
-        if (parts.length >= 3) {
-          const cond = parts[1];
-          const step = parts[2];
-          if (/\*=|>>=|\/=|i\s*=\s*i\s*\*|i\s*=\s*i\s*\/|\bpow\b/.test(step)) {
-            isLogarithmic = true;
-          }
-          const bMatch = cond.match(/[<>=!]+\s*([a-zA-Z0-9_]+)/);
-          if (bMatch && !['0', 'true', 'false', 'NULL'].includes(bMatch[1])) {
-            boundVar = bMatch[1].toUpperCase();
-          }
-        }
-      } else if (loopType === 'while') {
-        const bodySlice = cleanCode.slice(bodyStart, bodyEnd);
-        if (/\/\s*2|>>\s*1|\*=|>>=|\/=|mid\s*=/.test(bodySlice) || /\b(low|high)\b/.test(headerContent)) {
-          isLogarithmic = true;
-        }
-        const bMatch = headerContent.match(/[<>=!]+\s*([a-zA-Z0-9_]+)/);
-        if (bMatch && !['0', 'true', 'false', 'NULL'].includes(bMatch[1])) {
-          boundVar = bMatch[1].toUpperCase();
-        }
+      if (/\*=\s*2|\/=\s*2|>>=\s*1|<<=\s*1/.test(headerContent)) {
+        complexity = 'O(log N)';
       }
 
       allLoops.push({
+        loopType,
         startIndex,
         bodyStart,
         bodyEnd,
-        loopType,
-        headerContent,
-        isLogarithmic,
+        complexity,
         boundVar,
         children: []
       });
     }
 
-    // Build containment tree
-    allLoops.sort((a, b) => a.startIndex - b.startIndex || (b.bodyEnd - b.startIndex) - (a.bodyEnd - a.startIndex));
-
+    // Build hierarchy
     function insertLoop(parent, loop) {
       for (const child of parent.children) {
         if (loop.startIndex >= child.bodyStart && loop.bodyEnd <= child.bodyEnd) {
@@ -202,7 +288,6 @@ class CppStructuralScanner {
     patterns.rootLoops = rootLoops;
     patterns.totalLoopCount = allLoops.length;
 
-    // Calculate maximum nesting depth
     function getDepth(node) {
       if (!node.children || node.children.length === 0) return 1;
       return 1 + Math.max(...node.children.map(getDepth));
@@ -216,16 +301,15 @@ class CppStructuralScanner {
   }
 
   /**
-   * Accurately analyzes recursion strictly inside defined function bodies
+   * Analyzes recursion for C-style languages
    */
-  static _analyzeRecursion(cleanCode, patterns) {
-    const funcDefs = [...cleanCode.matchAll(/(?:int|void|long|bool|double|string|auto)\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*\{/g)];
+  static _analyzeRecursionCStyle(cleanCode, patterns) {
+    const funcDefs = [...cleanCode.matchAll(/(?:int|void|long|bool|double|string|auto|public|private|static)\s+([a-zA-Z0-9_]+)\s*\(([^)]*)\)\s*\{/g)];
 
     for (const f of funcDefs) {
       const fnName = f[1];
       if (['main', 'ios_base', 'cin', 'cout'].includes(fnName)) continue;
 
-      // Extract function body between balanced { and }
       const bodyStart = f.index + f[0].length;
       let braceDepth = 1;
       let bodyEnd = bodyStart;
@@ -236,7 +320,6 @@ class CppStructuralScanner {
       }
       const funcBody = cleanCode.slice(bodyStart, bodyEnd);
 
-      // Check recursive calls inside the body
       const callMatches = [...funcBody.matchAll(new RegExp(`\\b${fnName}\\s*\\(([^)]*)\\)`, 'g'))];
 
       if (callMatches.length >= 2) {
@@ -256,9 +339,18 @@ class CppStructuralScanner {
   }
 
   /**
-   * Strips comments and string/char literals safely
+   * Strips comments and string/char literals safely according to language rules
    */
-  static _stripCommentsAndStrings(code) {
+  static _stripCommentsAndStrings(code, lang = 'cpp') {
+    if (lang === 'python') {
+      return code
+        .replace(/'''[\s\S]*?'''/g, '')
+        .replace(/"""[\s\S]*?"""/g, '')
+        .replace(/#.*$/gm, '')
+        .replace(/"(?:[^"\\]|\\.)*"/g, '""')
+        .replace(/'(?:[^'\\]|\\.)*'/g, "''");
+    }
+
     return code
       .replace(/\/\/.*$/gm, '')           // Single-line comments
       .replace(/\/\*[\s\S]*?\*\//g, '')   // Multi-line comments
@@ -267,4 +359,4 @@ class CppStructuralScanner {
   }
 }
 
-module.exports = CppStructuralScanner;
+module.exports = MultiLanguageStructuralScanner;

@@ -63,8 +63,9 @@ class StageService {
     };
   }
 
-  static async submitStageCode(userId = 1, stageId, language, code) {
+  static async submitStageCode(userId = 1, stageId, language = 'cpp', code) {
     const client = await db.getClient();
+    const normalizedLang = JudgeService.normalizeLanguage(language);
 
     try {
       await client.query('BEGIN');
@@ -107,7 +108,7 @@ class StageService {
       const memLimit = stage.memory_limit_kb || stage.prob_mem_limit;
 
       // 1. Evaluate against Standard Test Suite
-      let judgeResult = JudgeService.executeCppSubmission(code, tcRes.rows, timeLimit, memLimit);
+      let judgeResult = JudgeService.executeSubmission(normalizedLang, code, tcRes.rows, timeLimit, memLimit);
 
       // 2. Differential Stress Fuzzing (Anti-Hardcoding & Random Inputs)
       let stressFailed = false;
@@ -119,14 +120,36 @@ class StageService {
         fs.mkdirSync(tempDir, { recursive: true });
 
         try {
-          // Compile Candidate
-          fs.writeFileSync(path.join(tempDir, 'Solution.cpp'), code);
-          spawnSync('docker', [
-            'run', '--rm', '--network', 'none', '-v', `${tempDir}:/sandbox`,
-            'judge-runner:latest', 'g++', '-O2', '-std=c++17', '/sandbox/Solution.cpp', '-o', '/sandbox/Solution.out'
-          ]);
+          let candidateCmd = '/sandbox/Solution.out';
 
-          // Compile Reference Oracle
+          if (normalizedLang === 'c') {
+            fs.writeFileSync(path.join(tempDir, 'Solution.c'), code);
+            spawnSync('docker', [
+              'run', '--rm', '--network', 'none', '-v', `${tempDir}:/sandbox`,
+              'judge-runner:latest', 'gcc', '-O2', '/sandbox/Solution.c', '-o', '/sandbox/Solution.out', '-lm'
+            ]);
+            candidateCmd = '/sandbox/Solution.out';
+          } else if (normalizedLang === 'java') {
+            fs.writeFileSync(path.join(tempDir, 'Solution.java'), code);
+            spawnSync('docker', [
+              'run', '--rm', '--network', 'none', '-v', `${tempDir}:/sandbox`,
+              'judge-runner:latest', 'javac', '/sandbox/Solution.java'
+            ]);
+            candidateCmd = 'java -Xmx256m -cp /sandbox Solution';
+          } else if (normalizedLang === 'python') {
+            fs.writeFileSync(path.join(tempDir, 'solution.py'), code);
+            candidateCmd = 'python3 -u /sandbox/solution.py';
+          } else {
+            // C++
+            fs.writeFileSync(path.join(tempDir, 'Solution.cpp'), code);
+            spawnSync('docker', [
+              'run', '--rm', '--network', 'none', '-v', `${tempDir}:/sandbox`,
+              'judge-runner:latest', 'g++', '-O2', '-std=c++17', '/sandbox/Solution.cpp', '-o', '/sandbox/Solution.out'
+            ]);
+            candidateCmd = '/sandbox/Solution.out';
+          }
+
+          // Compile Reference Oracle (C++)
           fs.writeFileSync(path.join(tempDir, 'Reference.cpp'), stage.ref_code);
           spawnSync('docker', [
             'run', '--rm', '--network', 'none', '-v', `${tempDir}:/sandbox`,
@@ -142,7 +165,8 @@ class StageService {
               max_stress_cases: stage.max_stress_cases || 5,
               max_input_size: stage.max_input_size || 10000
             },
-            timeLimit
+            timeLimit,
+            candidateCmd
           );
 
           if (!stressResult.passed) {
@@ -159,7 +183,8 @@ class StageService {
       const analysisResult = AnalyzerService.analyze(
         code,
         { execution_time_ms: judgeResult.execution_time_ms, memory_used_kb: judgeResult.memory_used_kb },
-        stage.expected_time_complexity
+        stage.expected_time_complexity,
+        normalizedLang
       );
 
       // Algomind Progressive Stage Invariant:
@@ -199,7 +224,7 @@ class StageService {
           userId,
           stage.problem_id,
           stageId,
-          language,
+          normalizedLang,
           code,
           judgeResult.verdict,
           judgeResult.execution_time_ms,

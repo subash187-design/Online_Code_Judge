@@ -1,4 +1,4 @@
-const CppStructuralScanner = require('./astParser');
+const StructuralScanner = require('./astParser');
 const Logger = require('../../utils/logger');
 
 // Asymptotic complexity order (lower number = better performance)
@@ -27,15 +27,16 @@ const ASYMPTOTIC_HIERARCHY = {
 class AnalyzerService {
   /**
    * Synthesizes Big-O time and space complexity based on structural scanner output
-   * @param {string} sourceCode - Submitted C++ source code
+   * @param {string} sourceCode - Submitted source code
    * @param {Object} runMetrics - { execution_time_ms, memory_used_kb }
    * @param {string} expectedStageComplexity - e.g. "O(N)", "O(N^2)" (for comparison only)
+   * @param {string} language - 'c' | 'cpp' | 'java' | 'python'
    */
-  static analyze(sourceCode, runMetrics = {}, expectedStageComplexity = null) {
-    Logger.info('AnalyzerService', 'Complexity analysis started');
+  static analyze(sourceCode, runMetrics = {}, expectedStageComplexity = null, language = 'cpp') {
+    Logger.info('AnalyzerService', `Complexity analysis started for language: ${language}`);
 
     try {
-      const ast = CppStructuralScanner.scan(sourceCode);
+      const ast = StructuralScanner.scan(sourceCode, language);
       const detected = [];
 
       let timeEst = 'O(1)';
