@@ -1,82 +1,11 @@
 import React from 'react';
 import { 
-  Layers, 
   Cpu, 
-  Sparkles, 
   ArrowRight, 
-  Code2, 
-  CheckCircle2,
-  TrendingUp, 
-  Terminal,
-  Activity,
-  ArrowDown,
-  Brain,
-  ShieldCheck,
-  Award,
-  Zap
+  CheckCircle2
 } from 'lucide-react';
 
 export default function LandingPage({ onNavigate }) {
-  // Topic Tags for Interview Prep
-  const interviewTopics = [
-    "Arrays", "Strings", "Hashing", "Sliding Window", "Two Pointers", 
-    "Binary Search", "Linked Lists", "Trees", "Graphs", 
-    "Dynamic Programming", "Greedy", "Heaps", "Intervals"
-  ];
-
-  // 4 Steps for "Learn the Way You Solve Problems"
-  const problemSolvingSteps = [
-    {
-      num: "01",
-      title: "Start Simple",
-      desc: "Begin with the most straightforward solution. Focus on understanding the problem before worrying about optimization."
-    },
-    {
-      num: "02",
-      title: "Understand Your Complexity",
-      desc: "Algomind analyzes your submitted code and estimates its time and space complexity."
-    },
-    {
-      num: "03",
-      title: "Improve Step by Step",
-      desc: "Once your solution works, move to the next stage and improve your approach instead of immediately looking at the answer."
-    },
-    {
-      num: "04",
-      title: "Reach Optimal",
-      desc: "Complete the optimization journey and understand why the final approach is more efficient."
-    }
-  ];
-
-  // 5 Pillars for "A Different Way to Practice DSA"
-  const dsaPillars = [
-    {
-      title: "Online Judge",
-      desc: "Run and submit your code against test cases.",
-      icon: <Terminal size={18} className="text-blue-500" />
-    },
-    {
-      title: "Complexity Analyzer",
-      desc: "Understand the efficiency of your approach.",
-      icon: <Cpu size={18} className="text-indigo-500" />
-    },
-    {
-      title: "AI Mentor",
-      desc: "Receive guidance based on your actual code.",
-      icon: <Sparkles size={18} className="text-amber-500" />
-    },
-    {
-      title: "Progressive Stages",
-      desc: "Move from brute force to optimal solutions.",
-      icon: <Layers size={18} className="text-emerald-500" />
-    },
-    {
-      title: "Optimization Analytics",
-      desc: "Track how your problem-solving skills evolve.",
-      icon: <TrendingUp size={18} className="text-rose-500" />
-    }
-  ];
-
   // Flowchart steps for "What is Algomind?"
   const flowchartSteps = [
     "Problem",
@@ -205,95 +134,7 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* 3. LEARN THE WAY YOU SOLVE PROBLEMS */}
-      <section className="py-14 md:py-20 bg-[#f4f6f8] dark:bg-[#111111] border-b border-[#e2e4e8] dark:border-[#222222]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Learn the Way You Solve Problems
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">
-              A structured progression designed around genuine understanding.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {problemSolvingSteps.map((step, idx) => (
-              <div 
-                key={idx}
-                className="p-6 rounded-2xl bg-white dark:bg-[#181818] border border-[#e2e4e8] dark:border-[#262626] shadow-xs flex flex-col justify-between space-y-4 hover:border-slate-300 dark:hover:border-[#383838] transition-all"
-              >
-                <div className="space-y-3">
-                  <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-md border border-blue-200 dark:border-blue-900/60 inline-block">
-                    Step {step.num}
-                  </span>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                    {step.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-400 leading-relaxed font-normal">
-                    {step.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 4. AI CODE MENTOR */}
-      <section className="py-14 md:py-20 bg-white dark:bg-[#161616] border-b border-[#e2e4e8] dark:border-[#222222]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="max-w-3xl mx-auto text-center space-y-4 mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 text-xs font-semibold border border-amber-200 dark:border-amber-900/60">
-              <Sparkles size={13} />
-              <span>Socratic Intelligence</span>
-            </div>
-            
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              AI Code Mentor
-            </h2>
-            
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-zinc-200">
-              Don't just get the answer. Learn how to find it.
-            </h3>
-            
-            <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400 leading-relaxed font-normal">
-              The AI Mentor analyzes your <strong>problem, current stage, submitted code, complexity, and submission result</strong> to provide guidance specific to your solution.
-            </p>
-          </div>
-
-          {/* Progressive Hints Card */}
-          <div className="max-w-2xl mx-auto p-6 rounded-2xl bg-indigo-50/60 dark:bg-indigo-950/20 border border-indigo-200/80 dark:border-indigo-900/40 text-center space-y-4 shadow-xs">
-            <div className="text-xs font-mono font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
-              Progressive Hints When You Are Stuck
-            </div>
-            
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm font-semibold">
-              <span className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#1e1e1e] text-slate-800 dark:text-zinc-200 border border-indigo-200 dark:border-indigo-900/60 shadow-xs">
-                Gentle Hint
-              </span>
-              <span className="text-indigo-400">→</span>
-              <span className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#1e1e1e] text-slate-800 dark:text-zinc-200 border border-indigo-200 dark:border-indigo-900/60 shadow-xs">
-                Deeper Hint
-              </span>
-              <span className="text-indigo-400">→</span>
-              <span className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#1e1e1e] text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800 shadow-xs font-bold">
-                Strong Hint
-              </span>
-            </div>
-
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-zinc-300 font-medium italic pt-1">
-              "The goal is to help you discover the improvement yourself."
-            </p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* 5. COMPLEXITY ANALYSIS */}
+      {/* 3. COMPLEXITY ANALYSIS */}
       <section className="py-14 md:py-20 bg-[#f4f6f8] dark:bg-[#111111] border-b border-[#e2e4e8] dark:border-[#222222]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -342,153 +183,7 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* 6. YOUR OPTIMIZATION JOURNEY */}
-      <section className="py-14 md:py-20 bg-white dark:bg-[#161616] border-b border-[#e2e4e8] dark:border-[#222222]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="max-w-3xl mx-auto text-center space-y-3 mb-10">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 text-xs font-semibold border border-emerald-200 dark:border-emerald-900/60">
-              <TrendingUp size={13} />
-              <span>Progress Tracking</span>
-            </div>
-
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Your Optimization Journey
-            </h2>
-            
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-zinc-200">
-              See how your solutions improve.
-            </h3>
-            
-            <p className="text-sm sm:text-base text-slate-600 dark:text-zinc-400">
-              Track your progress from one approach to another.
-            </p>
-          </div>
-
-          {/* Big-O Evolution Pill */}
-          <div className="max-w-md mx-auto mb-10 flex items-center justify-center gap-3 font-mono text-sm font-bold bg-[#f0f2f5] dark:bg-[#1e1e1e] p-3 rounded-2xl border border-[#e0e2e6] dark:border-[#333333] shadow-xs">
-            <span className="text-amber-700 dark:text-amber-400">O(N²)</span>
-            <span className="text-slate-400">→</span>
-            <span className="text-blue-700 dark:text-blue-400">O(N log N)</span>
-            <span className="text-slate-400">→</span>
-            <span className="text-emerald-600 dark:text-emerald-400">O(N) ⚡</span>
-          </div>
-
-          {/* View Features Pill Grid */}
-          <div className="max-w-3xl mx-auto mb-8">
-            <div className="text-center text-xs font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 mb-4">
-              View Your:
-            </div>
-            
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {[
-                "Submission History",
-                "Stage Progress",
-                "Runtime",
-                "Memory Usage",
-                "Complexity Changes",
-                "Optimization History",
-                "Solved Problems"
-              ].map((pill, idx) => (
-                <span 
-                  key={idx}
-                  className="px-3 py-1.5 rounded-xl bg-[#f8f9fa] dark:bg-[#1a1a1a] text-slate-700 dark:text-zinc-300 text-xs font-semibold border border-[#e2e4e8] dark:border-[#2e2e2e] shadow-xs"
-                >
-                  • {pill}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <p className="text-center text-sm font-semibold text-slate-900 dark:text-white">
-            Turn every accepted submission into a learning opportunity.
-          </p>
-
-        </div>
-      </section>
-
-      {/* 7. BUILT FOR INTERVIEW PREPARATION */}
-      <section className="py-14 md:py-20 bg-[#f4f6f8] dark:bg-[#111111] border-b border-[#e2e4e8] dark:border-[#222222]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="max-w-3xl mx-auto text-center space-y-3 mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Built for Interview Preparation
-            </h2>
-            
-            <h3 className="text-lg sm:text-xl font-semibold text-slate-800 dark:text-zinc-200">
-              Practice patterns, not just problems.
-            </h3>
-            
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">
-              Prepare with problems covering:
-            </p>
-          </div>
-
-          {/* Interview Topic Chips */}
-          <div className="max-w-3xl mx-auto flex flex-wrap justify-center gap-2 mb-8">
-            {interviewTopics.map((topic, idx) => (
-              <span 
-                key={idx}
-                className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#1a1a1a] text-slate-800 dark:text-zinc-200 text-xs font-medium border border-[#e2e4e8] dark:border-[#2e2e2e] shadow-xs"
-              >
-                {topic}
-              </span>
-            ))}
-          </div>
-
-          <p className="text-center text-xs sm:text-sm text-slate-600 dark:text-zinc-400 max-w-xl mx-auto leading-relaxed">
-            Each problem is designed around progressive improvement so you can practice thinking about{' '}
-            <strong className="text-slate-900 dark:text-white">why one solution is better than another</strong>.
-          </p>
-
-        </div>
-      </section>
-
-      {/* 8. A DIFFERENT WAY TO PRACTICE DSA */}
-      <section className="py-14 md:py-20 bg-white dark:bg-[#161616] border-b border-[#e2e4e8] dark:border-[#222222]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          <div className="max-w-3xl mx-auto text-center space-y-3 mb-10">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              A Different Way to Practice DSA
-            </h2>
-            
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 text-xs font-mono font-bold border border-blue-200 dark:border-blue-900/60">
-              Code → Analyze → Improve → Optimize
-            </div>
-            
-            <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 pt-1">
-              Algomind combines:
-            </p>
-          </div>
-
-          {/* 5 DSA Pillars */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-4xl mx-auto">
-            {dsaPillars.map((item, idx) => (
-              <div 
-                key={idx}
-                className="p-5 rounded-2xl bg-[#f8f9fa] dark:bg-[#1a1a1a] border border-[#e2e4e8] dark:border-[#282828] shadow-xs space-y-2.5 hover:border-slate-300 dark:hover:border-[#383838] transition-all"
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="p-2 rounded-xl bg-white dark:bg-[#242424] border border-[#e0e2e6] dark:border-[#333333] shadow-xs">
-                    {item.icon}
-                  </div>
-                  <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                    {item.title}
-                  </h4>
-                </div>
-                <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed font-normal">
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </section>
-
-      {/* 9. FINAL CALL TO ACTION */}
+      {/* 4. FINAL CALL TO ACTION */}
       <section className="py-16 md:py-24 bg-gradient-to-b from-[#f8f9fa] to-white dark:from-[#121212] dark:to-[#181818] text-center relative overflow-hidden">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
           
@@ -517,7 +212,7 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* 10. CLEAN FOOTER */}
+      {/* 5. CLEAN FOOTER */}
       <footer className="mt-auto bg-[#eaedf0] dark:bg-[#0c0c0c] py-6 text-center text-xs text-slate-500 dark:text-zinc-500 border-t border-[#d8dbe0] dark:border-[#222222]">
         <div className="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px]">
           <div className="flex items-center gap-2">
