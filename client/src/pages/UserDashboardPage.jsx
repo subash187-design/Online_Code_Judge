@@ -1260,6 +1260,24 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                     Verified
                   </span>
                 </div>
+
+                <div className="p-4 rounded-xl bg-[#f8f9fa] border border-[#e2e4e8] dark:bg-[#181818] dark:border-[#2d2d2d] flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Active Session</div>
+                    <div className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Sign out of your account on this device</div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      onNavigate('landing');
+                    }}
+                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-900/60 dark:hover:bg-rose-950/70 transition-all shadow-xs cursor-pointer"
+                  >
+                    <LogOut size={13} />
+                    Log Out
+                  </button>
+                </div>
               </div>
 
               {/* Actions */}

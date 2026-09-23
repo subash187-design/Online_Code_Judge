@@ -6,7 +6,6 @@ import {
   Sun, 
   Moon, 
   User, 
-  LogOut, 
   Shield, 
   LogIn, 
   UserPlus, 
@@ -18,18 +17,12 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 export default function Navbar({ onNavigate, currentPage }) {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { isDark, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNav = (page) => {
     onNavigate(page);
-    setMobileMenuOpen(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    onNavigate('landing');
     setMobileMenuOpen(false);
   };
 
@@ -161,14 +154,6 @@ export default function Navbar({ onNavigate, currentPage }) {
                   <span className="text-[10px] text-slate-500 dark:text-zinc-500 truncate max-w-[110px]">{user?.email}</span>
                 </div>
               </div>
-
-              <button
-                onClick={handleLogout}
-                title="Log out"
-                className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:text-zinc-400 dark:hover:text-rose-400 dark:hover:bg-rose-950/40 rounded-lg transition-all"
-              >
-                <LogOut size={15} />
-              </button>
             </div>
           ) : (
             <div className="flex items-center gap-2.5">
