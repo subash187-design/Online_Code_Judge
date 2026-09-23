@@ -10,8 +10,7 @@ import {
   LogIn, 
   UserPlus, 
   LayoutDashboard,
-  Code2,
-  Compass
+  Code2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -72,44 +71,7 @@ export default function Navbar({ onNavigate, currentPage }) {
           </nav>
         ) : null}
 
-        {!isAuthenticated && (
-          <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-slate-600 dark:text-zinc-400">
-            <button 
-              onClick={() => handleNav('landing')} 
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              Home
-            </button>
-            <a 
-              href="#features" 
-              onClick={() => handleNav('landing')} 
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              Features
-            </a>
-            <a 
-              href="#platform" 
-              onClick={() => handleNav('landing')} 
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              Platform
-            </a>
-            <a 
-              href="#how-it-works" 
-              onClick={() => handleNav('landing')} 
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              How it Works
-            </a>
-            <a 
-              href="#about" 
-              onClick={() => handleNav('landing')} 
-              className="hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              About
-            </a>
-          </nav>
-        )}
+
 
         {/* Right Controls: [Theme Toggle + Sign In / User Avatar] */}
         <div className="hidden md:flex items-center gap-3">
@@ -210,14 +172,7 @@ export default function Navbar({ onNavigate, currentPage }) {
             </>
           )}
           {!isAuthenticated && (
-            <>
-              <button
-                onClick={() => handleNav('landing')}
-                className="w-full text-left px-3 py-2 rounded-xl text-sm text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center gap-2 font-medium"
-              >
-                <Compass size={16} /> Overview
-              </button>
-              <div className="flex flex-col gap-2 pt-2 border-t border-slate-200 dark:border-zinc-800">
+            <div className="flex flex-col gap-2 pt-1">
                 <button
                   onClick={() => handleNav('signin')}
                   className="w-full py-2.5 rounded-xl text-center text-sm font-semibold text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 flex items-center justify-center gap-2"
@@ -231,9 +186,8 @@ export default function Navbar({ onNavigate, currentPage }) {
                   <UserPlus size={15} /> Get started
                 </button>
               </div>
-            </>
-          )}
-        </div>
+            )}
+          </div>
       )}
     </header>
   );
