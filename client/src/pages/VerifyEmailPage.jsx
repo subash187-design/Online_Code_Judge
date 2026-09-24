@@ -1,16 +1,32 @@
-import React, { useState } from 'react';
-import { ShieldCheck, Mail, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShieldCheck, AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
 
 export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
-  const [email, setEmail] = useState(initialEmail);
+  const [email, setEmail] = useState(() => {
+    return initialEmail || localStorage.getItem('pending_verification_email') || '';
+  });
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
 
+  useEffect(() => {
+    if (initialEmail) {
+      setEmail(initialEmail);
+      try {
+        localStorage.setItem('pending_verification_email', initialEmail);
+      } catch {}
+    }
+  }, [initialEmail]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!email) {
+      setError('No verification email found. Please sign up or log in again.');
+      return;
+    }
+
     setError('');
     setSuccess('');
     setLoading(true);
@@ -28,6 +44,10 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
         throw new Error(data.error || 'Verification failed');
       }
 
+      try {
+        localStorage.removeItem('pending_verification_email');
+      } catch {}
+
       setSuccess('Email verified successfully! Redirecting to sign in...');
       setTimeout(() => {
         onNavigate('signin');
@@ -41,7 +61,7 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
 
   const handleResend = async () => {
     if (!email) {
-      setError('Please provide your email address to resend the code.');
+      setError('No verification email found. Please sign up or log in again.');
       return;
     }
 
@@ -100,23 +120,6 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#f8f9fa] border border-[#d5d9de] text-sm text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:border-blue-600 dark:bg-[#141414] dark:border-[#2e2e2e] dark:text-white dark:placeholder-zinc-500 dark:focus:border-blue-500 transition-all"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">
               6-Digit Verification Code
             </label>
             <input
@@ -135,7 +138,7 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
             disabled={loading || otp.length !== 6}
             className="w-full mt-2 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold text-sm transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {loading ? 'Verifying...' : 'Verify Email & Activate'}
+            {loading ? 'Verifying...' : 'Verify Email'}
           </button>
         </form>
 

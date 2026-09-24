@@ -1,8 +1,8 @@
 const authService = require('../services/auth.service');
+const { validateEmailAddress } = require('../utils/emailValidator');
 
 // Password complexity regex: at least 8 chars, 1 uppercase, 1 lowercase, 1 number
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 class AuthController {
   async register(req, res) {
@@ -13,9 +13,12 @@ class AuthController {
         return res.status(400).json({ error: 'Full name is required.' });
       }
 
-      if (!email || !EMAIL_REGEX.test(email.trim())) {
-        return res.status(400).json({ error: 'A valid email address is required.' });
+      // Strict email format and DNS domain check before generating OTP
+      const emailValidation = await validateEmailAddress(email);
+      if (!emailValidation.valid) {
+        return res.status(400).json({ error: emailValidation.error });
       }
+      const validatedEmail = emailValidation.email;
 
       if (!password) {
         return res.status(400).json({ error: 'Password is required.' });
@@ -35,8 +38,8 @@ class AuthController {
       const userAgent = req.headers['user-agent'];
 
       const result = await authService.register({
-        name,
-        email,
+        name: name.trim(),
+        email: validatedEmail,
         password,
         ipAddress,
         userAgent
@@ -67,8 +70,8 @@ class AuthController {
       const userAgent = req.headers['user-agent'];
 
       const result = await authService.verifyEmail({
-        email,
-        otp,
+        email: email.trim().toLowerCase(),
+        otp: otp.trim(),
         ipAddress,
         userAgent
       });
@@ -87,11 +90,16 @@ class AuthController {
         return res.status(400).json({ error: 'Email is required.' });
       }
 
+      const emailValidation = await validateEmailAddress(email);
+      if (!emailValidation.valid) {
+        return res.status(400).json({ error: emailValidation.error });
+      }
+
       const ipAddress = req.ip || req.connection.remoteAddress;
       const userAgent = req.headers['user-agent'];
 
       const result = await authService.resendVerification({
-        email,
+        email: emailValidation.email,
         ipAddress,
         userAgent
       });

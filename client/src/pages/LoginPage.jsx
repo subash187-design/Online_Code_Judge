@@ -19,7 +19,11 @@ export default function LoginPage({ onNavigate }) {
       onNavigate('problems');
     } catch (err) {
       if (err.requiresVerification) {
-        onNavigate('verify-email', { email: err.email || email.trim() });
+        const targetEmail = err.email || email.trim();
+        try {
+          localStorage.setItem('pending_verification_email', targetEmail);
+        } catch {}
+        onNavigate('verify-email', { email: targetEmail });
       } else {
         setError(err.message || 'Login failed. Please check your credentials.');
       }

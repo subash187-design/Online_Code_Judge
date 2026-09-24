@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z]{2,})+$/;
+
 export default function RegisterPage({ onNavigate }) {
   const { register } = useAuth();
   const [name, setName] = useState('');
@@ -15,6 +17,12 @@ export default function RegisterPage({ onNavigate }) {
     e.preventDefault();
     setError('');
 
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !EMAIL_REGEX.test(trimmedEmail) || trimmedEmail.includes('..')) {
+      setError('Please enter a valid email address (e.g. name@example.com).');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
@@ -23,8 +31,12 @@ export default function RegisterPage({ onNavigate }) {
     setLoading(true);
 
     try {
-      const res = await register(name.trim(), email.trim(), password, confirmPassword);
-      onNavigate('verify-email', { email: res.email || email.trim() });
+      const res = await register(name.trim(), trimmedEmail, password, confirmPassword);
+      const targetEmail = res.email || trimmedEmail;
+      try {
+        localStorage.setItem('pending_verification_email', targetEmail);
+      } catch {}
+      onNavigate('verify-email', { email: targetEmail });
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {

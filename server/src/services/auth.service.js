@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/database');
 const { generateOTP, hashToken } = require('../utils/crypto');
+const { validateEmailAddress } = require('../utils/emailValidator');
 const emailService = require('./email.service');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret_judge_jwt_key_987654321_secure';
@@ -28,12 +29,50 @@ class AuthService {
    * Register a new user
    */
   async register({ name, email, password, ipAddress, userAgent }) {
-    const normalizedEmail = email.trim().toLowerCase();
+    // Validate email strictly before generating OTP or saving to database
+    const validation = await validateEmailAddress(email);
+    if (!validation.valid) {
+      throw new Error(validation.error);
+    }
+
+    const normalizedEmail = validation.email;
 
     // Check if user already exists
     const existingUser = await db.query('SELECT id, email_verified FROM users WHERE email = $1', [normalizedEmail]);
     if (existingUser.rows.length > 0) {
-      throw new Error('An account with this email address already exists');
+      if (existingUser.rows[0].email_verified) {
+        throw new Error('An account with this email address already exists. Please sign in.');
+      } else {
+        // User registered previously but has not verified yet: update credentials and issue a fresh OTP
+        const salt = await bcrypt.genSalt(12);
+        const passwordHash = await bcrypt.hash(password, salt);
+        const otp = generateOTP();
+        const hashedOtp = hashToken(otp);
+        const expiry = new Date(Date.now() + OTP_TTL_MINUTES * 60 * 1000);
+
+        await db.query(
+          `UPDATE users 
+           SET name = $1, password_hash = $2, verification_token_hash = $3, verification_token_expiry = $4, updated_at = NOW()
+           WHERE id = $5`,
+          [name.trim(), passwordHash, hashedOtp, expiry, existingUser.rows[0].id]
+        );
+
+        await emailService.sendVerificationEmail(normalizedEmail, otp, name.trim());
+        await this.logAuthEvent({
+          userId: existingUser.rows[0].id,
+          email: normalizedEmail,
+          action: 'REGISTER_RESEND_OTP',
+          ipAddress,
+          userAgent,
+          status: 'SUCCESS'
+        });
+
+        return {
+          message: 'Account registered successfully. A 6-digit verification code has been dispatched to your email.',
+          email: normalizedEmail,
+          requiresVerification: true
+        };
+      }
     }
 
     // New user registration
