@@ -85,7 +85,15 @@ exports.getSubmissionHistory = async (req, res) => {
   try {
     const effectiveUserId = (req.user && req.user.id) ? req.user.id : req.query.user_id;
     const { problem_id } = req.query;
-    let query = `SELECT * FROM submissions WHERE 1=1`;
+    let query = `
+      SELECT id, user_id, problem_id, language, code, verdict, execution_time_ms, memory_used_kb, compile_output, created_at, stage_id
+      FROM (
+        SELECT id, user_id, problem_id, language, code, verdict, execution_time_ms, memory_used_kb, compile_output, created_at, NULL::integer AS stage_id FROM submissions
+        UNION ALL
+        SELECT id, user_id, problem_id, language, code, verdict, execution_time_ms, memory_used_kb, compile_output, created_at, stage_id FROM stage_submissions
+      ) all_subs
+      WHERE 1=1
+    `;
     const params = [];
 
     if (problem_id) {
@@ -97,7 +105,7 @@ exports.getSubmissionHistory = async (req, res) => {
       query += ` AND user_id = $${params.length}`;
     }
 
-    query += ` ORDER BY created_at DESC LIMIT 50;`;
+    query += ` ORDER BY created_at DESC LIMIT 1000;`;
     const result = await db.query(query, params);
     return res.json(result.rows);
   } catch (err) {

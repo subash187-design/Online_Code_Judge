@@ -106,10 +106,17 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
   }, [user]);
 
   useEffect(() => {
-    if (user?.id) {
+    let storedId = null;
+    try {
+      const stored = localStorage.getItem('user');
+      if (stored) storedId = JSON.parse(stored)?.id;
+    } catch {}
+    const targetUserId = user?.id || storedId || 1;
+
+    if (targetUserId) {
       Promise.all([
-        authFetch(`/api/v1/submissions?user_id=${user.id}`).then(res => res.json()).catch(() => []),
-        authFetch(`/api/v1/analytics/dashboard?user_id=${user.id}`).then(res => res.json()).catch(() => null),
+        authFetch(`/api/v1/submissions?user_id=${targetUserId}`).then(res => res.json()).catch(() => []),
+        authFetch(`/api/v1/analytics/dashboard?user_id=${targetUserId}`).then(res => res.json()).catch(() => null),
         fetch('/api/v1/problems').then(res => res.json()).catch(() => [])
       ])
         .then(([subsData, dashData, probData]) => {
@@ -225,6 +232,19 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
       }
     }
 
+    if (dashboardMetrics?.problem_history && Array.isArray(dashboardMetrics.problem_history)) {
+      for (const p of dashboardMetrics.problem_history) {
+        if (!p.updated_at) continue;
+        const d = new Date(p.updated_at);
+        if (isNaN(d.getTime())) continue;
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        if (!submissionsByDate[key]) {
+          submissionsByDate[key] = p.total_submissions || 1;
+          activeDateSet.add(key);
+        }
+      }
+    }
+
     const now = new Date();
     const formatKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
     const todayKey = formatKey(now);
@@ -320,22 +340,22 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
       },
       monthCalendarData: monthCalendar
     };
-  }, [submissions]);
+  }, [submissions, dashboardMetrics]);
 
   const getTileColor = (count) => {
     if (count === 0) {
-      return 'bg-[#2b2b2b] dark:bg-[#262626] border border-transparent';
+      return 'bg-[#e2e4e8] dark:bg-[#262626] border border-transparent';
     }
     if (count === 1) {
-      return 'bg-[#15803d] dark:bg-[#14532d]';
+      return 'bg-[#4ade80] dark:bg-[#14532d]';
     }
     if (count <= 3) {
-      return 'bg-[#16a34a] dark:bg-[#16a34a]';
+      return 'bg-[#22c55e] dark:bg-[#16a34a]';
     }
     if (count <= 5) {
-      return 'bg-[#22c55e] dark:bg-[#22c55e]';
+      return 'bg-[#16a34a] dark:bg-[#22c55e]';
     }
-    return 'bg-[#86efac] dark:bg-[#86efac]';
+    return 'bg-[#15803d] dark:bg-[#86efac]';
   };
 
 
@@ -737,7 +757,7 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px]">Less</span>
-                    <div className="w-2.5 h-2.5 rounded-[2px] bg-[#2b2b2b] dark:bg-[#262626]" title="0 submissions" />
+                    <div className="w-2.5 h-2.5 rounded-[2px] bg-[#e2e4e8] dark:bg-[#262626]" title="0 submissions" />
                     <div className="w-2.5 h-2.5 rounded-[2px] bg-[#14532d]" title="1 submission" />
                     <div className="w-2.5 h-2.5 rounded-[2px] bg-[#16a34a]" title="2-3 submissions" />
                     <div className="w-2.5 h-2.5 rounded-[2px] bg-[#22c55e]" title="4-5 submissions" />
