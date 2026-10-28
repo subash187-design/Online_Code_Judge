@@ -41,8 +41,9 @@ async function seed() {
         'EASY',
         1000,
         262144,
-        'Arrays'
+        'Arrays & Hashing'
       )
+
       ON CONFLICT (id) DO NOTHING;
     `);
 
