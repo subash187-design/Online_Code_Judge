@@ -528,41 +528,8 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
               {activeTab === 'settings' && 'Configure theme preferences, code editor, and notification settings.'}
             </p>
           </div>
-
-          {/* Quick Tab Switcher */}
-          <div className="flex items-center flex-wrap gap-1.5 bg-[#edeef1] dark:bg-zinc-900 p-1 rounded-xl border border-[#e2e4e8] dark:border-zinc-800">
-            <button
-              onClick={() => setActiveTab('profile')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'profile'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Profile Details
-            </button>
-            <button
-              onClick={() => setActiveTab('edit')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'edit'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Profile Editing
-            </button>
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                activeTab === 'settings'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] shadow-sm font-bold dark:bg-zinc-800 dark:text-white dark:border-transparent'
-                  : 'text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Settings
-            </button>
-          </div>
         </div>
+
 
         {/* TAB: PROFILE DETAILS VIEW */}
         {activeTab === 'profile' && (
