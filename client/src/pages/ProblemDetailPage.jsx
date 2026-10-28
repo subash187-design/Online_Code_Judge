@@ -23,10 +23,7 @@ const DEFAULT_BOILERPLATES = {
 using namespace std;
 
 int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    // Write your solution here
+    // Write your code here
 
     return 0;
 }
@@ -37,7 +34,7 @@ int main() {
 #include <stdbool.h>
 
 int main() {
-    // Write your solution here
+    // Write your code here
 
     return 0;
 }
@@ -46,244 +43,16 @@ int main() {
 
 public class Solution {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
-        // Write your solution here
+        // Write your code here
 
     }
 }
 `,
-  python: `import sys
-
-def main():
-    # Write your solution here
-    pass
-
-if __name__ == '__main__':
-    main()
+  python: `# Write your code here
 `
 };
 
 function generateStarterBoilerplate(prob, lang = 'cpp') {
-  if (!prob) return DEFAULT_BOILERPLATES[lang] || DEFAULT_BOILERPLATES.cpp;
-
-  // Specific Problem 1 (Sum of Two Numbers / Two Sum Basic)
-  if (prob.id === 1) {
-    if (lang === 'c') {
-      return `#include <stdio.h>
-
-int main() {
-    long long a, b;
-    if (scanf("%lld %lld", &a, &b) == 2) {
-        // Write your solution for: ${prob.title}
-        
-    }
-    return 0;
-}
-`;
-    }
-    if (lang === 'java') {
-      return `import java.util.*;
-
-public class Solution {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        if (sc.hasNextLong()) {
-            long a = sc.nextLong();
-            long b = sc.nextLong();
-            // Write your solution for: ${prob.title}
-            
-        }
-    }
-}
-`;
-    }
-    if (lang === 'python') {
-      return `import sys
-
-def main():
-    input_data = sys.stdin.read().split()
-    if len(input_data) >= 2:
-        a = int(input_data[0])
-        b = int(input_data[1])
-        # Write your solution for: ${prob.title}
-        pass
-
-if __name__ == '__main__':
-    main()
-`;
-    }
-    // C++
-    return `#include <iostream>
-using namespace std;
-
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    long long a, b;
-    if (cin >> a >> b) {
-        // Write your solution for: ${prob.title}
-        
-    }
-
-    return 0;
-}
-`;
-  }
-
-  // String Problems
-  if (prob.id === 2 || prob.topic === 'Strings') {
-    if (lang === 'c') {
-      return `#include <stdio.h>
-#include <string.h>
-
-int main() {
-    char s[100005];
-    if (scanf("%s", s) == 1) {
-        // Write your solution for: ${prob.title}
-        
-    }
-    return 0;
-}
-`;
-    }
-    if (lang === 'java') {
-      return `import java.util.*;
-
-public class Solution {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        if (sc.hasNext()) {
-            String s = sc.next();
-            // Write your solution for: ${prob.title}
-            
-        }
-    }
-}
-`;
-    }
-    if (lang === 'python') {
-      return `import sys
-
-def main():
-    s = sys.stdin.read().strip()
-    # Write your solution for: ${prob.title}
-    pass
-
-if __name__ == '__main__':
-    main()
-`;
-    }
-    return `#include <iostream>
-#include <string>
-#include <algorithm>
-using namespace std;
-
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    string s;
-    if (cin >> s) {
-        // Write your solution for: ${prob.title}
-        
-    }
-
-    return 0;
-}
-`;
-  }
-
-  // Array / Two Sum / Numerical Problems
-  if (prob.id === 3 || prob.title?.toLowerCase().includes('two sum') || prob.topic === 'Arrays & Hashing') {
-    if (lang === 'c') {
-      return `#include <stdio.h>
-#include <stdlib.h>
-
-int main() {
-    int n;
-    long long target;
-    if (scanf("%d %lld", &n, &target) == 2) {
-        long long *nums = (long long*)malloc(n * sizeof(long long));
-        for (int i = 0; i < n; i++) {
-            scanf("%lld", &nums[i]);
-        }
-
-        // Write your solution for: ${prob.title}
-
-        free(nums);
-    }
-    return 0;
-}
-`;
-    }
-    if (lang === 'java') {
-      return `import java.util.*;
-
-public class Solution {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        if (sc.hasNextInt()) {
-            int n = sc.nextInt();
-            long target = sc.nextLong();
-            long[] nums = new long[n];
-            for (int i = 0; i < n; i++) {
-                nums[i] = sc.nextLong();
-            }
-
-            // Write your solution for: ${prob.title}
-
-        }
-    }
-}
-`;
-    }
-    if (lang === 'python') {
-      return `import sys
-
-def main():
-    data = sys.stdin.read().split()
-    if not data:
-        return
-    n = int(data[0])
-    target = int(data[1])
-    nums = [int(x) for x in data[2:2+n]]
-
-    # Write your solution for: ${prob.title}
-    pass
-
-if __name__ == '__main__':
-    main()
-`;
-    }
-    return `#include <iostream>
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
-using namespace std;
-
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    int n;
-    long long target;
-    if (cin >> n >> target) {
-        vector<long long> nums(n);
-        for (int i = 0; i < n; i++) {
-            cin >> nums[i];
-        }
-
-        // Write your solution for: ${prob.title}
-        
-    }
-
-    return 0;
-}
-`;
-  }
-
   return DEFAULT_BOILERPLATES[lang] || DEFAULT_BOILERPLATES.cpp;
 }
 
