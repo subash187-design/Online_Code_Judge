@@ -443,18 +443,6 @@ export default function UserDashboardPage({ onNavigate, onSelectProblem, initial
             </button>
 
             <button
-              onClick={() => setActiveTab('edit')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                activeTab === 'edit'
-                  ? 'bg-white text-slate-900 border border-[#e2e4e8] border-l-2 border-l-blue-600 font-semibold shadow-sm dark:bg-[#262626] dark:text-white dark:border-[#383838] dark:border-l-blue-500'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-[#edeef1] dark:text-zinc-400 dark:hover:text-white dark:hover:bg-[#222222]'
-              }`}
-            >
-              <Edit3 size={15} className={activeTab === 'edit' ? 'text-blue-600 dark:text-blue-400' : ''} />
-              Profile Editing
-            </button>
-
-            <button
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 activeTab === 'settings'
