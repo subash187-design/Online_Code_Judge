@@ -8,17 +8,20 @@ import {
 
 const TOPIC_OPTIONS = [
   { value: 'ALL', label: 'All Topics' },
-  { value: 'Arrays', label: 'Arrays' },
+  { value: 'Arrays', label: 'Arrays & Hashing' },
   { value: 'Strings', label: 'Strings' },
-  { value: 'Dynamic Programming', label: 'DP' },
   { value: 'Two Pointers', label: 'Two Pointers' },
-  { value: 'Trees', label: 'Trees' },
-  { value: 'Graphs', label: 'Graphs' },
   { value: 'Binary Search', label: 'Binary Search' },
+  { value: 'Linked List', label: 'Linked List' },
+  { value: 'Stack & Queue', label: 'Stack & Queue' },
+  { value: 'Trees', label: 'Trees & BST' },
+  { value: 'Graphs', label: 'Graphs' },
+  { value: 'Dynamic Programming', label: 'DP' },
   { value: 'Greedy', label: 'Greedy' },
   { value: 'Backtracking', label: 'Backtracking' },
   { value: 'Math', label: 'Math' }
 ];
+
 
 export default function ProblemListPage({ onSelectProblem }) {
   const [problems, setProblems] = useState([]);

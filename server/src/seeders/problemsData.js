@@ -9,6 +9,7 @@ const graphs = require('./data/graphs');
 const dynamicProgramming = require('./data/dynamic_programming');
 const greedyHeapIntervals = require('./data/greedy_heap_intervals');
 const backtracking = require('./data/backtracking');
+const math = require('./data/math');
 
 const all100Problems = [
   ...arraysHashing,
@@ -21,8 +22,10 @@ const all100Problems = [
   ...graphs,
   ...dynamicProgramming,
   ...greedyHeapIntervals,
-  ...backtracking
+  ...backtracking,
+  ...math
 ];
 
 module.exports = all100Problems;
+
 
