@@ -1,4 +1,4 @@
-﻿const arraysHashing = require('./data/arrays_hashing');
+const arraysHashing = require('./data/arrays_hashing');
 const strings = require('./data/strings');
 const twoPointers = require('./data/two_pointers_sliding_window');
 const binarySearch = require('./data/binary_search');
@@ -8,6 +8,7 @@ const treesBst = require('./data/trees_bst');
 const graphs = require('./data/graphs');
 const dynamicProgramming = require('./data/dynamic_programming');
 const greedyHeapIntervals = require('./data/greedy_heap_intervals');
+const backtracking = require('./data/backtracking');
 
 const all100Problems = [
   ...arraysHashing,
@@ -19,7 +20,9 @@ const all100Problems = [
   ...treesBst,
   ...graphs,
   ...dynamicProgramming,
-  ...greedyHeapIntervals
+  ...greedyHeapIntervals,
+  ...backtracking
 ];
 
 module.exports = all100Problems;
+

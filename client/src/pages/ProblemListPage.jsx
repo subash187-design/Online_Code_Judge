@@ -52,7 +52,9 @@ export default function ProblemListPage({ onSelectProblem }) {
                           (p.subtopics && p.subtopics.some(s => s.toLowerCase().includes(query))) ||
                           (p.tags && p.tags.some(t => t.toLowerCase().includes(query)));
     const matchesDiff = difficultyFilter === 'ALL' || p.difficulty === difficultyFilter;
-    const matchesTopic = topicFilter === 'ALL' || p.topic === topicFilter;
+    const matchesTopic = topicFilter === 'ALL' || 
+                          p.topic === topicFilter || 
+                          (p.topic && p.topic.toLowerCase().includes(topicFilter.toLowerCase()));
     return matchesSearch && matchesDiff && matchesTopic;
   });
 
