@@ -614,12 +614,28 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
 
   const activeStage = stagesData?.stages?.find(s => s.id === activeStageId);
   const isStageLocked = activeStage?.status === 'LOCKED';
+  const expectedTime = activeStage?.expected_time_complexity || problem?.expected_time_complexity || 'O(N)';
+  const expectedSpace = activeStage?.expected_space_complexity || problem?.expected_space_complexity || 'O(1)';
 
   const renderFormattedDescription = (text) => {
     if (!text) return null;
 
     // Split into sections by markdown heading markers (### Input Format, ### Output Format, ### Constraints, etc.)
     const sections = text.split(/(?=(?:^|\n)###?\s+)/);
+    const hasConstraintsHeading = sections.some(s => /constraint/i.test(s));
+
+    const renderComplexityBlock = () => (
+      <div className="pt-2 text-xs space-y-1">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-slate-800 dark:text-zinc-200">Expected Time Complexity:</span>
+          <span className="font-mono text-blue-600 dark:text-blue-400 font-semibold">{expectedTime}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-slate-800 dark:text-zinc-200">Expected Space Complexity:</span>
+          <span className="font-mono text-blue-600 dark:text-blue-400 font-semibold">{expectedSpace}</span>
+        </div>
+      </div>
+    );
 
     return (
       <div className="space-y-4">
@@ -632,6 +648,8 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
           if (match) {
             const headingTitle = match[1].trim();
             const bodyContent = match[2].trim();
+            const isConstraints = /constraint/i.test(headingTitle);
+
             return (
               <div key={idx} className="space-y-1.5 pt-1">
                 <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
@@ -640,6 +658,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                 <div className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">
                   {bodyContent}
                 </div>
+                {isConstraints && renderComplexityBlock()}
               </div>
             );
           }
@@ -657,6 +676,21 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
             </div>
           );
         })}
+
+        {/* Fallback if no explicit Constraints section was parsed in description */}
+        {!hasConstraintsHeading && (
+          <div className="space-y-1.5 pt-1">
+            <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider font-mono">
+              Constraints
+            </h4>
+            {problem?.constraints && (
+              <div className="text-xs text-slate-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                {problem.constraints}
+              </div>
+            )}
+            {renderComplexityBlock()}
+          </div>
+        )}
       </div>
     );
   };
@@ -920,25 +954,7 @@ export default function ProblemDetailPage({ problemId, onBack, onNavigateProblem
                   </div>
                 </div>
 
-                {/* Active Stage Target Banner */}
-                {activeStage && (
-                  <div className="p-3.5 rounded-xl bg-[#f8f9fa] dark:bg-[#262626] border border-[#e2e4e8] dark:border-[#383838] space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] uppercase font-bold tracking-wider text-blue-600 dark:text-blue-400 font-mono flex items-center gap-1.5">
-                        <Sparkles size={12} /> Target Stage Requirements
-                      </span>
-                      <span className="text-[10px] px-2 py-0.5 rounded bg-white text-slate-700 font-mono border border-[#e0e2e6] dark:bg-[#1e1e1e] dark:text-zinc-300 dark:border-[#333333]">
-                        {activeStage.status}
-                      </span>
-                    </div>
-                    <h4 className="text-xs font-semibold text-slate-900 dark:text-white">{activeStage.name}</h4>
-                    <p className="text-xs text-slate-600 dark:text-zinc-300 leading-relaxed">{activeStage.description}</p>
-                    <div className="flex gap-4 pt-1 text-[11px] font-mono text-slate-500 dark:text-zinc-400 border-t border-[#e2e4e8] dark:border-[#333333]">
-                      <span>Expected Time: <b className="text-blue-600 dark:text-blue-400">{activeStage.expected_time_complexity || 'O(1)'}</b></span>
-                      <span>Expected Space: <b className="text-blue-600 dark:text-blue-400">{activeStage.expected_space_complexity || 'O(1)'}</b></span>
-                    </div>
-                  </div>
-                )}
+
 
                 {/* Feedback Banner */}
                 <StageFeedbackBanner
