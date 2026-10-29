@@ -5,11 +5,14 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
   const [email, setEmail] = useState(() => {
     return initialEmail || localStorage.getItem('pending_verification_email') || '';
   });
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(() => {
+    return localStorage.getItem('dev_otp_hint') || '';
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
+
 
   useEffect(() => {
     if (initialEmail) {
@@ -46,6 +49,7 @@ export default function VerifyEmailPage({ initialEmail = '', onNavigate }) {
 
       try {
         localStorage.removeItem('pending_verification_email');
+        localStorage.removeItem('dev_otp_hint');
       } catch {}
 
       setSuccess('Email verified successfully! Redirecting to sign in...');

@@ -35,6 +35,9 @@ export default function RegisterPage({ onNavigate }) {
       const targetEmail = res.email || trimmedEmail;
       try {
         localStorage.setItem('pending_verification_email', targetEmail);
+        if (res.dev_otp) {
+          localStorage.setItem('dev_otp_hint', res.dev_otp);
+        }
       } catch {}
       onNavigate('verify-email', { email: targetEmail });
     } catch (err) {

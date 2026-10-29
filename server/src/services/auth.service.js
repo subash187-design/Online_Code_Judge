@@ -57,7 +57,10 @@ class AuthService {
           [name.trim(), passwordHash, hashedOtp, expiry, existingUser.rows[0].id]
         );
 
-        await emailService.sendVerificationEmail(normalizedEmail, otp, name.trim());
+        emailService.sendVerificationEmail(normalizedEmail, otp, name.trim()).catch(err => {
+          console.warn('[authService] Verification email delivery notice:', err.message);
+        });
+
         await this.logAuthEvent({
           userId: existingUser.rows[0].id,
           email: normalizedEmail,
@@ -70,7 +73,8 @@ class AuthService {
         return {
           message: 'Account registered successfully. A 6-digit verification code has been dispatched to your email.',
           email: normalizedEmail,
-          requiresVerification: true
+          requiresVerification: true,
+          dev_otp: (!process.env.SMTP_HOST || !process.env.SMTP_USER) ? otp : undefined
         };
       }
     }
@@ -92,7 +96,10 @@ class AuthService {
     );
 
     const newUser = result.rows[0];
-    await emailService.sendVerificationEmail(normalizedEmail, otp, name.trim());
+    emailService.sendVerificationEmail(normalizedEmail, otp, name.trim()).catch(err => {
+      console.warn('[authService] Verification email delivery notice:', err.message);
+    });
+
     await this.logAuthEvent({
       userId: newUser.id,
       email: normalizedEmail,
@@ -105,7 +112,8 @@ class AuthService {
     return {
       message: 'Account registered successfully. A 6-digit verification code has been dispatched to your email.',
       email: normalizedEmail,
-      requiresVerification: true
+      requiresVerification: true,
+      dev_otp: (!process.env.SMTP_HOST || !process.env.SMTP_USER) ? otp : undefined
     };
   }
 
@@ -223,7 +231,10 @@ class AuthService {
       [hashedOtp, expiry, user.id]
     );
 
-    await emailService.sendVerificationEmail(normalizedEmail, otp, user.name || 'User');
+    emailService.sendVerificationEmail(normalizedEmail, otp, user.name || 'User').catch(err => {
+      console.warn('[authService] Resend email delivery notice:', err.message);
+    });
+
     await this.logAuthEvent({
       userId: user.id,
       email: normalizedEmail,
@@ -234,7 +245,8 @@ class AuthService {
     });
 
     return {
-      message: 'A new verification code has been dispatched to your email.'
+      message: 'A new verification code has been dispatched to your email.',
+      dev_otp: (!process.env.SMTP_HOST || !process.env.SMTP_USER) ? otp : undefined
     };
   }
 

@@ -15,6 +15,9 @@ class EmailService {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
         },
+        connectionTimeout: 4000,
+        greetingTimeout: 4000,
+        socketTimeout: 5000
       });
       console.log('[EmailService] Configured with external SMTP host:', process.env.SMTP_HOST);
     } else {
@@ -50,18 +53,26 @@ class EmailService {
     }
 
     try {
-      const info = await this.transporter.sendMail({
+      const sendPromise = this.transporter.sendMail({
         from: process.env.SMTP_FROM || `"Algomind Online Code Judge" <${process.env.SMTP_USER}>`,
         to: email,
         subject,
         text,
         html,
       });
+
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('SMTP dispatch timed out')), 4000)
+      );
+
+      const info = await Promise.race([sendPromise, timeoutPromise]);
       return { success: true, messageId: info.messageId };
     } catch (err) {
-      console.error('[EmailService] Failed to send email via SMTP, falling back to console log:', err.message);
-      console.log(`[FALLBACK OTP for ${email}]: ${otp}`);
-      return { success: true, fallback: true, otp };
+      console.warn('[EmailService] SMTP delivery failed or timed out:', err.message);
+      console.log(`\n================== [FALLBACK OTP FOR ${email}] ==================`);
+      console.log(`CODE: ${otp}`);
+      console.log('===================================================================\n');
+      return { success: false, fallback: true, otp };
     }
   }
 }
