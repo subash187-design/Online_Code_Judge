@@ -8,6 +8,7 @@ COPY client/package*.json ./
 RUN npm ci
 
 COPY client/ ./
+RUN chmod -R +x node_modules/.bin || true
 RUN npm run build
 
 # ==========================================
