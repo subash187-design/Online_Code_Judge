@@ -23,5 +23,6 @@ services:
 databases:
   - name: algomind-postgres
     databaseName: judge_db
-    user: postgres
+    user: judge_user
     plan: free
+
