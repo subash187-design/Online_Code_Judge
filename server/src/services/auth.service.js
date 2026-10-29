@@ -52,7 +52,7 @@ class AuthService {
 
         await db.query(
           `UPDATE users 
-           SET name = $1, password_hash = $2, verification_token_hash = $3, verification_token_expiry = $4, updated_at = NOW()
+           SET name = $1, password_hash = $2, verification_token_hash = $3, verification_token_expiry = $4
            WHERE id = $5`,
           [name.trim(), passwordHash, hashedOtp, expiry, existingUser.rows[0].id]
         );

@@ -77,6 +77,10 @@ async function startServer() {
         await seed();
       }
     }
+
+    // Ensure backwards-compatible schema extensions on users table
+    await db.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;");
+
   } catch (err) {
     console.warn('[Online Code Judge] Database auto-init check skipped or deferred:', err.message);
   }
