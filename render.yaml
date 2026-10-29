@@ -1,9 +1,10 @@
 services:
   - type: web
     name: algomind-judge
-    runtime: docker
+    runtime: node
     plan: free
-    dockerfilePath: ./Dockerfile
+    buildCommand: npm run render-build
+    startCommand: npm run start
     envVars:
       - key: PORT
         value: 5000
@@ -25,4 +26,3 @@ databases:
     databaseName: judge_db
     user: judge_user
     plan: free
-

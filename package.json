@@ -1,0 +1,9 @@
+{
+  "name": "online-code-judge",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "render-build": "cd client && npm install && npm run build && cd ../server && npm install",
+    "start": "cd server && node src/index.js"
+  }
+}
