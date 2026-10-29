@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: algomind-judge
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: algomind-postgres
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: EMAIL_VERIFICATION_TTL_MINUTES
+        value: 15
+
+databases:
+  - name: algomind-postgres
+    databaseName: judge_db
+    user: postgres
+    plan: free

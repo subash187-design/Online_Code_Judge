@@ -125,12 +125,18 @@ async function seed() {
     const seed100Problems = require('./seeders/seed100Problems');
     await seed100Problems();
 
-    console.log('✓ Seeding complete for all 102 problems (Phases 1 through 8)!');
-    process.exit(0);
+    console.log('✓ Seeding complete for all problems (Phases 1 through 8)!');
+    return true;
   } catch (err) {
     console.error('Seeding failed:', err);
-    process.exit(1);
+    if (require.main === module) process.exit(1);
+    throw err;
   }
 }
 
-seed();
+if (require.main === module) {
+  seed().then(() => process.exit(0)).catch(() => process.exit(1));
+}
+
+module.exports = seed;
+

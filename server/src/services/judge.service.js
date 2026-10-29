@@ -72,14 +72,156 @@ class JudgeService {
    * @param {string} language - Target language
    * @returns {{ success: boolean, compile_output: string }}
    */
+  static isDockerAvailable() {
+    if (this._dockerChecked !== undefined) return this._dockerAvailable;
+    try {
+      const res = spawnSync('docker', ['--version'], { stdio: 'pipe' });
+      this._dockerAvailable = (res.status === 0);
+    } catch {
+      this._dockerAvailable = false;
+    }
+    this._dockerChecked = true;
+    Logger.info('JudgeService', `Docker environment check: ${this._dockerAvailable ? 'Available (using container isolation)' : 'Unavailable (using direct secure execution)'}`);
+    return this._dockerAvailable;
+  }
+
+  static _compileBinaryDirect(tempDir, lang) {
+    let compileRes;
+    try {
+      if (lang === 'c') {
+        const outFile = path.join(tempDir, process.platform === 'win32' ? 'Solution.exe' : 'Solution.out');
+        compileRes = spawnSync('gcc', ['-O2', path.join(tempDir, 'Solution.c'), '-o', outFile, '-lm'], { stdio: 'pipe' });
+      } else if (lang === 'cpp') {
+        const outFile = path.join(tempDir, process.platform === 'win32' ? 'Solution.exe' : 'Solution.out');
+        compileRes = spawnSync('g++', ['-O2', '-std=c++17', path.join(tempDir, 'Solution.cpp'), '-o', outFile], { stdio: 'pipe' });
+      } else if (lang === 'java') {
+        compileRes = spawnSync('javac', [path.join(tempDir, 'Solution.java')], { stdio: 'pipe' });
+      } else if (lang === 'python') {
+        const pyCmd = process.platform === 'win32' ? 'python' : 'python3';
+        compileRes = spawnSync(pyCmd, ['-m', 'py_compile', path.join(tempDir, 'solution.py')], { stdio: 'pipe' });
+      }
+    } catch (err) {
+      return { success: false, compile_output: err.message || `Compiler invocation failed for ${lang}` };
+    }
+
+    if (!compileRes) {
+      return { success: false, compile_output: `Compiler for ${lang} not found` };
+    }
+
+    if (compileRes.error) {
+      return { success: false, compile_output: compileRes.error.message || `Compiler error: ${lang}` };
+    }
+
+    const stderrMsg = compileRes.stderr ? compileRes.stderr.toString() : '';
+    if (compileRes.status !== 0) {
+      return { success: false, compile_output: stderrMsg || 'Compilation failed' };
+    }
+
+    return { success: true, compile_output: '' };
+  }
+
+  static _executeSingleDirect(tempDir, input, timeLimitMs, memoryLimitKb, lang, config) {
+    const startTime = Date.now();
+    const scaledTimeMs = Math.round(timeLimitMs * config.timeMultiplier);
+    let runRes;
+
+    try {
+      if (lang === 'c' || lang === 'cpp') {
+        const binFile = path.join(tempDir, process.platform === 'win32' ? 'Solution.exe' : 'Solution.out');
+        runRes = spawnSync(binFile, [], {
+          input: input || '',
+          timeout: scaledTimeMs,
+          maxBuffer: 10 * 1024 * 1024,
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+      } else if (lang === 'java') {
+        runRes = spawnSync('java', ['-Xmx256m', '-cp', tempDir, 'Solution'], {
+          input: input || '',
+          timeout: scaledTimeMs,
+          maxBuffer: 10 * 1024 * 1024,
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+      } else if (lang === 'python') {
+        const pyCmd = process.platform === 'win32' ? 'python' : 'python3';
+        runRes = spawnSync(pyCmd, ['-u', path.join(tempDir, 'solution.py')], {
+          input: input || '',
+          timeout: scaledTimeMs,
+          maxBuffer: 10 * 1024 * 1024,
+          stdio: ['pipe', 'pipe', 'pipe']
+        });
+      }
+    } catch (err) {
+      return {
+        verdict: 'RUNTIME_ERROR',
+        exit_code: 1,
+        stdout: '',
+        stderr: err.message,
+        execution_time_ms: Date.now() - startTime,
+        memory_used_kb: 0
+      };
+    }
+
+    const execTimeMs = Date.now() - startTime;
+    const stdout = runRes && runRes.stdout ? runRes.stdout.toString() : '';
+    const stderr = runRes && runRes.stderr ? runRes.stderr.toString() : '';
+    const exitCode = runRes ? (runRes.status ?? -1) : -1;
+
+    if (runRes && runRes.error && runRes.error.code === 'ETIMEDOUT') {
+      return {
+        verdict: 'TIME_LIMIT_EXCEEDED',
+        exit_code: exitCode,
+        stdout,
+        stderr,
+        execution_time_ms: timeLimitMs,
+        memory_used_kb: 0
+      };
+    }
+
+    if (exitCode !== 0) {
+      return {
+        verdict: 'RUNTIME_ERROR',
+        exit_code: exitCode,
+        stdout,
+        stderr,
+        execution_time_ms: execTimeMs,
+        memory_used_kb: 0
+      };
+    }
+
+    return {
+      verdict: 'SUCCESS',
+      exit_code: 0,
+      stdout,
+      stderr,
+      execution_time_ms: execTimeMs,
+      memory_used_kb: 0
+    };
+  }
+
+  /**
+   * Compiles source code inside the sandboxed Docker runner or direct fallback
+   * @param {string} tempDir - Directory containing source code
+   * @param {string} language - Target language
+   * @returns {{ success: boolean, compile_output: string }}
+   */
   static _compileBinary(tempDir, language = 'cpp') {
     const lang = this.normalizeLanguage(language);
     const config = LANGUAGE_CONFIGS[lang] || LANGUAGE_CONFIGS.cpp;
 
     Logger.info('JudgeService', `Compilation started for language: ${lang}`);
 
+    if (!this.isDockerAvailable()) {
+      return this._compileBinaryDirect(tempDir, lang);
+    }
+
     const compileArgs = config.compileArgs(tempDir);
-    const compileRes = spawnSync('docker', compileArgs, { stdio: 'pipe' });
+    let compileRes;
+    try {
+      compileRes = spawnSync('docker', compileArgs, { stdio: 'pipe' });
+    } catch {
+      return this._compileBinaryDirect(tempDir, lang);
+    }
+
     const stderrMsg = compileRes.stderr ? compileRes.stderr.toString() : '';
 
     if (compileRes.status !== 0) {
@@ -95,7 +237,7 @@ class JudgeService {
   }
 
   /**
-   * Executes code with specific stdin inside the sandboxed container
+   * Executes code with specific stdin inside the sandboxed container or direct fallback
    * @param {string} tempDir - Directory containing executable / script
    * @param {string} input - Stdin data
    * @param {number} timeLimitMs - Timeout in milliseconds
@@ -107,6 +249,10 @@ class JudgeService {
 
     const lang = this.normalizeLanguage(language);
     const config = LANGUAGE_CONFIGS[lang] || LANGUAGE_CONFIGS.cpp;
+
+    if (!this.isDockerAvailable()) {
+      return this._executeSingleDirect(tempDir, input, timeLimitMs, memoryLimitKb, lang, config);
+    }
 
     const scaledTimeMs = Math.round(timeLimitMs * config.timeMultiplier);
     const timeLimitSec = (scaledTimeMs / 1000).toFixed(2);
@@ -127,8 +273,14 @@ class JudgeService {
       config.executeCmd(timeLimitSec)
     ];
 
-    const runRes = spawnSync('docker', dockerArgs, { stdio: 'pipe' });
+    let runRes;
+    try {
+      runRes = spawnSync('docker', dockerArgs, { stdio: 'pipe' });
+    } catch {
+      return this._executeSingleDirect(tempDir, input, timeLimitMs, memoryLimitKb, lang, config);
+    }
     const exitCode = runRes.status ?? -1;
+
 
     // Read outputs
     const stdoutPath = path.join(tempDir, 'stdout.txt');

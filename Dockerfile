@@ -15,11 +15,16 @@ RUN npm run build
 # ==========================================
 FROM node:20-bookworm-slim AS production
 
-# Install Docker CLI to allow judge service to run sandbox containers via mounted docker.sock
+# Install compilers for native code execution (Render/PaaS) and Docker CLI (VPS)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     ca-certificates \
     gnupg \
+    gcc \
+    g++ \
+    python3 \
+    default-jdk-headless \
+    build-essential \
     && install -m 0755 -d /etc/apt/keyrings \
     && curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg \
     && chmod a+r /etc/apt/keyrings/docker.gpg \
@@ -27,6 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get update && apt-get install -y --no-install-recommends \
     docker-ce-cli \
     && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /app
 

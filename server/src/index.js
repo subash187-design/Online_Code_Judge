@@ -60,8 +60,32 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`[Online Code Judge] Backend running on port ${PORT} (0.0.0.0)`);
-});
+// Auto-initialize database if tables or problems are missing
+async function startServer() {
+  try {
+    const db = require('./config/database');
+    const checkRes = await db.query("SELECT to_regclass('public.problems') as tbl;");
+    if (!checkRes.rows[0].tbl) {
+      console.log('[Online Code Judge] Database tables missing. Running initial migrations and seeders...');
+      const seed = require('./seed');
+      await seed();
+    } else {
+      const countRes = await db.query('SELECT COUNT(*) FROM problems;');
+      if (parseInt(countRes.rows[0].count, 10) === 0) {
+        console.log('[Online Code Judge] Problems table empty. Seeding problems...');
+        const seed = require('./seed');
+        await seed();
+      }
+    }
+  } catch (err) {
+    console.warn('[Online Code Judge] Database auto-init check skipped or deferred:', err.message);
+  }
+
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`[Online Code Judge] Backend running on port ${PORT} (0.0.0.0)`);
+  });
+}
+
+startServer();
 
 module.exports = app;
